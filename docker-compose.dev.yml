@@ -1,0 +1,40 @@
+version: "3.2"
+services:
+  livebundle-store:
+    build:
+      context: .
+      dockerfile: packages/livebundle-store/Dockerfile.dev
+    labels:
+      - traefik.http.routers.livebundle-store.rule=PathPrefix(`/store`)
+      - traefik.http.middlewares.remove-store-prefix.stripprefix.prefixes=/store
+      - traefik.http.middlewares.remove-store-prefix.stripprefix.forceslash=false
+      - traefik.http.routers.livebundle-store.middlewares=remove-store-prefix@docker
+  livebundle-github:
+    build:
+      context: .
+      dockerfile: packages/livebundle-github/Dockerfile.dev
+    labels:
+      - traefik.http.routers.livebundle-github.rule=PathPrefix(`/github`)
+      - traefik.http.middlewares.remove-ghapp-prefix.stripprefix.prefixes=/github
+      - traefik.http.middlewares.remove-ghapp-prefix.stripprefix.forceslash=false
+      - traefik.http.routers.livebundle-github.middlewares=remove-ghapp-prefix@docker
+    depends_on:
+      - livebundle-qrcode
+      - livebundle-store
+  livebundle-qrcode:
+    build:
+      context: .
+      dockerfile: packages/livebundle-qrcode/Dockerfile.dev
+    labels:
+      - traefik.http.routers.livebundle-qrcode.rule=PathPrefix(`/qrcode`)
+      - traefik.http.middlewares.remove-qrcode-prefix.stripprefix.prefixes=/qrcode
+      - traefik.http.middlewares.remove-qrcode-prefix.stripprefix.forceslash=false
+      - traefik.http.routers.livebundle-qrcode.middlewares=remove-qrcode-prefix@docker
+  reverse-proxy:
+    image: traefik:v2.2
+    command: --api.insecure=true --providers.docker
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

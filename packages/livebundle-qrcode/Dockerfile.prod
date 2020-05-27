@@ -1,0 +1,10 @@
+FROM node:12-alpine
+WORKDIR /usr/src/app
+RUN yarn init . --yes
+RUN yarn add livebundle-qrcode@0.1.8
+
+FROM node:12-alpine
+WORKDIR /usr/src/app
+COPY --from=0 /usr/src/app .
+EXPOSE 3000
+CMD [ "yarn", "livebundle-qrcode" ]

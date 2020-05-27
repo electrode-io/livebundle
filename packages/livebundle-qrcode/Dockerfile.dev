@@ -1,0 +1,11 @@
+# To be run from top level workspace directory to build a development image
+FROM node:12-alpine
+
+WORKDIR /usr/src/app
+COPY ["package.json", "yarn.lock", "./"]
+COPY ./packages ./packages
+RUN yarn workspace livebundle-qrcode install --prod
+EXPOSE 3000
+ENV DEBUG *
+WORKDIR /usr/src/app/packages/livebundle-qrcode
+CMD ["yarn", "start"]

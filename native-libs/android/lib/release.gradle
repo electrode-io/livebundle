@@ -1,0 +1,120 @@
+apply(plugin: "maven")
+apply(plugin: "signing")
+
+def getRepositoryUrl() {
+    return project.findProperty("repositoryUrl") ?: "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+}
+
+def getRepositoryUsername() {
+    return project.findProperty("repositoryUsername") ?: ""
+}
+
+def getRepositoryPassword() {
+    return project.findProperty("repositoryPassword") ?: ""
+}
+
+def configureLiveBundlePom(def pom) {
+    pom.project {
+        name(POM_NAME)
+        artifactId(POM_ARTIFACT_ID)
+        packaging(POM_PACKAGING)
+        description("LiveBundle Android Library")
+        url("https://github.com/electrode-io/livebundle")
+
+        developers {
+            developer {
+                id("walmartlabs")
+                name("WalmartLabs")
+            }
+        }
+
+        licenses {
+            license {
+                name("Apache 2.0")
+                url("https://github.com/electrode-io")
+                distribution("repo")
+            }
+        }
+
+        scm {
+            url("https://github.com/electrode-io/livebundle.git")
+            connection("scm:git:https://github.com/electrode-io/livebundle.git")
+            developerConnection("scm:git:git@github.com:electrode-io/livebundle.git")
+        }
+    }
+}
+
+if (JavaVersion.current().isJava8Compatible()) {
+  allprojects {
+    tasks.withType(Javadoc) {
+      options.addStringOption("Xdoclint:none", "-quiet")
+    }
+  }
+}
+
+afterEvaluate { project ->
+
+    task androidJavadoc(type: Javadoc) {
+        source = android.sourceSets.main.java.srcDirs
+        classpath += files(android.bootClasspath)
+        classpath += files(project.getConfigurations().getByName("compile").asList())
+        include("**/*.java")
+    }
+
+    task androidJavadocJar(type: Jar, dependsOn: androidJavadoc) {
+        classifier = "javadoc"
+        from(androidJavadoc.destinationDir)
+    }
+
+    task androidSourcesJar(type: Jar) {
+        classifier = "sources"
+        from(android.sourceSets.main.java.srcDirs)
+        include("**/*.java")
+    }
+
+    android.libraryVariants.all { variant ->
+        def name = variant.name.capitalize()
+        task "jar${name}"(type: Jar, dependsOn: variant.javaCompileProvider.get()) {
+            from(variant.javaCompileProvider.get().destinationDir)
+        }
+    }
+
+    artifacts {
+        archives(androidSourcesJar)
+        archives(androidJavadocJar)
+    }
+
+    version = VERSION_NAME
+    group = GROUP
+
+    signing {
+        required { gradle.taskGraph.hasTask("uploadArchives") }
+        sign(configurations.archives)
+    }
+
+    uploadArchives {
+        configuration = configurations.archives
+        repositories.mavenDeployer {
+            beforeDeployment {
+                MavenDeployment deployment -> signing.signPom(deployment)
+            }
+
+            repository(url: getRepositoryUrl()) {
+                authentication(
+                        userName: getRepositoryUsername(),
+                        password: getRepositoryPassword())
+
+            }
+
+            configureLiveBundlePom(pom)
+        }
+    }
+
+    task installArchives(type: Upload) {
+        configuration = configurations.archives
+        repositories.mavenDeployer {
+            repository(url: "file://" + System.getenv('HOME') + "/.m2/repository")
+            configureLiveBundlePom(pom)
+        }
+    }
+}

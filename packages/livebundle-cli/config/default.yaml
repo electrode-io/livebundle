@@ -1,0 +1,37 @@
+# QRCode generation configuration
+qrcode:
+  term:
+    # Indicates whether to generate a QR Code in the terminal
+    generate: true
+    # Indicates whether to generate a small QR Code
+    small: true
+  image:
+    # Indicates whether to generate a QR Code image
+    generate: true
+    # Margin around QR code image
+    margin: 1
+    # Width of QR code image (also height given QR Code is a square)
+    width: 250
+    # Indicates whether to open the image after generation
+    open: true
+
+# SDK task configuration
+task:
+  bundle:
+    - dev: true
+      entry: index.js
+      platform: ios
+    - dev: false
+      entry: index.js
+      platform: ios
+    - dev: true
+      entry: index.js
+      platform: android
+    - dev: false
+      entry: index.js
+      platform: android
+
+  # Store configuration
+  upload:
+    # LiveBundle store server url
+    url: http://localhost:3000

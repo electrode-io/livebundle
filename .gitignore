@@ -1,0 +1,8 @@
+dist/
+node_modules/
+.env
+.DS_Store
+native-libs/android/.idea/vcs.xml
+.livebundle
+yarn-error.log
+lerna-debug.log

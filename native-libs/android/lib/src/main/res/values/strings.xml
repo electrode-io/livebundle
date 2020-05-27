@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">BundleStore</string>
+    <string name="livebundle_deeplink_intent">LiveBundle DeepLink Intent</string>
+</resources>
