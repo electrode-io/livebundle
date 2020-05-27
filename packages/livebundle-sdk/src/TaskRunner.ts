@@ -1,6 +1,6 @@
 import cp from "child_process";
 import debug from "debug";
-import { Package } from "livebundle-store";
+import type { Package } from "livebundle-store";
 import path from "path";
 import tmp from "tmp";
 import util from "util";

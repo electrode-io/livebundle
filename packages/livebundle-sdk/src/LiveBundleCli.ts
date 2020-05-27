@@ -1,7 +1,7 @@
 import FormData from "form-data";
 import * as fs from "fs";
 import got from "got";
-import { Package } from "livebundle-store";
+import type { Package } from "livebundle-store";
 
 export class LiveBundleCli {
   constructor(public readonly storeUrl: string) {}

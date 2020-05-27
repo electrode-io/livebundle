@@ -1,4 +1,4 @@
-import { Platform } from "livebundle-store";
+import type { Platform } from "livebundle-store";
 
 export interface CliBundle {
   dev: boolean;

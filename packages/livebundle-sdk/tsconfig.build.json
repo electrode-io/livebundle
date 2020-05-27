@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.build.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "./dist",
+    "typeRoots": ["./typings"],
+    "rootDir": "./src"
+  },
+  "include": ["src/**/*"],
+  "references": [
+    {
+      "path": "../livebundle-store/tsconfig.build.json"
+    },
+    {
+      "path": "../livebundle-utils/tsconfig.build.json"
+    }
+  ]
+}

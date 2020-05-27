@@ -1,7 +1,7 @@
 import { Octokit } from "@octokit/rest";
 import debug from "debug";
 import fs from "fs-extra";
-import { Config as CliConfig } from "livebundle-cli";
+import type { Config as CliConfig } from "livebundle-cli";
 import { BundleTask, LiveBundleTask, TaskRunner } from "livebundle-sdk";
 import { createTmpDir, loadConfig } from "livebundle-utils";
 import path from "path";

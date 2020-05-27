@@ -4,7 +4,9 @@
   "main": "dist/index.js",
   "private": true,
   "license": "Apache-2.0",
-  "scripts": {
+  "scripts": {    
+    "clean": "lerna run clean",
+    "compile": "lerna run compile",
     "docker:start": "lerna run build && COMPOSE_FILE=docker-compose.dev.yml docker-compose up --build",
     "docker:clean": "COMPOSE_FILE=docker-compose.dev.yml docker-compose down --rmi local --volumes --remove-orphans",
     "build": "lerna run build",

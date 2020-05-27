@@ -1,6 +1,6 @@
 import debug from "debug";
 import fs from "fs-extra";
-import { Bundle, Package, PackageCli } from "livebundle-store";
+import type { Bundle, Package, PackageCli } from "livebundle-store";
 import { createTmpDir } from "livebundle-utils";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";

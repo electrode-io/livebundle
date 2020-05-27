@@ -7,9 +7,11 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "build": "tsc",
+    "build": "yarn clean && yarn compile",
+    "clean": "rm -rf ./dist && rm -rf tsconfig.build.tsbuildinfo",
+    "compile": "tsc -b tsconfig.build.json",
     "docker:build": "yarn build && docker build -t livebundle/store .",
-    "prepare": "yarn build",
+    "prepublishOnly": "yarn build",
     "start": "node dist/cli.js",
     "test": "mocha"
   },

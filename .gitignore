@@ -1,8 +1,21 @@
+# Android Studio
+native-libs/android/.idea/vcs.xml
+
+# Build
 dist/
 node_modules/
-.env
-.DS_Store
-native-libs/android/.idea/vcs.xml
-.livebundle
-yarn-error.log
+
+# Lerna
 lerna-debug.log
+
+# LiveBundle
+.livebundle
+
+# MacOS
+.DS_Store
+
+# TypeScript
+tsconfig.build.tsbuildinfo
+
+# Yarn
+yarn-error.log
