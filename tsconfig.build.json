@@ -1,5 +1,5 @@
 {
-  "compilerOptions": {    
+  "compilerOptions": {
     "declaration": true,
     "target": "es2018",
     "module": "commonjs",
@@ -8,6 +8,7 @@
     "skipLibCheck": true,
     "strictNullChecks": true,
     "noImplicitAny": true,
+    "sourceMap": true,
     "typeRoots": ["node_modules/@types", "./typings"]
   },
   "exclude": ["node_modules", "dist"]
