@@ -36,9 +36,11 @@ Further development documentation material detailing technology stack, developme
 ├── .mocharc.json         // Mocha configuration
 ├──  .prettier.rc         // Prettier configuration
 └── .vscode               // VSCode IDE configuration
-    └── settings.json     // VSCode workspace configuration
+    └── settings.json     // VSCode workspace configuration 
 ```
 
-### User documentation
+### Related repositories
 
-Website and documentation can be found in the [LiveBundle website repository](https://github.com/electrode-io/livebundle-website)
+- [LiveBundle website](https://github.com/electrode-io/livebundle-website) contains the LiveBundle website and user documentation.
+- [LiveBundle sample](https://github.com/electrode-io/livebundle-sample) contains a sample React Native application wired with LiveBundle, used for the getting started guide.
+- [LiveBundle Docker starter](https://github.com/electrode-io/livebundle-docker-starter) contains 
