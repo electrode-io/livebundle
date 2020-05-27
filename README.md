@@ -34,7 +34,7 @@ Further development documentation material detailing technology stack, developme
 ├── .eslintignore.json    // Files/Directories to exclude from ESLint
 ├── .eslintrc.js          // ESLint configuration
 ├── .mocharc.json         // Mocha configuration
-├──  .prettier.rc         // Prettier configuration
+├── .prettier.rc         // Prettier configurations
 └── .vscode               // VSCode IDE configuration
     └── settings.json     // VSCode workspace configuration 
 ```
@@ -43,4 +43,4 @@ Further development documentation material detailing technology stack, developme
 
 - [LiveBundle website](https://github.com/electrode-io/livebundle-website) contains the LiveBundle website and user documentation.
 - [LiveBundle sample](https://github.com/electrode-io/livebundle-sample) contains a sample React Native application wired with LiveBundle, used for the getting started guide.
-- [LiveBundle Docker starter](https://github.com/electrode-io/livebundle-docker-starter) contains 
+- [LiveBundle Docker starter](https://github.com/electrode-io/livebundle-docker-starter) contains necessary files to spin up a basic LiveBundle complete infrastructure in Docker.
