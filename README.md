@@ -34,7 +34,7 @@ Further development documentation material detailing technology stack, developme
 ├── .eslintignore.json    // Files/Directories to exclude from ESLint
 ├── .eslintrc.js          // ESLint configuration
 ├── .mocharc.json         // Mocha configuration
-├── .prettier.rc         // Prettier configurations
+├── .prettier.rc          // Prettier configurations
 └── .vscode               // VSCode IDE configuration
     └── settings.json     // VSCode workspace configuration 
 ```
