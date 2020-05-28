@@ -8,5 +8,7 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "workbench.colorCustomizations": {
     "editorWhitespace.foreground": "#ff0000"
-  }
+  },
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true
 }
