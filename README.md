@@ -1,5 +1,7 @@
 # LiveBundle
 
+[![ci][1]][2]
+
 **This project is still in incubation.  
 Heavy work is in progess to get to a proper initial MVP state.  
 If you are cloning this repository at this stage, be ready for a wild ride with potential consequent repository updates and breaking changes from one day to the next. _Or to put it another way : 'Not ready for production'._**
@@ -45,3 +47,6 @@ Further development documentation material detailing technology stack, developme
 - [LiveBundle website](https://github.com/electrode-io/livebundle-website) contains the LiveBundle website and user documentation.
 - [LiveBundle sample](https://github.com/electrode-io/livebundle-sample) contains a sample React Native application wired with LiveBundle, used for the getting started guide.
 - [LiveBundle Docker starter](https://github.com/electrode-io/livebundle-docker-starter) contains necessary files to spin up a basic LiveBundle complete infrastructure in Docker.
+
+[1]: https://github.com/electrode-io/livebundle/workflows/ci/badge.svg
+[2]: https://github.com/electrode-io/livebundle/actions
