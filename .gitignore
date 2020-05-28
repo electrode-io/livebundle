@@ -1,5 +1,6 @@
-# Android Studio
-native-libs/android/.idea/vcs.xml
+# IDEs
+*.iml
+.idea/
 
 # Build
 dist/
