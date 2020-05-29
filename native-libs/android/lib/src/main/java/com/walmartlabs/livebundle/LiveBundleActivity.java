@@ -28,7 +28,7 @@ public class LiveBundleActivity extends Activity implements ZXingScannerView.Res
             this.mServerUrl = this.getLiveBundlePropertyFromStrings("StoreUrl");
         } catch (Exception e) {
             // Shoud log warning and default to localhost:3000
-            Log.d("LBScannerActivity", "onCreate: " + e);   
+            Log.d("LBScannerActivity", "onCreate: " + e);
         }
         Intent intent = getIntent();
         Uri uri = intent.getData();
