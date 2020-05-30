@@ -4,6 +4,7 @@
     "baseUrl": "./packages",
     "paths": {
       "livebundle-*": ["livebundle-*/src"]
-    }
+    },
+    "resolveJsonModule": true
   }
 }

@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 import program from "commander";
 import fs from "fs-extra";
+import { taskSchema } from "livebundle-sdk";
 import { loadConfig } from "livebundle-utils";
 import path from "path";
 import { GitHubAppServer } from "./GitHubAppServer";
 import { JobManager } from "./JobManager";
 import { JobRunner } from "./JobRunner";
 import log from "./log";
+import { configSchema } from "./schemas";
 import { Config } from "./types";
 import { JWTIssuer } from "./utils/JWTIssuer";
 import { QRCodeUrlBuilder } from "./utils/QRCodeUrlBuilder";
@@ -18,12 +20,14 @@ program.version(pJson.version);
 
 program
   .option("--config <string>", "path to the config")
-  .action(({ config }: { config?: string }) => {
+  .action(async ({ config }: { config?: string }) => {
     const defaultConfigPath = path.resolve(__dirname, "../config/default.yaml");
-    const conf = loadConfig<Config>({
+    const conf = await loadConfig<Config>({
       configPath: config,
       defaultConfigPath,
       defaultFileName: "livebundle-github",
+      refSchemas: [taskSchema],
+      schema: configSchema,
     });
     log(`conf: ${JSON.stringify(conf, null, 2)}`);
     const jwtIssuer = new JWTIssuer(conf.github);

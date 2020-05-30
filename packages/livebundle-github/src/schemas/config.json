@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://electrode.io/schemas/github-config.json",
+  "type": "object",
+  "properties": {
+    "github": {
+      "type": "object",
+      "properties": {
+        "appIdentifier": {
+          "type": "number"
+        },
+        "clientId": {
+          "type": "string"
+        },
+        "clientSecret": {
+          "type": "string"
+        },
+        "privateKey": {
+          "type": "string"
+        }
+      },
+      "required": ["appIdentifier", "clientId", "clientSecret", "privateKey"]
+    },
+    "jobManager": {
+      "type": "object",
+      "properties": {
+        "maxConcurentJobs": {
+          "type": "number",
+          "minimum": 1
+        }
+      }
+    },
+    "qrcode": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "pattern": "^http://[^:]+:\\d+$"
+        },
+        "margin": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": { "$data": "1/width" }
+        },
+        "width": {
+          "type": "number",
+          "minimum": 100
+        }
+      }
+    },
+    "task": {
+      "$ref": "sdk-task.json"
+    },
+    "server": {
+      "type": "object",
+      "properties": {
+        "host": {
+          "type": "string",
+          "format": "hostname"
+        },
+        "port": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 65535
+        }
+      }
+    }
+  },
+  "required": ["github"]
+}

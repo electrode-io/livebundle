@@ -1,39 +1,42 @@
 import debug from "debug";
 import fs from "fs-extra";
-import yaml from "js-yaml";
 import _ from "lodash";
 import path from "path";
+import { loadYamlFile } from "./loadYamlFile";
+import { schemaValidate } from "./schemaValidate";
 
 const log = debug("livebundle-utils:loadConfig");
 
-export function loadConfig<T>({
+export async function loadConfig<T>({
   config,
   configPath,
   defaultConfig,
   defaultConfigPath,
   defaultFileName,
+  refSchemas = [],
+  schema,
 }: {
   config?: T;
   configPath?: string;
   defaultConfig?: T;
   defaultConfigPath?: string;
   defaultFileName?: string;
-}): T {
-  log(`
-config: ${JSON.stringify(config, null, 2)}
+  refSchemas?: Record<string, unknown>[];
+  schema: Record<string, unknown>;
+}): Promise<T> {
+  log(`config: ${JSON.stringify(config, null, 2)}
 configPath: ${configPath}
 defaultConfig: ${JSON.stringify(config, null, 2)}
 defaultConfigPath: ${defaultConfigPath}
-defaultFileName: ${defaultFileName}`);
+defaultFileName: ${defaultFileName}
+refSchemas: ${refSchemas.map((s) => s["$id"])}
+schema: ${schema["$id"]}`);
 
-  if (!defaultConfig && defaultConfigPath) {
-    const defaultConfigFile = fs.readFileSync(defaultConfigPath, {
-      encoding: "utf8",
-    });
-    defaultConfig = yaml.safeLoad(defaultConfigFile);
-  }
+  const resolvedDefaultConfig: T =
+    defaultConfig ?? defaultConfigPath
+      ? await loadYamlFile(defaultConfigPath as string)
+      : ({} as T);
 
-  let userConfig = config ?? {};
   const paths = configPath
     ? [configPath]
     : [
@@ -46,20 +49,23 @@ defaultFileName: ${defaultFileName}`);
       ];
 
   const resolvedConfigPath = _.find(paths, (p) => fs.pathExistsSync(p));
-
   log(`resolvedConfigPath: ${resolvedConfigPath}`);
 
-  if (!config && resolvedConfigPath) {
-    const userConfigFile = fs.readFileSync(resolvedConfigPath, {
-      encoding: "utf8",
-    });
-    userConfig = yaml.safeLoad(userConfigFile);
-  }
+  const resolvedConfig: T =
+    config ?? resolvedConfigPath
+      ? await loadYamlFile(resolvedConfigPath as string)
+      : ({} as T);
+  schemaValidate({ data: resolvedConfig, refSchemas, schema });
 
-  return _.mergeWith({}, defaultConfig ?? {}, userConfig, (objVal, srcVal) => {
-    // Do not merge arrays
-    if (_.isArray(objVal)) {
-      return srcVal;
-    }
-  }) as T;
+  return _.mergeWith(
+    {},
+    resolvedDefaultConfig ?? {},
+    resolvedConfig,
+    (objVal, srcVal) => {
+      // Do not merge arrays
+      if (_.isArray(objVal)) {
+        return srcVal;
+      }
+    },
+  ) as T;
 }
