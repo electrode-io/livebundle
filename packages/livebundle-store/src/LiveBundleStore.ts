@@ -4,8 +4,10 @@ import debug from "debug";
 import express from "express";
 import expressWs from "express-ws";
 import fs from "fs-extra";
+import http from "http";
 import _ from "lodash";
 import multer from "multer";
+import { AddressInfo } from "net";
 import path from "path";
 import querystring from "querystring";
 import shell from "shelljs";
@@ -15,13 +17,13 @@ import yauzl from "yauzl";
 import { Bundle, Config, Package, StackFrame } from "./types";
 
 export class LiveBundleStore {
-  public readonly app: express.Application;
-  public readonly wsInstance: expressWs.Instance;
-  public readonly storage: multer.StorageEngine;
-  public readonly assetsPath: string;
-  public readonly packagesPath: string;
-
+  private readonly app: express.Application;
+  private readonly wsInstance: expressWs.Instance;
+  private readonly storage: multer.StorageEngine;
+  private readonly assetsPath: string;
+  private readonly packagesPath: string;
   private readonly assets: Set<string>;
+  private server: http.Server;
 
   private readonly log = debug("livebundle-store:LiveBundleStore");
 
@@ -40,6 +42,21 @@ export class LiveBundleStore {
     this.assets = new Set(fs.readdirSync(this.assetsPath));
   }
 
+  public get address(): string {
+    if (!this.server) {
+      throw new Error("Server is not started");
+    }
+    return (this.server.address() as AddressInfo).address;
+  }
+
+  public get port(): number {
+    if (!this.server) {
+      throw new Error("Server is not started");
+    }
+    return (this.server.address() as AddressInfo).port;
+  }
+
+  // Sample url:
   // http://localhost:3000/packages/ae62082f-cb4d-400e-8943-83ff8cdd1b56/index.bundle?platform=android&dev=true&minify=false
   public extractSegmentsFromPackageUrl(
     url: string,
@@ -52,10 +69,8 @@ export class LiveBundleStore {
     if (!re.test(url)) {
       throw new Error(`Package url ${url} does not match regex`);
     }
-    const reArr = re.exec(url);
-    if (!reArr) {
-      throw new Error(`Invalid url ${url}`);
-    }
+
+    const reArr = re.exec(url) as RegExpExecArray;
     const [, packageId, qs] = reArr;
     const pqs = querystring.parse(qs);
     return {
@@ -107,34 +122,19 @@ export class LiveBundleStore {
       await new Promise((resolve, reject) =>
         yauzl.open(zipFilePath, { lazyEntries: true }, (err, zipfile) => {
           if (!zipfile) {
-            return reject(new Error("zipfile is undefined"));
-          }
-          if (err) {
-            reject(err);
+            return reject(err);
           }
           zipfile.readEntry();
           zipfile.on("entry", (entry) => {
-            if (/\/$/.test(entry.fileName)) {
-              // Directory. Skip.
-              zipfile.readEntry();
-            } else {
-              newAssets.add(path.dirname(entry.fileName));
-              const filePath = path.join(targetDir, entry.fileName);
-              shell.mkdir("-p", path.dirname(filePath));
-              zipfile.openReadStream(entry, (e, readStream) => {
-                if (e) {
-                  return reject(e);
-                }
-                if (!readStream) {
-                  return reject(`readStream is ${readStream}`);
-                }
-                const writeStream = fs.createWriteStream(filePath);
-                readStream.pipe(writeStream);
-                readStream.on("end", () => zipfile.readEntry());
-              });
-            }
+            newAssets.add(path.dirname(entry.fileName));
+            const filePath = path.join(targetDir, entry.fileName);
+            shell.mkdir("-p", path.dirname(filePath));
+            zipfile.openReadStream(entry, (e, readStream) => {
+              const writeStream = fs.createWriteStream(filePath);
+              readStream?.pipe(writeStream);
+              readStream?.on("end", () => zipfile.readEntry());
+            });
           });
-          zipfile.on("error", (error) => reject(error));
           zipfile.on("close", () => resolve());
         }),
       );
@@ -154,33 +154,18 @@ export class LiveBundleStore {
       await new Promise((resolve, reject) =>
         yauzl.open(packagePath, { lazyEntries: true }, (err, zipfile) => {
           if (!zipfile) {
-            return reject(new Error("zipfile is undefined"));
-          }
-          if (err) {
-            reject(err);
+            return reject(err);
           }
           zipfile.readEntry();
           zipfile.on("entry", (entry) => {
-            if (/\/$/.test(entry.fileName)) {
-              // Directory. Skip.
-              zipfile.readEntry();
-            } else {
-              const filePath = path.join(dir, entry.fileName);
-              shell.mkdir("-p", path.dirname(filePath));
-              zipfile.openReadStream(entry, (e, readStream) => {
-                if (e) {
-                  return reject(e);
-                }
-                if (!readStream) {
-                  return reject(`readStream is ${readStream}`);
-                }
-                const writeStream = fs.createWriteStream(filePath);
-                readStream.pipe(writeStream);
-                readStream.on("end", () => zipfile.readEntry());
-              });
-            }
+            const filePath = path.join(dir, entry.fileName);
+            shell.mkdir("-p", path.dirname(filePath));
+            zipfile.openReadStream(entry, (e, readStream) => {
+              const writeStream = fs.createWriteStream(filePath);
+              readStream?.pipe(writeStream);
+              readStream?.on("end", () => zipfile.readEntry());
+            });
           });
-          zipfile.on("error", (error) => reject(error));
           zipfile.on("close", () => resolve());
         }),
       );
@@ -197,10 +182,6 @@ export class LiveBundleStore {
     } finally {
       shell.rm(packagePath);
     }
-  }
-
-  public async hasPackage(packageId: string): Promise<boolean> {
-    return fs.pathExists(this.getPackagePath(packageId));
   }
 
   public async getSourceMap({
@@ -244,11 +225,20 @@ export class LiveBundleStore {
     return path.join(this.packagesPath, packageId, sourceMap);
   }
 
-  public start(): void {
-    const { host, port } = this.config.server;
-    this.app.listen(port, host, () => {
-      this.log(`LiveBundle Store listening on ${host}:${port}`);
+  public async start(): Promise<void> {
+    return new Promise((resolve) => {
+      const { host, port } = this.config.server;
+      this.server =
+        this.server ??
+        this.app.listen(port, host, () => {
+          this.log(`LiveBundle Store server started on ${host}:${port}`);
+          resolve();
+        });
     });
+  }
+
+  public stop(): void {
+    this.server && this.server.close();
   }
 
   private createDirectories() {
@@ -343,7 +333,6 @@ export class LiveBundleStore {
         "Content-Type": "text/plain",
         "Transfer-Encoding": "chunked",
       });
-
       res.write(JSON.stringify({ stack: symbolicated }));
       res.end();
     });
@@ -359,11 +348,6 @@ export class LiveBundleStore {
           req.pkg.bundles,
           (p) => p.platform === platform && p.dev === dev,
         );
-        if (!bundle) {
-          throw new Error(
-            `Cannot find ${platform} ${dev} bundle in package ${packageId}`,
-          );
-        }
         res.sendFile(this.getPathToBundle(packageId, bundle.id), {
           headers: {
             "Content-Type": "application/javascript",
@@ -383,11 +367,6 @@ export class LiveBundleStore {
           req.pkg.bundles,
           (b) => b.platform === platform && b.dev === dev,
         );
-        if (!bundle) {
-          throw new Error(
-            `Cannot find ${platform} ${dev} bundle in package ${packageId}`,
-          );
-        }
         res.sendFile(this.getPathToSourceMap(packageId, bundle.sourceMap));
       },
     );

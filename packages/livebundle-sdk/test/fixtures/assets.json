@@ -1,0 +1,52 @@
+[
+  {
+    "__packager_asset": true,
+    "fileSystemLocation": "/Users/foo/Code/livebundle-demo/node_modules/react-native/Libraries/LogBox/UI/LogBoxImages",
+    "httpServerLocation": "/assets/node_modules/react-native/Libraries/LogBox/UI/LogBoxImages",
+    "width": 44,
+    "height": 44,
+    "scales": [1],
+    "files": [
+      "/Users/foo/Code/livebundle-demo/node_modules/react-native/Libraries/LogBox/UI/LogBoxImages/loader.png"
+    ],
+    "hash": "46d1173c53d96832e868151c1648ea42",
+    "name": "loader",
+    "type": "png"
+  },
+  {
+    "__packager_asset": true,
+    "fileSystemLocation": "/Users/foo/Code/livebundle-demo/node_modules/react-native/Libraries/LogBox/UI/LogBoxImages",
+    "httpServerLocation": "/assets/node_modules/react-native/Libraries/LogBox/UI/LogBoxImages",
+    "width": 16,
+    "height": 28,
+    "scales": [1],
+    "files": [
+      "/Users/foo/Code/livebundle-demo/node_modules/react-native/Libraries/LogBox/UI/LogBoxImages/chevron-left.png"
+    ],
+    "hash": "34d53ae6f3c2303163010aef6efe27ba",
+    "name": "chevron-left",
+    "type": "png"
+  },
+  {
+    "__packager_asset": true,
+    "fileSystemLocation": "/Users/foo/Code/livebundle-demo/assets",
+    "httpServerLocation": "/assets/assets",
+    "width": 200,
+    "height": 200,
+    "scales": [1],
+    "files": ["/Users/foo/Code/livebundle-demo/assets/live.png"],
+    "hash": "fc0eb4863332ff13e9a1b883201ce215",
+    "name": "live",
+    "type": "png"
+  },
+  {
+    "__packager_asset": true,
+    "fileSystemLocation": "/Users/foo/Code/livebundle-demo",
+    "httpServerLocation": "/assets",
+    "scales": [1],
+    "files": ["/Users/foo/Code/livebundle-demo/app.json"],
+    "hash": "bf95e7543e423b8a4170ec2b92459b3a",
+    "name": "app",
+    "type": "json"
+  }
+]

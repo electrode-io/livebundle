@@ -1,3 +1,4 @@
+import { rejects } from "assert";
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import fs from "fs";
@@ -6,7 +7,7 @@ import path from "path";
 import shell from "shelljs";
 import tmp from "tmp";
 import { LiveBundleStore } from "../src/LiveBundleStore";
-import { Config } from "../src/types";
+import { Config, StackFrame } from "../src/types";
 
 describe("server", () => {
   tmp.setGracefulCleanup();
@@ -58,18 +59,13 @@ describe("server", () => {
       expect(fs.existsSync(path.join(sut.config.store.path, "packages")));
     });
 
-    it("should create the multer storage instance", () => {
-      const sut = createServer();
-      expect(sut.storage).not.undefined;
-    });
-
     it("should have default config [default port]", () => {
       const sut = createServer();
       expect(sut.config.server.port).equal(3000);
     });
   });
 
-  describe("extractSegmentsFromBundleUrl", () => {
+  describe("extractSegmentsFromPackageUrl", () => {
     it("should throw if the url does not contain the proper segments", () => {
       const sut = createServer();
       expect(() =>
@@ -92,6 +88,20 @@ describe("server", () => {
   });
 
   describe("getSourceMap", () => {
+    it("should throw if the bundle does not exist in package", async () => {
+      const sut = createServer({
+        store: { path: storeFixturePath },
+        server: defaultServer,
+      });
+      await rejects(
+        sut.getSourceMap({
+          packageId: "8fba3f82-90ae-11ea-b22c-bb90cd699313",
+          platform: "ios",
+          dev: false,
+        }),
+      );
+    });
+
     it("should return expected sourcemap [android dev]", async () => {
       const sut = createServer({
         store: { path: storeFixturePath },
@@ -149,7 +159,82 @@ describe("server", () => {
     });
   });
 
+  describe("symbolicate", () => {
+    it("should return the symbolicated frames", async () => {
+      const sut = createServer();
+      const stack: StackFrame[] = [
+        {
+          arguments: undefined,
+          column: 12,
+          file: "http://localhost:3000/index.js",
+          lineNumber: 1,
+          methodName: "test",
+        },
+      ];
+      const map = fs.readFileSync(
+        path.resolve(__dirname, "./fixtures/sourcemap/index.map"),
+        { encoding: "utf-8" },
+      );
+      const res = await sut.symbolicate(stack, map);
+      expect(res).deep.equal([
+        {
+          arguments: undefined,
+          column: 12,
+          file: "index.ts",
+          lineNumber: 1,
+          methodName: "test",
+        },
+      ]);
+    });
+
+    it("should return the original frames [missing file]", async () => {
+      const sut = createServer();
+      const stack: StackFrame[] = [
+        {
+          arguments: undefined,
+          column: 12,
+          file: undefined,
+          lineNumber: 1,
+          methodName: "test",
+        },
+      ];
+      const map = fs.readFileSync(
+        path.resolve(__dirname, "./fixtures/sourcemap/index.map"),
+        { encoding: "utf-8" },
+      );
+      const res = await sut.symbolicate(stack, map);
+      expect(res).deep.equal(stack);
+    });
+  });
+
   describe("unzipPackage", () => {
+    it("should throw if the zip file does not exist", async () => {
+      const sut = createServer();
+      const tmpDir = createTmpDir();
+      const packageZipPath = path.join(tmpDir, "package.zip");
+      const tmpOutDir = createTmpDir();
+      await rejects(sut.unzipPackage(packageZipPath, tmpOutDir), (err) => {
+        expect(err.message).eql(
+          `ENOENT: no such file or directory, open '${packageZipPath}'`,
+        );
+        return true;
+      });
+    });
+
+    it("should throw if the zip file is invalid", async () => {
+      const sut = createServer();
+      const tmpDir = createTmpDir();
+      const invalidZipPath = path.join(tmpDir, "invalid.zip");
+      shell.cp(path.join(fixturesPath, "invalid.zip"), invalidZipPath);
+      const tmpOutDir = createTmpDir();
+      await rejects(sut.unzipPackage(invalidZipPath, tmpOutDir), (err) => {
+        expect(err.message).eql(
+          "end of central directory record signature not found",
+        );
+        return true;
+      });
+    });
+
     it("should unzip the package", async () => {
       const sut = createServer();
       const tmpDir = createTmpDir();
@@ -186,6 +271,33 @@ describe("server", () => {
   });
 
   describe("unzipAssets", () => {
+    it("should throw if the zip file does not exist", async () => {
+      const sut = createServer();
+      const tmpDir = createTmpDir();
+      const assetsZipPath = path.join(tmpDir, "assets.zip");
+      const tmpOutDir = createTmpDir();
+      await rejects(sut.unzipAssets(assetsZipPath, tmpOutDir), (err) => {
+        expect(err.message).eql(
+          `ENOENT: no such file or directory, open '${assetsZipPath}'`,
+        );
+        return true;
+      });
+    });
+
+    it("should throw if the zip file is invalid", async () => {
+      const sut = createServer();
+      const tmpDir = createTmpDir();
+      const invalidZipPath = path.join(tmpDir, "invalid.zip");
+      shell.cp(path.join(fixturesPath, "invalid.zip"), invalidZipPath);
+      const tmpOutDir = createTmpDir();
+      await rejects(sut.unzipAssets(invalidZipPath, tmpOutDir), (err) => {
+        expect(err.message).eql(
+          "end of central directory record signature not found",
+        );
+        return true;
+      });
+    });
+
     it("should unzip the assets", async () => {
       const sut = createServer();
       const tmpDir = createTmpDir();
@@ -228,298 +340,416 @@ describe("server", () => {
     });
   });
 
+  describe("get address", () => {
+    it("should throw if the server is not started", () => {
+      const sut = createServer();
+      expect(() => sut.address).to.throw();
+    });
+  });
+
+  describe("get port", () => {
+    it("should throw if the server is not started", () => {
+      const sut = createServer();
+      expect(() => sut.port).to.throw();
+    });
+  });
+
   describe("functional tests", () => {
+    const defaultConfig = {
+      server: {
+        host: "localhost",
+        port: 3000,
+      },
+      store: {
+        path: createTmpDir(),
+      },
+    };
+
+    async function test(
+      config: Config,
+      func: (req: ChaiHttp.Agent, server: LiveBundleStore) => Promise<void>,
+    ) {
+      const serv = new LiveBundleStore(config);
+      try {
+        await serv.start();
+        await func(chai.request(`http://${serv.address}:${serv.port}`), serv);
+      } finally {
+        serv.stop();
+      }
+    }
+
     describe("GET /status", () => {
-      it("should return HTTP 200", (done) => {
-        const sut = createServer();
-        chai
-          .request(sut.app)
-          .get("/status")
-          .end((err, res) => {
-            expect(res).to.have.status(200);
-            done();
-          });
+      it("should return HTTP 200", async () => {
+        await test(defaultConfig, async (req) => {
+          const res = await req.get("/status");
+          expect(res).to.have.status(200);
+        });
       });
 
-      it("should return 'packager-status:running' text", (done) => {
-        const sut = createServer();
-        chai
-          .request(sut.app)
-          .get("/status")
-          .end((err, res) => {
-            if (err) {
-              return done(err);
-            }
-            expect(res.text).eql("packager-status:running");
-            done();
-          });
+      it("should return 'packager-status:running' text", async () => {
+        await test(defaultConfig, async (req) => {
+          const res = await req.get("/status");
+          expect(res.text).eql("packager-status:running");
+        });
       });
 
-      it("should use chunked Transfer-Encoding", (done) => {
-        const sut = createServer();
-        chai
-          .request(sut.app)
-          .get("/status")
-          .end((err, res) => {
-            if (err) {
-              return done(err);
-            }
-            expect(res).to.have.header("Transfer-Encoding", "chunked");
-            done();
-          });
+      it("should use chunked Transfer-Encoding", async () => {
+        await test(defaultConfig, async (req) => {
+          const res = await req.get("/status");
+          expect(res).to.have.header("Transfer-Encoding", "chunked");
+        });
       });
     });
 
     describe("GET /assets/*", () => {
-      it("should return HTTP 404 if asset is not found", (done) => {
-        const sut = createServer();
-        chai
-          .request(sut.app)
-          .get(
+      it("should return HTTP 404 if asset is not found", async () => {
+        await test(defaultConfig, async (req) => {
+          const res = await req.get(
             "/assets/img/notfound.png?platform=android&hash=6efcef727ae7b1a1408e7085efec5df9",
-          )
-          .end((err, res) => {
-            if (err) {
-              return done(err);
-            }
-            expect(res).to.have.status(404);
-            done();
-          });
+          );
+          expect(res).to.have.status(404);
+        });
       });
 
-      it("should return the asset if found", (done) => {
-        const sut = createServer({
-          store: { path: storeFixturePath },
-          server: defaultServer,
-        });
-        const expectedAsset = fs.readFileSync(
-          path.join(
-            storeFixturePath,
-            "assets",
-            "70d6fbba5502a18a0c052b6f6cb3fc32",
-            "img@2x.png",
-          ),
-        );
-        chai
-          .request(sut.app)
-          .get(
-            "/assets/img/img@2x.png?platform=android&hash=70d6fbba5502a18a0c052b6f6cb3fc32",
-          )
-          .buffer(true)
-          .parse(binaryParser)
-          .end((err, res) => {
-            if (err) {
-              return done(err);
-            }
+      it("should return the asset if found", async () => {
+        await test(
+          {
+            store: { path: storeFixturePath },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const expectedAsset = fs.readFileSync(
+              path.join(
+                storeFixturePath,
+                "assets",
+                "70d6fbba5502a18a0c052b6f6cb3fc32",
+                "img@2x.png",
+              ),
+            );
+            const res = await req
+              .get(
+                "/assets/img/img@2x.png?platform=android&hash=70d6fbba5502a18a0c052b6f6cb3fc32",
+              )
+              .buffer(true)
+              .parse(binaryParser);
             expect(Buffer.compare(res.body, expectedAsset)).equal(0);
-            done();
-          });
+          },
+        );
       });
     });
 
     describe("GET /packages/:packageId/index.bundle", () => {
-      it("should return the bundle [platform=android&dev=false]", (done) => {
-        const sut = createServer({
-          store: { path: storeFixturePath },
-          server: defaultServer,
-        });
-        const expectedBundle = fs.readFileSync(
-          path.join(
-            storeFixturePath,
-            "packages",
-            "8fba3f82-90ae-11ea-b22c-bb90cd699313",
-            "9e122bee-9a90-4158-9205-6759751d80dd",
-          ),
+      it("should return HTTP 404 if the package does not exit in store", async () => {
+        await test(
+          {
+            store: { path: storeFixturePath },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const res = await req
+              .get(
+                "/packages/11111111-90ae-11ea-b22c-bb90cd699313/index.bundle",
+              )
+              .query({ dev: false, platform: "android" })
+              .buffer(true)
+              .parse(binaryParser);
+            expect(res).to.have.status(404);
+          },
         );
-        chai
-          .request(sut.app)
-          .get("/packages/8fba3f82-90ae-11ea-b22c-bb90cd699313/index.bundle")
-          .query({ dev: false, platform: "android" })
-          .buffer(true)
-          .parse(binaryParser)
-          .end((err, res) => {
-            if (err) {
-              return done(err);
-            }
-            expect(Buffer.compare(res.body, expectedBundle)).equal(0);
-            done();
-          });
       });
 
-      it("should return the bundle [platform=android&dev=true]", (done) => {
-        const sut = createServer({
-          store: { path: storeFixturePath },
-          server: defaultServer,
-        });
-        const expectedBundle = fs.readFileSync(
-          path.join(
-            storeFixturePath,
-            "packages",
-            "8fba3f82-90ae-11ea-b22c-bb90cd699313",
-            "790f95fd-2b02-4774-bb78-5de4b7dc73b8",
-          ),
-        );
-        chai
-          .request(sut.app)
-          .get("/packages/8fba3f82-90ae-11ea-b22c-bb90cd699313/index.bundle")
-          .query({ dev: true, platform: "android" })
-          .buffer(true)
-          .parse(binaryParser)
-          .end((err, res) => {
-            if (err) {
-              return done(err);
-            }
+      it("should return the bundle [platform=android&dev=false]", async () => {
+        await test(
+          {
+            store: { path: storeFixturePath },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const expectedBundle = fs.readFileSync(
+              path.join(
+                storeFixturePath,
+                "packages",
+                "8fba3f82-90ae-11ea-b22c-bb90cd699313",
+                "9e122bee-9a90-4158-9205-6759751d80dd",
+              ),
+            );
+            const res = await req
+              .get(
+                "/packages/8fba3f82-90ae-11ea-b22c-bb90cd699313/index.bundle",
+              )
+              .query({ dev: false, platform: "android" })
+              .buffer(true)
+              .parse(binaryParser);
             expect(Buffer.compare(res.body, expectedBundle)).equal(0);
-            done();
-          });
+          },
+        );
+      });
+
+      it("should return the bundle [platform=android&dev=true]", async () => {
+        await test(
+          {
+            store: { path: storeFixturePath },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const expectedBundle = fs.readFileSync(
+              path.join(
+                storeFixturePath,
+                "packages",
+                "8fba3f82-90ae-11ea-b22c-bb90cd699313",
+                "790f95fd-2b02-4774-bb78-5de4b7dc73b8",
+              ),
+            );
+            const res = await req
+              .get(
+                "/packages/8fba3f82-90ae-11ea-b22c-bb90cd699313/index.bundle",
+              )
+              .query({ dev: true, platform: "android" })
+              .buffer(true)
+              .parse(binaryParser);
+            expect(Buffer.compare(res.body, expectedBundle)).equal(0);
+          },
+        );
+      });
+    });
+
+    describe("GET /packages/:packageId/index.map", () => {
+      it("should return HTTP 404 if the package does not exit in store", async () => {
+        await test(
+          {
+            store: { path: storeFixturePath },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const res = await req
+              .get("/packages/11111111-90ae-11ea-b22c-bb90cd699313/index.map")
+              .query({ dev: false, platform: "android" })
+              .buffer(true)
+              .parse(binaryParser);
+            expect(res).to.have.status(404);
+          },
+        );
+      });
+
+      it("should return the source map [platform=android&dev=false]", async () => {
+        await test(
+          {
+            store: { path: storeFixturePath },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const expectedMap = fs.readFileSync(
+              path.join(
+                storeFixturePath,
+                "packages",
+                "8fba3f82-90ae-11ea-b22c-bb90cd699313",
+                "4a1aaa5b-89ae-477f-b6d7-9747131750d7",
+              ),
+            );
+            const res = await req
+              .get("/packages/8fba3f82-90ae-11ea-b22c-bb90cd699313/index.map")
+              .query({ dev: false, platform: "android" })
+              .buffer(true)
+              .parse(binaryParser);
+            expect(Buffer.compare(res.body, expectedMap)).equal(0);
+          },
+        );
       });
     });
 
     describe("POST /packages", () => {
-      it("shoud add the package to the store", (done) => {
+      it("shoud add the package to the store", async () => {
         const tmpDir = createTmpDir();
         shell.cp("-rf", path.join(storeFixturePath, "*"), tmpDir);
-        const sut = createServer({
-          store: { path: tmpDir },
-          server: defaultServer,
-        });
-        const packageRs = fs.createReadStream(
-          path.join(fixturesPath, "package.zip"),
-        );
-        chai
-          .request(sut.app)
-          .post("/packages")
-          .attach("package", packageRs)
-          .end((err, res) => {
-            if (err) {
-              return done(err);
-            }
+        await test(
+          {
+            store: { path: tmpDir },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const packageRs = fs.createReadStream(
+              path.join(fixturesPath, "package.zip"),
+            );
+
+            const res = await req
+              .post("/packages")
+              .attach("package", packageRs);
             expect(res).to.be.json;
             expect(res.body.id).not.undefined;
-            done();
-          });
+          },
+        );
       });
 
-      it("shoud return HTTP 201", (done) => {
+      it("shoud return HTTP 201", async () => {
         const tmpDir = createTmpDir();
         shell.cp("-rf", path.join(storeFixturePath, "*"), tmpDir);
-        const sut = createServer({
-          store: { path: tmpDir },
-          server: defaultServer,
-        });
-        const packageRs = fs.createReadStream(
-          path.join(fixturesPath, "package.zip"),
-        );
-        chai
-          .request(sut.app)
-          .post("/packages")
-          .attach("package", packageRs)
-          .end((err, res) => {
-            if (err) {
-              return done(err);
-            }
+        await test(
+          {
+            store: { path: tmpDir },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const packageRs = fs.createReadStream(
+              path.join(fixturesPath, "package.zip"),
+            );
+
+            const res = await req
+              .post("/packages")
+              .attach("package", packageRs);
             expect(res).to.have.status(201);
-            done();
-          });
+          },
+        );
+      });
+
+      it("shoud return HTTP 500 if the zip file is invalid", async () => {
+        const tmpDir = createTmpDir();
+        shell.cp("-rf", path.join(storeFixturePath, "*"), tmpDir);
+        await test(
+          {
+            store: { path: tmpDir },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const packageRs = fs.createReadStream(
+              path.join(fixturesPath, "invalid.zip"),
+            );
+
+            const res = await req
+              .post("/packages")
+              .attach("package", packageRs);
+            expect(res).to.have.status(500);
+          },
+        );
       });
     });
 
     describe("POST /assets", () => {
-      it("should return HTTP 201", (done) => {
+      it("should return HTTP 201", async () => {
         const tmpDir = createTmpDir();
         shell.cp("-rf", path.join(storeFixturePath, "*"), tmpDir);
-        const sut = createServer({
-          store: { path: tmpDir },
-          server: defaultServer,
-        });
-        const assetsZipRs = fs.createReadStream(
-          path.join(fixturesPath, "assets.zip"),
-        );
-        chai
-          .request(sut.app)
-          .post("/assets")
-          .attach("assets", assetsZipRs)
-          .end((err, res) => {
-            if (err) {
-              return done(err);
-            }
+        await test(
+          {
+            store: { path: tmpDir },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const assetsZipRs = fs.createReadStream(
+              path.join(fixturesPath, "assets.zip"),
+            );
+            const res = await req.post("/assets").attach("assets", assetsZipRs);
             expect(res).to.have.status(201);
-            done();
-          });
+          },
+        );
       });
 
-      it("should return the hashes of the assets that have been added to the store", (done) => {
+      it("should return HTTP 500 if zip file is invalid", async () => {
         const tmpDir = createTmpDir();
         shell.cp("-rf", path.join(storeFixturePath, "*"), tmpDir);
-        const sut = createServer({
-          store: { path: tmpDir },
-          server: defaultServer,
-        });
-        const assetsZipRs = fs.createReadStream(
-          path.join(fixturesPath, "assets.zip"),
+        await test(
+          {
+            store: { path: tmpDir },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const assetsZipRs = fs.createReadStream(
+              path.join(fixturesPath, "invalid.zip"),
+            );
+            const res = await req.post("/assets").attach("assets", assetsZipRs);
+            expect(res).to.have.status(500);
+          },
         );
-        chai
-          .request(sut.app)
-          .post("/assets")
-          .attach("assets", assetsZipRs)
-          .end((err, res) => {
-            if (err) {
-              return done(err);
-            }
+      });
+
+      it("should return the hashes of the assets that have been added to the store", async () => {
+        const tmpDir = createTmpDir();
+        shell.cp("-rf", path.join(storeFixturePath, "*"), tmpDir);
+        await test(
+          {
+            store: { path: tmpDir },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const assetsZipRs = fs.createReadStream(
+              path.join(fixturesPath, "assets.zip"),
+            );
+            const res = await req.post("/assets").attach("assets", assetsZipRs);
             expect(res).to.be.json;
             expect(res.body).deep.equal([
               "ffc71969f5f0d7b4142f729a755bc50a",
               "f6264846f4b8b90b34bbccf0c0ec38b1",
               "47ce6e77f039020ee2e76a10c1e988e9",
             ]);
-            done();
-          });
+          },
+        );
       });
     });
 
     describe("POST /assets/delta", () => {
-      it("should return HTTP 200", (done) => {
-        const sut = createServer({
-          store: { path: storeFixturePath },
-          server: defaultServer,
-        });
-        chai
-          .request(sut.app)
-          .post("/assets/delta")
-          .send({ assets: [] })
-          .end((err, res) => {
-            if (err) {
-              return done(err);
-            }
+      it("should return HTTP 200", async () => {
+        await test(
+          {
+            store: { path: storeFixturePath },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const res = await req.post("/assets/delta").send({ assets: [] });
             expect(res).to.have.status(200);
-            done();
-          });
+          },
+        );
       });
 
-      it("should return the assets ids that are not already in the store", (done) => {
-        const sut = createServer({
-          store: { path: storeFixturePath },
-          server: defaultServer,
-        });
-        const assetIdsInStore = [
-          "47ce6e77f039020ee2e76a10c1e988e9",
-          "70d6fbba5502a18a0c052b6f6cb3fc32",
-        ];
-        const assetIdsNotInStore = ["32d6f43a5542a18a04352b6f6cb3fc948"];
-        chai
-          .request(sut.app)
-          .post("/assets/delta")
-          .send({
-            assets: [...assetIdsInStore, ...assetIdsNotInStore],
-          })
-          .end((err, res) => {
-            if (err) {
-              return done(err);
-            }
+      it("should return the assets ids that are not already in the store", async () => {
+        await test(
+          {
+            store: { path: storeFixturePath },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const assetIdsInStore = [
+              "47ce6e77f039020ee2e76a10c1e988e9",
+              "70d6fbba5502a18a0c052b6f6cb3fc32",
+            ];
+            const assetIdsNotInStore = ["32d6f43a5542a18a04352b6f6cb3fc948"];
+            const res = await req.post("/assets/delta").send({
+              assets: [...assetIdsInStore, ...assetIdsNotInStore],
+            });
             expect(res).to.be.json;
             expect(res.body).to.deep.equal(assetIdsNotInStore);
-            done();
-          });
+          },
+        );
+      });
+    });
+
+    describe("POST /symbolicate", () => {
+      it("should return HTTP 200", async () => {
+        await test(
+          {
+            store: { path: storeFixturePath },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const res = await req
+              .post("/symbolicate")
+              .set("Content-Type", "text/plain")
+              .send(
+                JSON.stringify({
+                  stack: [
+                    {
+                      arguments: undefined,
+                      column: 12,
+                      file:
+                        "http://localhost:3000/packages/8fba3f82-90ae-11ea-b22c-bb90cd699313/index.bundle?platform=ios&dev=true",
+                      lineNumber: 1,
+                      methodName: "test",
+                    },
+                  ],
+                }),
+              );
+            expect(res.text).equal(
+              '{"stack":[{"column":12,"file":"index.ts","lineNumber":1,"methodName":"test"}]}',
+            );
+          },
+        );
       });
     });
   });

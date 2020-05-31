@@ -6,34 +6,45 @@ import tmp from "tmp";
 import util from "util";
 import { LiveBundleSdk } from "./LiveBundleSdk";
 import { parseAssetsFile } from "./parseAssetsFile";
-import { BundleTask, CliBundle, LiveBundleTask } from "./types";
-
-const exec = util.promisify(cp.exec);
+import { BundleTask, CliBundle, LiveBundleTask, TaskRunner } from "./types";
 
 const log = debug("livebundle-sdk:TaskRunner");
 
-export class TaskRunner {
-  public static async execTask(
+const execAsync = util.promisify(cp.exec);
+
+export class TaskRunnerImpl implements TaskRunner {
+  private readonly exec = execAsync;
+
+  public constructor(
+    private readonly sdk: LiveBundleSdk,
+    { exec }: { exec?: typeof execAsync } = {},
+  ) {
+    if (exec) {
+      this.exec = exec;
+    }
+  }
+
+  public async execTask(
     task: LiveBundleTask,
     {
       bundlingStarted,
       bundlingCompleted,
       uploadStarted,
       cwd = process.cwd(),
+      parseAssetsFunc = parseAssetsFile,
     }: {
       bundlingStarted?: (bundle: BundleTask) => void;
       bundlingCompleted?: (bundle: BundleTask) => void;
       uploadStarted?: ({ bundles }: { bundles: CliBundle[] }) => void;
       cwd?: string;
+      parseAssetsFunc?: typeof parseAssetsFile;
     } = {},
   ): Promise<Package> {
-    const sdk = new LiveBundleSdk(task.upload.url);
-
     //
     // PREPARE
     for (const step of task.prepare?.steps || []) {
       log(`Running ${step}`);
-      await exec(step, { cwd });
+      await this.exec(step, { cwd });
     }
 
     //
@@ -54,11 +65,11 @@ export class TaskRunner {
 --platform ${platform} \
 --sourcemap-output ${sourceMapPath}`;
       log(`Running ${cmd}`);
-      await exec(cmd, { cwd });
-      const assets = await parseAssetsFile(
+      await this.exec(cmd, { cwd });
+      const assets = await parseAssetsFunc(
         path.resolve(".livebundle/assets.json"),
       );
-      await sdk.uploadAssets(assets);
+      await this.sdk.uploadAssets(assets);
       bundles.push({
         bundlePath,
         dev,
@@ -76,6 +87,6 @@ export class TaskRunner {
       uploadStarted({ bundles });
     }
 
-    return sdk.uploadPackage({ bundles });
+    return this.sdk.uploadPackage({ bundles });
   }
 }

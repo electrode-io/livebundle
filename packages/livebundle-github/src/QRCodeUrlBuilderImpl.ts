@@ -1,7 +1,7 @@
 import qs from "querystring";
-import { QrCodeServiceConfig } from "../types";
+import { QrCodeServiceConfig, QRCodeUrlBuilder } from "./types";
 
-export class QRCodeUrlBuilder {
+export class QRCodeUrlBuilderImpl implements QRCodeUrlBuilder {
   private query = "";
 
   public constructor(private readonly config: QrCodeServiceConfig) {
