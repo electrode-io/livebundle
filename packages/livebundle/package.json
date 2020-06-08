@@ -1,5 +1,5 @@
 {
-  "name": "livebundle-cli",
+  "name": "livebundle",
   "version": "0.1.8",
   "main": "dist/index.js",
   "bin": {

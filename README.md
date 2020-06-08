@@ -2,8 +2,8 @@
 
 [![ci][1]][2]
 
-**This project is still in incubation.  
-Heavy work is in progess to get to a proper initial MVP state.  
+**This project is still in incubation.
+Heavy work is in progess to get to a proper initial MVP state.
 If you are cloning this repository at this stage, be ready for a wild ride with potential consequent repository updates and breaking changes from one day to the next. _Or to put it another way : 'Not ready for production'._**
 
 ### Instructions
@@ -23,7 +23,7 @@ Further development documentation material detailing technology stack, developme
 ├── native-libs           // Native client libaries
 │   └── android           // Android client library
 ├── packages              // Node.js packages
-│   ├── livebundle-cli    // Command line CLI
+│   ├── livebundle        // Command line CLI
 │   ├── livebundle-github // GitHub application server
 │   ├── livebundle-metro-asset-plugin  // Metro asset plugin
 │   ├── livebundle-qrcode // QR Code server

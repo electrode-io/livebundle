@@ -8,7 +8,7 @@
   "include": ["./src/**/*", "./src/**/*.json"],
   "references": [
     {
-      "path": "../livebundle-cli/tsconfig.build.json"
+      "path": "../livebundle/tsconfig.build.json"
     },
     {
       "path": "../livebundle-sdk/tsconfig.build.json"
