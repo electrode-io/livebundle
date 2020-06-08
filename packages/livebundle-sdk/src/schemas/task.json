@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://electrode.io/schemas/sdk-task.json",
+  "type": "object",
+  "properties": {
+    "prepare": {
+      "type": "object",
+      "properties": {
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "bundle": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dev": {
+            "type": "boolean"
+          },
+          "entry": {
+            "type": "string"
+          },
+          "platform": {
+            "enum": ["android", "ios"]
+          }
+        }
+      }
+    },
+    "upload": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "pattern": "^http://[^:]+:\\d+$"
+        }
+      }
+    }
+  }
+}

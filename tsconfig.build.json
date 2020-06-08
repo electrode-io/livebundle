@@ -5,6 +5,7 @@
     "module": "commonjs",
     "lib": ["es2018"],
     "esModuleInterop": true,
+    "resolveJsonModule": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
     "noImplicitAny": true,

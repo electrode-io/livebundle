@@ -3,7 +3,7 @@ import chalk from "chalk";
 import { program } from "commander";
 import debug from "debug";
 import fs from "fs-extra";
-import { TaskRunner } from "livebundle-sdk";
+import { TaskRunner, taskSchema } from "livebundle-sdk";
 import { loadConfig } from "livebundle-utils";
 import emoji from "node-emoji";
 import open from "open";
@@ -11,6 +11,7 @@ import ora from "ora";
 import path from "path";
 import qrcodepng from "qrcode";
 import qrcodeterm from "qrcode-terminal";
+import { configSchema } from "./schemas";
 import { Config } from "./types";
 
 const pJsonPath = path.resolve(__dirname, "..", "package.json");
@@ -27,10 +28,12 @@ program
   .action(async ({ config }: { config?: string }) => {
     const defaultConfigPath = path.resolve(__dirname, "../config/default.yaml");
 
-    const conf = loadConfig<Config>({
+    const conf = await loadConfig<Config>({
       configPath: config,
       defaultConfigPath,
       defaultFileName: "livebundle",
+      refSchemas: [taskSchema],
+      schema: configSchema,
     });
 
     dlog(`Configuration:\n${JSON.stringify(conf, null, 2)}`);

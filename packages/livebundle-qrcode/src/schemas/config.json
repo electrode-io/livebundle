@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://electrode.io/schemas/qrcode-config.json",
+  "properties": {
+    "server": {
+      "type": "object",
+      "properties": {
+        "host": {
+          "type": "string",
+          "format": "hostname"
+        },
+        "port": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 65535
+        }
+      }
+    },
+    "qrcode": {
+      "type": "object",
+      "properties": {
+        "margin": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": { "$data": "1/width" }
+        },
+        "width": {
+          "type": "number",
+          "minimum": 100
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://electrode.io/schemas/cli-config.json",
+  "properties": {
+    "qrcode": {
+      "type": "object",
+      "properties": {
+        "term": {
+          "type": "object",
+          "properties": {
+            "generate": {
+              "type": "boolean"
+            },
+            "small": {
+              "type": "boolean"
+            }
+          }
+        },
+        "image": {
+          "type": "object",
+          "properties": {
+            "generate": {
+              "type": "boolean"
+            },
+            "margin": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": { "$data": "1/width" }
+            },
+            "width": {
+              "type": "number",
+              "minimum": 100
+            },
+            "open": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "task": {
+      "$ref": "sdk-task.json"
+    }
+  }
+}

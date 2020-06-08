@@ -1,0 +1,70 @@
+# GitHub application configuration
+github:
+  appIdentifier: 65645
+  clientId: Iv1.04849b1cb72ad0fa
+  clientSecret: 14c640bb4946970807366672ba6bb077c7de7009
+  privateKey: |
+    -----BEGIN RSA PRIVATE KEY-----
+    MIIEpAIBAAKCAQEA3ddwHEVpGM3OXYNY2jro2bDZWzzuNEzwRxl7pgqwG7eWXEGe
+    NDC+qwOuyclz/2qtqg83eJ9PvUnaG+vmwdbeu7dzkQuCtKFi4sFMCFbl6fZcbn0u
+    NTfK5dHjjdaQjEqD+WZsTxec8NzMrMWOeJ07sZ3TsmWjXm3AZVn27Mnk0nnY6WIC
+    6EwSI80pvDDkUHWrPE/WSHYVJWxsl6KpICAu73i2N2hplG13XEmP1TIMwoktSKB7
+    h+9au+S3KkCdxXzFyN9hVBUZu8FcvbO8ZPSmb5bGyVw44pFQU9X39iqWZtMpc8V4
+    A/qIwRYuf6mFcnvdwkpbuZkRJq06VFHeFsDe9wIDAQABAoIBAA+XWpvCDRbfMAfG
+    eXIs/bx+/2e4Ko2mcqSsl9Idoi7wgjLNsc69NklSovAvpmVnG/l9xEpH+BS3ogqg
+    U8F/1nue8xJYmsETLp39M9jKMrJ0zB4/0gWPfEUWsUWAtPwHKKtYlXghkrgi7Ieg
+    AtlbQ5zCGOTK2+aBFCqLXh1aOyjHofBubcX/qMVwKqoC+cHtcqQVa3aAZPyovrt5
+    M1zlUxWfhA/xqIT0PPSkgMrHZbScSBMMrbQ2JZ1EysySK2Mv43FQPGD5oNYZOyJx
+    F1q8ZDVXvPsqN/pN3gsQ3wCzRCVgtkIpD2sglND+yte9GwVc3EVLQXIO1dRNYt1A
+    ea2kBgECgYEA/63lxv6eRND8hIDnTFavdrfARJN9ZQhIPkFzRVS1GCxFKGUwBcCX
+    Qr1fZsbJ4bm/hnxbrVgRGXv0oTuDrGDjVFvdjCFpK4GP6ZB1nNnRmxLhTTla0uXj
+    1oh/9LUygPDYqjtxf9RyzzznxA7QumorWw+3wY8X/9Cw6lNIV+cQ04ECgYEA3h6s
+    sClnniGE8LLqO1RpzNTJbM5vUsrl9zCBfXeQ4lqRKutbmgoKWCSO7hJQjC/qoLip
+    sjyMc4a5R8RxlEb1yBA0+7PzFUJqS4LSpLjWZzHN6XMmBHihAbC31EHX6Wfsu8De
+    m81D66w4bdtzmIpEMTWLcmi84LIuKIHL4+MdjncCgYEA67xhNCWEtXxepqjXGap/
+    Ix2pmZDHN8T4HvZnpo/sXLpMlV8edN9KV42VDYSWklmZvhygxmWBdpa0SYg+8ktu
+    rlP5I/+WITfXAYlg91pZiPpSYsoz9GljtWSrXWtHgl0N137xOeQeavcD1d+3EXlc
+    Ohx2127guMuoopRhCjMQb4ECgYEAs81K5vMtYJErpxh9iXdkiZ26S6yz6uY5z6Zh
+    O+pcyw6bMo4AwandA8rcNJV4xHJJUL8LBzACVcY6F4FKm8fxT3jnGtVpMc1odCW7
+    VAIX9MMZNx+yJ65qTw75UAXYvKUWukl/Kcm4cH8h0rPxWAqc9uSsM/na41z5BmtD
+    W/7OPzMCgYBJQtH1vqxkrBcv36k9gLK8jiI/GgTSFf/qMfjuW4WG7oXBGC/wzUSn
+    bRzItrRRkv6C0Yf7GVZvfmxcXpTy9B6fsH29VmNqRSK8BrvocPaRNlyWYAv5ghQU
+    f8xyaFUyVTosaxjUs6dY4hzb3EjonfuXZJznV/ThoNhNg+ldpWJI8A==
+    -----END RSA PRIVATE KEY-----
+
+# Job Manager configuration
+jobManager:
+  maxConcurentJobs: 4
+
+# LiveBundle QR Code service configuration
+qrcode:
+  url: http://livebundle-qrcode:3000
+  margin: 1
+  width: 250
+
+# SDK configuration
+task:
+  prepare:
+    steps:
+      - yarn install
+  bundle:
+    - dev: true
+      entry: index.js
+      platform: ios
+    - dev: false
+      entry: index.js
+      platform: ios
+    - dev: true
+      entry: index.js
+      platform: android
+    - dev: false
+      entry: index.js
+      platform: android
+  # LiveBundle Store service configuration
+  upload:
+    url: http://livebundle-store:3000
+
+# Server configuration
+server:
+  host: 0.0.0.0
+  port: 3000

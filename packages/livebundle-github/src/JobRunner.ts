@@ -1,8 +1,16 @@
 import { Octokit } from "@octokit/rest";
 import debug from "debug";
 import fs from "fs-extra";
-import type { Config as CliConfig } from "livebundle-cli";
-import { BundleTask, LiveBundleTask, TaskRunner } from "livebundle-sdk";
+import {
+  Config as CliConfig,
+  configSchema as cliConfigSchema,
+} from "livebundle-cli";
+import {
+  BundleTask,
+  LiveBundleTask,
+  TaskRunner,
+  taskSchema,
+} from "livebundle-sdk";
 import { createTmpDir, loadConfig } from "livebundle-utils";
 import path from "path";
 import shell from "shelljs";
@@ -43,13 +51,16 @@ export class JobRunner {
 
       let taskToRun = this.task;
       if (userConfigFile) {
-        const userConfig = loadConfig<CliConfig>({
+        const userConfig = await loadConfig<CliConfig>({
           configPath: path.resolve(userConfigFile),
+          refSchemas: [taskSchema],
+          schema: cliConfigSchema,
         });
         if (userConfig?.github?.task) {
-          taskToRun = loadConfig<LiveBundleTask>({
+          taskToRun = await loadConfig<LiveBundleTask>({
             config: userConfig.github.task,
             defaultConfig: this.task,
+            schema: taskSchema,
           });
         }
       }

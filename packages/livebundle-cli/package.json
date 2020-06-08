@@ -11,7 +11,8 @@
     "clean": "rm -rf ./dist && rm -rf tsconfig.build.tsbuildinfo",
     "compile": "tsc -b tsconfig.build.json",
     "prepublishOnly": "yarn build",
-    "start": "node dist/cli.js"
+    "start": "node dist/cli.js",
+    "test": "mocha"
   },
   "dependencies": {
     "chalk": "^4.0.0",
