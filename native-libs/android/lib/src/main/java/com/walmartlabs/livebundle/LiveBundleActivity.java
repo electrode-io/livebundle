@@ -39,6 +39,7 @@ public class LiveBundleActivity extends Activity implements ZXingScannerView.Res
                 String packageName = LiveBundle.sAppContext.getPackageName();
                 Intent launchIntent = LiveBundle.sAppContext.getPackageManager().getLaunchIntentForPackage(packageName);
                 startActivity(launchIntent);
+                finish();
             } catch (Exception e) {
             }
         } else {
@@ -63,6 +64,7 @@ public class LiveBundleActivity extends Activity implements ZXingScannerView.Res
     @Override
     public void handleResult(Result rawResult) {
        this.setPackage(rawResult.getText());
+       finish();
     }
 
     private String getLiveBundlePropertyFromStrings(String propertyName) throws Exception {
@@ -91,6 +93,5 @@ public class LiveBundleActivity extends Activity implements ZXingScannerView.Res
                 String.format(
                         "%s/packages/%s", this.mServerUrl, packageId)).commit();
         LiveBundle.sInstanceManager.getDevSupportManager().handleReloadJS();
-        finish();
     }
 }
