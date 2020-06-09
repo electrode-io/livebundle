@@ -3,7 +3,7 @@ import fs from "fs-extra";
 import {
   Config as CliConfig,
   configSchema as cliConfigSchema,
-} from "livebundle-cli";
+} from "livebundle";
 import {
   BundleTask,
   LiveBundleTask,
