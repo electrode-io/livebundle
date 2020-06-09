@@ -1,3 +1,4 @@
+import { Octokit } from "@octokit/rest";
 import { LiveBundleTask } from "livebundle-sdk";
 
 export interface Config {
@@ -7,10 +8,12 @@ export interface Config {
   server: ServerConfig;
   task: LiveBundleTask;
 }
+
 export interface ServerConfig {
   host: string;
   port: number;
 }
+
 export interface GitHubAppConfig {
   privateKey: string;
   appIdentifier: number;
@@ -33,4 +36,56 @@ export interface Job {
 
 export interface JobManagerConfig {
   maxConcurentJobs: number;
+}
+
+export interface JobManager {
+  add(job: Job): void;
+}
+
+export interface JobRunner {
+  run(job: Job): Promise<void>;
+}
+
+export interface GitHubApi {
+  createComment({
+    installationId,
+    owner,
+    repo,
+    issueNumber,
+    comment,
+  }: {
+    installationId: number;
+    owner: string;
+    repo: string;
+    issueNumber: number;
+    comment: string;
+  }): Promise<void>;
+
+  cloneRepoAndCheckoutPr({
+    installationId,
+    owner,
+    repo,
+    prNumber,
+  }: {
+    installationId: number;
+    owner: string;
+    repo: string;
+    prNumber: number;
+  }): Promise<void>;
+}
+
+export interface OctokitFactory {
+  create(installationId: number): Promise<Octokit>;
+}
+
+export interface JWTIssuer {
+  createJWT(installationId: number): Promise<string>;
+}
+
+export interface QRCodeUrlBuilder {
+  buildUrl(qrContent: string): string;
+}
+
+export interface ExecCmd {
+  exec(...cmds: string[]): void;
 }

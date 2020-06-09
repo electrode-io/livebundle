@@ -18,7 +18,7 @@ describe("QRCodeServer", () => {
     },
     server: {
       host: "localhost",
-      port: 3000,
+      port: 0,
     },
   };
 
@@ -34,28 +34,47 @@ describe("QRCodeServer", () => {
     return `${content}_m${margin}_w${width}.jpg`;
   }
 
+  async function test(
+    config: Config,
+    func: (req: ChaiHttp.Agent, server: QRCodeServer) => Promise<void>,
+  ) {
+    const serv = new QRCodeServer(config);
+    try {
+      await serv.start();
+      await func(chai.request(`http://${serv.address}:${serv.port}`), serv);
+    } finally {
+      serv.stop();
+    }
+  }
+
+  describe("get address", () => {
+    it("should throw if the server is not started", () => {
+      const sut = new QRCodeServer(defaultConfig);
+      expect(() => sut.address).to.throw();
+    });
+  });
+
+  describe("get port", () => {
+    it("should throw if the server is not started", () => {
+      const sut = new QRCodeServer(defaultConfig);
+      expect(() => sut.port).to.throw();
+    });
+  });
+
   describe("functional tests", () => {
     describe("GET /:content", () => {
-      it("should return HTTP 200", (done) => {
-        const sut = new QRCodeServer(defaultConfig);
-        chai
-          .request(sut.app)
-          .get("/foo")
-          .end((err, res) => {
-            expect(res).to.have.status(200);
-            done();
-          });
+      it("should return HTTP 200", async () => {
+        await test(defaultConfig, async (req) => {
+          const res = await req.get("/foo");
+          expect(res).to.have.status(200);
+        });
       });
 
-      it("should have Content-Type header set to image/png", (done) => {
-        const sut = new QRCodeServer(defaultConfig);
-        chai
-          .request(sut.app)
-          .get("/foo")
-          .end((err, res) => {
-            expect(res.get("Content-Type")).eql("image/png");
-            done();
-          });
+      it("should have Content-Type header set to image/png", async () => {
+        await test(defaultConfig, async (req) => {
+          const res = await req.get("/foo");
+          expect(res.get("Content-Type")).eql("image/png");
+        });
       });
 
       // [config, query_params, content] tuples
@@ -88,23 +107,19 @@ describe("QRCodeServer", () => {
         ],
       ];
       configTuples.forEach(([id, config, query, margin, width]) => {
-        it(`should generate expected qr [test case #${id}]`, (done) => {
-          const sut = new QRCodeServer(config);
-          chai
-            .request(sut.app)
-            .get(`/foo`)
-            .query(query as QRCodeConfig)
-            .end((err, res) => {
-              const b1 = fs.readFileSync(
-                path.join(
-                  fixturesPath,
-                  getQRCodeFileName({ content: "foo", margin, width }),
-                ),
-              );
-              const b2 = res.body;
-              expect(Buffer.compare(b1, b2)).eql(0);
-              done();
-            });
+        it(`should generate expected qr [test case #${id}]`, async () => {
+          await test(config, async (req) => {
+            const res = await req.get(`/foo`).query(query as QRCodeConfig);
+
+            const b1 = fs.readFileSync(
+              path.join(
+                fixturesPath,
+                getQRCodeFileName({ content: "foo", margin, width }),
+              ),
+            );
+            const b2 = res.body;
+            expect(Buffer.compare(b1, b2)).eql(0);
+          });
         });
       });
     });

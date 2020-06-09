@@ -9,4 +9,7 @@ module.exports = {
     "prettier/@typescript-eslint",
     "plugin:prettier/recommended",
   ],
+  rules: {
+    "@typescript-eslint/ban-ts-ignore": "off",
+  },
 };

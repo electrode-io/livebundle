@@ -1,4 +1,4 @@
-import type { Platform } from "livebundle-store";
+import type { Package, Platform } from "livebundle-store";
 
 export interface CliBundle {
   dev: boolean;
@@ -30,4 +30,21 @@ export interface LiveBundleTask {
 export interface ReactNativeAsset {
   files: string[];
   hash: string;
+}
+
+export interface TaskRunner {
+  execTask(
+    task: LiveBundleTask,
+    {
+      bundlingStarted,
+      bundlingCompleted,
+      uploadStarted,
+      cwd,
+    }: {
+      bundlingStarted?: (bundle: BundleTask) => void;
+      bundlingCompleted?: (bundle: BundleTask) => void;
+      uploadStarted?: ({ bundles }: { bundles: CliBundle[] }) => void;
+      cwd?: string;
+    },
+  ): Promise<Package>;
 }

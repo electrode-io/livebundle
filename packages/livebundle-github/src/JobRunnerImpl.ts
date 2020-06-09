@@ -1,4 +1,3 @@
-import { Octokit } from "@octokit/rest";
 import debug from "debug";
 import fs from "fs-extra";
 import {
@@ -14,18 +13,16 @@ import {
 import { createTmpDir, loadConfig } from "livebundle-utils";
 import path from "path";
 import shell from "shelljs";
-import { Job } from "./types";
-import exec from "./utils/exec";
-import { JWTIssuer } from "./utils/JWTIssuer";
-import { QRCodeUrlBuilder } from "./utils/QRCodeUrlBuilder";
+import { GitHubApi, Job, JobRunner, QRCodeUrlBuilder } from "./types";
 
 const log = debug("livebundle-github:JobRunner");
 
-export class JobRunner {
+export class JobRunnerImpl implements JobRunner {
   public constructor(
-    private readonly task: LiveBundleTask,
-    private readonly jwtIssuer: JWTIssuer,
+    private readonly gitHubApi: GitHubApi,
     private readonly qrCodeUrlBuilder: QRCodeUrlBuilder,
+    private readonly task: LiveBundleTask,
+    private readonly taskRunner: TaskRunner,
   ) {}
 
   public async run(job: Job): Promise<void> {
@@ -35,13 +32,7 @@ export class JobRunner {
     shell.pushd(tmpDir);
 
     try {
-      const jwt = await this.jwtIssuer.createJWT(installationId);
-      const octokit = new Octokit({ auth: `Bearer ${jwt}` });
-      exec(
-        `git clone https://x-access-token:${jwt}@github.com/${owner}/${repo}.git .`,
-      );
-      exec(`git fetch origin pull/${prNumber}/head`);
-      exec("git checkout FETCH_HEAD");
+      await this.gitHubApi.cloneRepoAndCheckoutPr(job);
 
       const userConfigFile = fs.existsSync("livebundle.yml")
         ? "livebundle.yml"
@@ -57,32 +48,30 @@ export class JobRunner {
           schema: cliConfigSchema,
         });
         if (userConfig?.github?.task) {
-          taskToRun = await loadConfig<LiveBundleTask>({
-            config: userConfig.github.task,
-            defaultConfig: this.task,
-            schema: taskSchema,
-          });
+          taskToRun = userConfig.github.task;
         }
       }
 
       log(`taskToRun : ${JSON.stringify(taskToRun, null, 2)}`);
-      await octokit.issues.createComment({
+      await this.gitHubApi.createComment({
+        installationId,
         owner,
         repo,
-        issue_number: prNumber,
-        body: `:robot: Packaging your on demand bundles :package:`,
+        issueNumber: prNumber,
+        comment: `:robot: Packaging your on demand bundles :package:`,
       });
-      const r = await TaskRunner.execTask(taskToRun, { cwd: tmpDir });
-      const bundlesStr = this.task.bundle
+      const r = await this.taskRunner.execTask(taskToRun, { cwd: tmpDir });
+      const bundlesStr = taskToRun.bundle
         .map((c: BundleTask) => `${c.platform} ${c.dev ? "dev" : "prod"}`)
         .join(", ");
       const qrCodeUrl = this.qrCodeUrlBuilder.buildUrl(r.id);
       const deepLinkUrl = `livebundle://packages?id=${r.id}`;
-      await octokit.issues.createComment({
+      await this.gitHubApi.createComment({
+        installationId,
         owner,
         repo,
-        issue_number: prNumber,
-        body: `<img src="${qrCodeUrl}" alt="${qrCodeUrl}" />
+        issueNumber: prNumber,
+        comment: `<img src="${qrCodeUrl}" alt="${qrCodeUrl}" />
 
 *Deep Link URL*
 \`\`\`

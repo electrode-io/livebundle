@@ -1,26 +1,50 @@
 import debug from "debug";
 import express from "express";
+import http from "http";
+import { AddressInfo } from "net";
 import qrcode from "qrcode";
 import { Config } from "./types";
 
-const log = debug("livebundle-qrcode:QRCodeServer");
-
 export class QRCodeServer {
-  public readonly app: express.Application;
-  public readonly config: Config;
+  private readonly app: express.Application;
+  private server: http.Server;
 
-  constructor(public readonly conf: Config) {
-    log(`Server config : ${JSON.stringify(conf, null, 2)}`);
-    this.config = conf;
+  private readonly log = debug("livebundle-qrcode:QRCodeServer");
+
+  constructor(private readonly config: Config) {
+    this.log(`Server config : ${JSON.stringify(config, null, 2)}`);
     this.app = express();
     this.createAppRoutes();
   }
 
-  public start(): void {
-    const { host, port } = this.config.server;
-    this.app.listen(port, host, () => {
-      log(`QRCode server started on ${host}:${port}`);
+  public get address(): string {
+    if (!this.server) {
+      throw new Error("Server is not started");
+    }
+    return (this.server.address() as AddressInfo).address;
+  }
+
+  public get port(): number {
+    if (!this.server) {
+      throw new Error("Server is not started");
+    }
+    return (this.server.address() as AddressInfo).port;
+  }
+
+  public async start(): Promise<void> {
+    return new Promise((resolve) => {
+      const { host, port } = this.config.server;
+      this.server =
+        this.server ??
+        this.app.listen(port, host, () => {
+          this.log(`QRCode server started on ${host}:${port}`);
+          resolve();
+        });
     });
+  }
+
+  public stop(): void {
+    this.server && this.server.close();
   }
 
   private createAppRoutes() {
@@ -28,7 +52,7 @@ export class QRCodeServer {
       const { content } = req.params;
       const { margin, width }: { margin?: string; width?: string } = req.query;
       const { margin: defaultMargin, width: defaultWidth } = this.config.qrcode;
-      log(`Encoding ${content}`);
+      this.log(`Encoding ${content}`);
       res.writeHead(200, {
         "Content-Type": "image/png",
       });

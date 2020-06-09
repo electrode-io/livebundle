@@ -22,7 +22,7 @@ export async function loadConfig<T>({
   defaultConfigPath?: string;
   defaultFileName?: string;
   refSchemas?: Record<string, unknown>[];
-  schema: Record<string, unknown>;
+  schema?: Record<string, unknown>;
 }): Promise<T> {
   log(`config: ${JSON.stringify(config, null, 2)}
 configPath: ${configPath}
@@ -30,7 +30,7 @@ defaultConfig: ${JSON.stringify(config, null, 2)}
 defaultConfigPath: ${defaultConfigPath}
 defaultFileName: ${defaultFileName}
 refSchemas: ${refSchemas.map((s) => s["$id"])}
-schema: ${schema["$id"]}`);
+schema: ${schema && schema["$id"]}`);
 
   const resolvedDefaultConfig: T =
     defaultConfig ?? defaultConfigPath
@@ -55,7 +55,9 @@ schema: ${schema["$id"]}`);
     config ?? resolvedConfigPath
       ? await loadYamlFile(resolvedConfigPath as string)
       : ({} as T);
-  schemaValidate({ data: resolvedConfig, refSchemas, schema });
+  if (schema) {
+    schemaValidate({ data: resolvedConfig, refSchemas, schema });
+  }
 
   return _.mergeWith(
     {},

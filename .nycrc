@@ -1,5 +1,25 @@
 {
   "extends": "@istanbuljs/nyc-config-typescript",
   "all": true,
-  "reporter": ["text", "html"]
+  "exclude": [
+    "coverage/**",
+    "packages/*/test{,s}/**",
+    "**/*.d.ts",
+    "test{,s}/**",
+    "test{,-*}.{js,cjs,mjs,ts}",
+    "**/*{.,-}test.{js,cjs,mjs,ts}",
+    "**/__tests__/**",
+    "**/{ava,nyc}.config.{js,cjs,mjs}",
+    "**/jest.config.{js,cjs,mjs,ts}",
+    "**/{karma,rollup,webpack}.config.js",
+    "**/types/**",
+    "**/schemas/**",
+    ".eslintrc.js",
+    "packages/livebundle-metro-asset-plugin/**",
+    "native-libs/**"
+  ],
+  "reporter": [
+    "text",
+    "html"
+  ]
 }

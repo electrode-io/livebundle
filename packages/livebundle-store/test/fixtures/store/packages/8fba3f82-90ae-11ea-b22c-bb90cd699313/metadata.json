@@ -12,6 +12,12 @@
       "platform": "android",
       "dev": false,
       "sourceMap": "4a1aaa5b-89ae-477f-b6d7-9747131750d7"
+    },
+    {
+      "id": "7b8ec5ce-a3a4-11ea-aaa2-873344a19352",
+      "platform": "ios",
+      "dev": true,
+      "sourceMap": "d82201e-a3a4-11ea-9889-8fe0bf999a50"
     }
   ],
   "timestamp": 1588892810

@@ -3,7 +3,7 @@ import * as fs from "fs";
 import got from "got";
 import type { Package } from "livebundle-store";
 
-export class LiveBundleCli {
+export class LiveBundleHttpCli {
   constructor(public readonly storeUrl: string) {}
 
   public async uploadPackage(zipPath: string): Promise<Package> {

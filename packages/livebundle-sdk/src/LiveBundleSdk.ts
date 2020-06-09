@@ -5,17 +5,13 @@ import { createTmpDir } from "livebundle-utils";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import yazl from "yazl";
-import { LiveBundleCli } from "./LiveBundleCli";
+import { LiveBundleHttpCli } from "./LiveBundleHttpCli";
 import { CliBundle, ReactNativeAsset } from "./types";
 
+const log = debug("livebundle-sdk:LiveBundleSdk");
+
 export class LiveBundleSdk {
-  public readonly sdk: LiveBundleCli;
-
-  private readonly log = debug("livebundle-sdk:LiveBundleSdk");
-
-  constructor(public readonly host: string) {
-    this.sdk = new LiveBundleCli(host);
-  }
+  constructor(private readonly httpCli: LiveBundleHttpCli) {}
 
   public async uploadPackage({
     bundles,
@@ -55,15 +51,15 @@ export class LiveBundleSdk {
 
     await packageProm;
 
-    const res = await this.sdk.uploadPackage(tmpZipPath);
+    const res = await this.httpCli.uploadPackage(tmpZipPath);
     return res;
   }
 
   public async uploadAssets(assets: ReactNativeAsset[]): Promise<void> {
-    const newAssets = await this.sdk.assetsDelta(assets.map((a) => a.hash));
+    const newAssets = await this.httpCli.assetsDelta(assets.map((a) => a.hash));
 
     if (newAssets.length > 0) {
-      this.log(`Uploading ${newAssets.length} new asset(s)`);
+      log(`Uploading ${newAssets.length} new asset(s)`);
 
       const zipfile = new yazl.ZipFile();
       const tmpZipPath = path.join(createTmpDir(), "assets.zip");
@@ -84,9 +80,9 @@ export class LiveBundleSdk {
       });
 
       await assetsProm;
-      await this.sdk.uploadAssets(tmpZipPath);
+      await this.httpCli.uploadAssets(tmpZipPath);
     } else {
-      this.log("No new assets !");
+      log("No new assets !");
     }
   }
 }

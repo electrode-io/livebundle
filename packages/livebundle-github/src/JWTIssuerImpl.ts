@@ -1,7 +1,7 @@
 import { createAppAuth } from "@octokit/auth-app";
-import { GitHubAppConfig } from "../types";
+import { GitHubAppConfig, JWTIssuer } from "./types";
 
-export class JWTIssuer {
+export class JWTIssuerImpl implements JWTIssuer {
   public constructor(private readonly config: GitHubAppConfig) {}
 
   public async createJWT(installationId: number): Promise<string> {
