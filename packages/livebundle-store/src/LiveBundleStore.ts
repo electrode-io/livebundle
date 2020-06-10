@@ -296,7 +296,7 @@ export class LiveBundleStore {
       // Swallow
     });
 
-    this.app.get("/status", (req, res) => {
+    this.app.get("*/status", (req, res) => {
       res.writeHead(200, {
         "Transfer-Encoding": "chunked",
       });
