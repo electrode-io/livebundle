@@ -33,5 +33,7 @@ task:
 
   # Store configuration
   upload:
+    # LiveBundle store access key
+    # accessKey:
     # LiveBundle store server url
     url: http://localhost:3000

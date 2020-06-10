@@ -8,6 +8,7 @@ export interface CliBundle {
 }
 
 export interface UploadTask {
+  accessKey?: string;
   url: string;
 }
 

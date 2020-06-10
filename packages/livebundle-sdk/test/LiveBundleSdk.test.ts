@@ -15,6 +15,7 @@ describe("LiveBundleSdk", () => {
   describe("uploadPackage", () => {
     it("should succeed", async () => {
       const httpCli = sandbox.createStubInstance(LiveBundleHttpCli);
+
       const uploadRes = {
         id: "4a1aaa5b-89ae-477f-b6d7-9747131750d7",
         bundles: [
@@ -34,7 +35,7 @@ describe("LiveBundleSdk", () => {
         timestamp: 1591640289863,
       };
       httpCli.uploadPackage.resolves(uploadRes);
-      const sut = new LiveBundleSdk(httpCli);
+      const sut = new LiveBundleSdk((httpCli as unknown) as LiveBundleHttpCli);
       const res = await sut.uploadPackage({
         bundles: [
           {
@@ -59,7 +60,7 @@ describe("LiveBundleSdk", () => {
     it("should succeed if there is new assets", async () => {
       const httpCli = sandbox.createStubInstance(LiveBundleHttpCli);
       httpCli.assetsDelta.resolves(["46d1173c53d96832e868151c1648ea42"]);
-      const sut = new LiveBundleSdk(httpCli);
+      const sut = new LiveBundleSdk((httpCli as unknown) as LiveBundleHttpCli);
       await sut.uploadAssets([
         {
           files: [path.join(fixturesPath, "loader.png")],
@@ -71,7 +72,7 @@ describe("LiveBundleSdk", () => {
     it("should succeed if there is no new assets", async () => {
       const httpCli = sandbox.createStubInstance(LiveBundleHttpCli);
       httpCli.assetsDelta.resolves([]);
-      const sut = new LiveBundleSdk(httpCli);
+      const sut = new LiveBundleSdk((httpCli as unknown) as LiveBundleHttpCli);
       await sut.uploadAssets([
         {
           files: [path.join(fixturesPath, "loader.png")],

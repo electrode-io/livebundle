@@ -29,6 +29,7 @@ describe("server", () => {
     const tmpStoreDir = createTmpDir();
     return new LiveBundleStore(
       config || {
+        accessKeys: [],
         server: {
           host: "localhost",
           port: 3000,
@@ -90,6 +91,7 @@ describe("server", () => {
   describe("getSourceMap", () => {
     it("should throw if the bundle does not exist in package", async () => {
       const sut = createServer({
+        accessKeys: [],
         store: { path: storeFixturePath },
         server: defaultServer,
       });
@@ -104,6 +106,7 @@ describe("server", () => {
 
     it("should return expected sourcemap [android dev]", async () => {
       const sut = createServer({
+        accessKeys: [],
         store: { path: storeFixturePath },
         server: defaultServer,
       });
@@ -117,6 +120,7 @@ describe("server", () => {
 
     it("should return expected sourcemap [android dev]", async () => {
       const sut = createServer({
+        accessKeys: [],
         store: { path: storeFixturePath },
         server: defaultServer,
       });
@@ -356,6 +360,7 @@ describe("server", () => {
 
   describe("functional tests", () => {
     const defaultConfig = {
+      accessKeys: [],
       server: {
         host: "localhost",
         port: 3000,
@@ -414,6 +419,7 @@ describe("server", () => {
       it("should return the asset if found", async () => {
         await test(
           {
+            accessKeys: [],
             store: { path: storeFixturePath },
             server: defaultConfig.server,
           },
@@ -442,6 +448,7 @@ describe("server", () => {
       it("should return HTTP 404 if the package does not exit in store", async () => {
         await test(
           {
+            accessKeys: [],
             store: { path: storeFixturePath },
             server: defaultConfig.server,
           },
@@ -461,6 +468,7 @@ describe("server", () => {
       it("should return the bundle [platform=android&dev=false]", async () => {
         await test(
           {
+            accessKeys: [],
             store: { path: storeFixturePath },
             server: defaultConfig.server,
           },
@@ -488,6 +496,7 @@ describe("server", () => {
       it("should return the bundle [platform=android&dev=true]", async () => {
         await test(
           {
+            accessKeys: [],
             store: { path: storeFixturePath },
             server: defaultConfig.server,
           },
@@ -517,6 +526,7 @@ describe("server", () => {
       it("should return HTTP 404 if the package does not exit in store", async () => {
         await test(
           {
+            accessKeys: [],
             store: { path: storeFixturePath },
             server: defaultConfig.server,
           },
@@ -534,6 +544,7 @@ describe("server", () => {
       it("should return the source map [platform=android&dev=false]", async () => {
         await test(
           {
+            accessKeys: [],
             store: { path: storeFixturePath },
             server: defaultConfig.server,
           },
@@ -563,6 +574,7 @@ describe("server", () => {
         shell.cp("-rf", path.join(storeFixturePath, "*"), tmpDir);
         await test(
           {
+            accessKeys: [],
             store: { path: tmpDir },
             server: defaultConfig.server,
           },
@@ -585,6 +597,7 @@ describe("server", () => {
         shell.cp("-rf", path.join(storeFixturePath, "*"), tmpDir);
         await test(
           {
+            accessKeys: [],
             store: { path: tmpDir },
             server: defaultConfig.server,
           },
@@ -606,6 +619,7 @@ describe("server", () => {
         shell.cp("-rf", path.join(storeFixturePath, "*"), tmpDir);
         await test(
           {
+            accessKeys: [],
             store: { path: tmpDir },
             server: defaultConfig.server,
           },
@@ -621,6 +635,74 @@ describe("server", () => {
           },
         );
       });
+
+      it("should fail with HTTP 400 if access key is missing from request headers", async () => {
+        const tmpDir = createTmpDir();
+        shell.cp("-rf", path.join(storeFixturePath, "*"), tmpDir);
+        await test(
+          {
+            accessKeys: ["test-access-key"],
+            store: { path: tmpDir },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const packageRs = fs.createReadStream(
+              path.join(fixturesPath, "package.zip"),
+            );
+
+            const res = await req
+              .post("/packages")
+              .attach("package", packageRs);
+            expect(res).to.have.status(400);
+          },
+        );
+      });
+
+      it("should fail with HTTP 403 if access key is invalid", async () => {
+        const tmpDir = createTmpDir();
+        shell.cp("-rf", path.join(storeFixturePath, "*"), tmpDir);
+        await test(
+          {
+            accessKeys: ["test-access-key"],
+            store: { path: tmpDir },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const packageRs = fs.createReadStream(
+              path.join(fixturesPath, "package.zip"),
+            );
+
+            const res = await req
+              .post("/packages")
+              .set("LB-Access-Key", "invalid-access-key")
+              .attach("package", packageRs);
+            expect(res).to.have.status(403);
+          },
+        );
+      });
+
+      it("should succeed with HTTP 201 if access key is valid", async () => {
+        const tmpDir = createTmpDir();
+        shell.cp("-rf", path.join(storeFixturePath, "*"), tmpDir);
+        await test(
+          {
+            accessKeys: ["test-access-key"],
+            store: { path: tmpDir },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const packageRs = fs.createReadStream(
+              path.join(fixturesPath, "package.zip"),
+            );
+
+            const res = await req
+              .post("/packages")
+              .set("LB-Access-Key", "test-access-key")
+              .attach("package", packageRs);
+            expect(res).to.have.status(201);
+          },
+        );
+      });
     });
 
     describe("POST /assets", () => {
@@ -629,6 +711,7 @@ describe("server", () => {
         shell.cp("-rf", path.join(storeFixturePath, "*"), tmpDir);
         await test(
           {
+            accessKeys: [],
             store: { path: tmpDir },
             server: defaultConfig.server,
           },
@@ -647,6 +730,7 @@ describe("server", () => {
         shell.cp("-rf", path.join(storeFixturePath, "*"), tmpDir);
         await test(
           {
+            accessKeys: [],
             store: { path: tmpDir },
             server: defaultConfig.server,
           },
@@ -660,11 +744,75 @@ describe("server", () => {
         );
       });
 
+      it("should fail with HTTP 400 if access key is missing from request headers", async () => {
+        const tmpDir = createTmpDir();
+        shell.cp("-rf", path.join(storeFixturePath, "*"), tmpDir);
+        await test(
+          {
+            accessKeys: ["test-access-key"],
+            store: { path: tmpDir },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const assetsZipRs = fs.createReadStream(
+              path.join(fixturesPath, "assets.zip"),
+            );
+            const res = await req.post("/assets").attach("assets", assetsZipRs);
+            expect(res).to.have.status(400);
+          },
+        );
+      });
+
+      it("should fail with HTTP 403 if access key is invalid", async () => {
+        const tmpDir = createTmpDir();
+        shell.cp("-rf", path.join(storeFixturePath, "*"), tmpDir);
+        await test(
+          {
+            accessKeys: ["test-access-key"],
+            store: { path: tmpDir },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const assetsZipRs = fs.createReadStream(
+              path.join(fixturesPath, "assets.zip"),
+            );
+            const res = await req
+              .post("/assets")
+              .set("LB-Access-Key", "invalid-access-key")
+              .attach("assets", assetsZipRs);
+            expect(res).to.have.status(403);
+          },
+        );
+      });
+
+      it("should succeed with HTTP 201 if access key is valid", async () => {
+        const tmpDir = createTmpDir();
+        shell.cp("-rf", path.join(storeFixturePath, "*"), tmpDir);
+        await test(
+          {
+            accessKeys: ["test-access-key"],
+            store: { path: tmpDir },
+            server: defaultConfig.server,
+          },
+          async (req) => {
+            const assetsZipRs = fs.createReadStream(
+              path.join(fixturesPath, "assets.zip"),
+            );
+            const res = await req
+              .post("/assets")
+              .set("LB-Access-Key", "test-access-key")
+              .attach("assets", assetsZipRs);
+            expect(res).to.have.status(201);
+          },
+        );
+      });
+
       it("should return the hashes of the assets that have been added to the store", async () => {
         const tmpDir = createTmpDir();
         shell.cp("-rf", path.join(storeFixturePath, "*"), tmpDir);
         await test(
           {
+            accessKeys: [],
             store: { path: tmpDir },
             server: defaultConfig.server,
           },
@@ -688,6 +836,7 @@ describe("server", () => {
       it("should return HTTP 200", async () => {
         await test(
           {
+            accessKeys: [],
             store: { path: storeFixturePath },
             server: defaultConfig.server,
           },
@@ -701,6 +850,7 @@ describe("server", () => {
       it("should return the assets ids that are not already in the store", async () => {
         await test(
           {
+            accessKeys: [],
             store: { path: storeFixturePath },
             server: defaultConfig.server,
           },
@@ -724,6 +874,7 @@ describe("server", () => {
       it("should return HTTP 200", async () => {
         await test(
           {
+            accessKeys: [],
             store: { path: storeFixturePath },
             server: defaultConfig.server,
           },

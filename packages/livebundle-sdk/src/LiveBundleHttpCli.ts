@@ -1,17 +1,26 @@
 import FormData from "form-data";
 import * as fs from "fs";
-import got from "got";
+import got, { Got } from "got";
 import type { Package } from "livebundle-store";
 
 export class LiveBundleHttpCli {
-  constructor(public readonly storeUrl: string) {}
+  private readonly cli: Got;
+
+  constructor(
+    private readonly storeUrl: string,
+    { accessKey }: { accessKey?: string } = {},
+  ) {
+    this.cli = got.extend(
+      accessKey ? { headers: { "LB-Access-Key": accessKey } } : {},
+    );
+  }
 
   public async uploadPackage(zipPath: string): Promise<Package> {
     try {
       const packageRs = fs.createReadStream(zipPath);
       const form = new FormData();
       form.append("package", packageRs);
-      const res = await got.post(`${this.storeUrl}/packages`, {
+      const res = await this.cli.post(`${this.storeUrl}/packages`, {
         body: form,
       });
       return JSON.parse(res.body);
@@ -25,7 +34,7 @@ export class LiveBundleHttpCli {
       const zippedAssetsFileRs = fs.createReadStream(zipPath);
       const form = new FormData();
       form.append("assets", zippedAssetsFileRs);
-      await got.post(`${this.storeUrl}/assets`, {
+      await this.cli.post(`${this.storeUrl}/assets`, {
         body: form,
       });
     } catch (err) {
@@ -35,7 +44,7 @@ export class LiveBundleHttpCli {
 
   public async assetsDelta(assets: string[]): Promise<string[]> {
     try {
-      const { body } = await got.post<string[]>(
+      const { body } = await this.cli.post<string[]>(
         `${this.storeUrl}/assets/delta`,
         {
           json: { assets },
