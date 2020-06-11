@@ -34,6 +34,9 @@
     "upload": {
       "type": "object",
       "properties": {
+        "accessKey": {
+          "type": "string"
+        },
         "url": {
           "type": "string",
           "pattern": "^http://[^:]+:\\d+$"

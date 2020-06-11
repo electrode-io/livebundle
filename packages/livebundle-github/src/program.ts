@@ -48,7 +48,9 @@ export default function program(): commander.Command {
         new ExecCmdImpl(),
       );
       const qrCodeUrlBuilder = new QRCodeUrlBuilderImpl(conf.qrcode);
-      const httpCli = new LiveBundleHttpCli(conf.task.upload.url);
+      const httpCli = new LiveBundleHttpCli(conf.task.upload.url, {
+        accessKey: conf.task.upload.accessKey,
+      });
       const sdk = new LiveBundleSdk(httpCli);
       const taskRunner = new TaskRunnerImpl(sdk);
       const jobRunner = new JobRunnerImpl(

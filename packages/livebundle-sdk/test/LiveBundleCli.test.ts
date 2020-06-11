@@ -14,19 +14,20 @@ describe("LiveBundleHttpCli", () => {
   });
 
   describe("uploadPackage", () => {
+    const pkg = {
+      id: "91b4e994-a5f4-11ea-bc6a-cbdbd91887aa",
+      bundles: [
+        {
+          id: "adc74460-a5f4-11ea-a82a-d76c0b568838",
+          dev: true,
+          platform: "android",
+          sourceMap: "ba2f6570-a5f4-11ea-b084-ab85345da8df",
+        },
+      ],
+      timestamp: 1591228064,
+    };
+
     it("should return server response", async () => {
-      const pkg = {
-        id: "91b4e994-a5f4-11ea-bc6a-cbdbd91887aa",
-        bundles: [
-          {
-            id: "adc74460-a5f4-11ea-a82a-d76c0b568838",
-            dev: true,
-            platform: "android",
-            sourceMap: "ba2f6570-a5f4-11ea-b084-ab85345da8df",
-          },
-        ],
-        timestamp: 1591228064,
-      };
       nock(url).post("/packages").reply(200, pkg);
       const sut = new LiveBundleHttpCli(url);
       const assetsZipPath = path.join(fixturesPath, "package.zip");
@@ -42,6 +43,27 @@ describe("LiveBundleHttpCli", () => {
         expect(err.message).eql("fail");
         return true;
       });
+    });
+
+    it("should not set the LB-Access-Key header if no access key is set", async () => {
+      nock(url, { badheaders: ["LB-Access-Key"] })
+        .post("/packages")
+        .reply(200, pkg);
+      const sut = new LiveBundleHttpCli(url);
+      const assetsZipPath = path.join(fixturesPath, "package.zip");
+      const res = await sut.uploadPackage(assetsZipPath);
+      expect(res).deep.equal(pkg);
+    });
+
+    it("should set the LB-Access-Key header if an access key is set", async () => {
+      nock(url)
+        .post("/packages")
+        .matchHeader("LB-Access-Key", "test-access-key")
+        .reply(200, pkg);
+      const sut = new LiveBundleHttpCli(url, { accessKey: "test-access-key" });
+      const assetsZipPath = path.join(fixturesPath, "package.zip");
+      const res = await sut.uploadPackage(assetsZipPath);
+      expect(res).deep.equal(pkg);
     });
   });
 
@@ -61,6 +83,25 @@ describe("LiveBundleHttpCli", () => {
         expect(err.message).eql("fail");
         return true;
       });
+    });
+
+    it("should not set the LB-Access-Key header if no access key is set", async () => {
+      nock(url, { badheaders: ["LB-Access-Key"] })
+        .post("/assets")
+        .reply(200);
+      const sut = new LiveBundleHttpCli(url);
+      const assetsZipPath = path.join(fixturesPath, "assets.zip");
+      await doesNotReject(sut.uploadAssets(assetsZipPath));
+    });
+
+    it("should set the LB-Access-Key header if an access key is set", async () => {
+      nock(url)
+        .post("/assets")
+        .matchHeader("LB-Access-Key", "test-access-key")
+        .reply(200);
+      const sut = new LiveBundleHttpCli(url, { accessKey: "test-access-key" });
+      const assetsZipPath = path.join(fixturesPath, "assets.zip");
+      await doesNotReject(sut.uploadAssets(assetsZipPath));
     });
   });
 

@@ -56,6 +56,29 @@ export class LiveBundleStore {
     return (this.server.address() as AddressInfo).port;
   }
 
+  public validateAccessKey(
+    req: express.Request,
+    res: express.Response,
+    next: () => void,
+  ): void {
+    const accessKey = req.header("LB-Access-Key");
+    if (!accessKey) {
+      res.status(400).send("Missing LB-Access-Key header");
+    } else if (!this.config.accessKeys.includes(accessKey)) {
+      res.status(403).send("Invalid LiveBundle access key");
+    } else {
+      next();
+    }
+  }
+
+  public passThrough(
+    req: express.Request,
+    res: express.Response,
+    next: () => void,
+  ): void {
+    next();
+  }
+
   // Sample url:
   // http://localhost:3000/packages/ae62082f-cb4d-400e-8943-83ff8cdd1b56/index.bundle?platform=android&dev=true&minify=false
   public extractSegmentsFromPackageUrl(
@@ -377,6 +400,9 @@ export class LiveBundleStore {
 
     this.app.post(
       "/assets",
+      this.config.accessKeys.length > 0
+        ? this.validateAccessKey.bind(this)
+        : this.passThrough.bind(this),
       upload.single("assets").bind(this),
       async (req, res, next) => {
         try {
@@ -404,6 +430,9 @@ export class LiveBundleStore {
 
     this.app.post(
       "/packages",
+      this.config.accessKeys.length > 0
+        ? this.validateAccessKey.bind(this)
+        : this.passThrough.bind(this),
       upload.single("package").bind(this),
       async (req, res, next) => {
         try {

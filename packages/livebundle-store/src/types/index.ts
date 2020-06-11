@@ -33,6 +33,7 @@ export interface ServerPaths {
 }
 
 export interface Config {
+  accessKeys: string[];
   server: ServerConfig;
   store: StoreConfig;
 }

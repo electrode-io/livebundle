@@ -12,7 +12,9 @@ export async function upload(
   conf: Config,
   { enableSpinners = true }: { enableSpinners?: boolean } = {},
 ): Promise<Package> {
-  const httpCli = new LiveBundleHttpCli(conf.task.upload.url);
+  const httpCli = new LiveBundleHttpCli(conf.task.upload.url, {
+    accessKey: conf.task.upload.accessKey,
+  });
   const sdk = new LiveBundleSdk(httpCli);
   let spinner: ora.Ora | undefined;
 
