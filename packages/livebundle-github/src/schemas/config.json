@@ -21,15 +21,6 @@
       },
       "required": ["appIdentifier", "clientId", "clientSecret", "privateKey"]
     },
-    "jobManager": {
-      "type": "object",
-      "properties": {
-        "maxConcurentJobs": {
-          "type": "number",
-          "minimum": 1
-        }
-      }
-    },
     "qrcode": {
       "type": "object",
       "properties": {

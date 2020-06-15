@@ -11,7 +11,6 @@ import path from "path";
 import { ExecCmdImpl } from "./ExecCmdImpl";
 import { GitHubApiImpl } from "./GitHubApiImpl";
 import { GitHubAppServer } from "./GitHubAppServer";
-import { JobManagerImpl } from "./JobManagerImpl";
 import { JobRunnerImpl } from "./JobRunnerImpl";
 import { JWTIssuerImpl } from "./JWTIssuerImpl";
 import { OctokitFactoryImpl } from "./OctokitFactoryImpl";
@@ -59,7 +58,6 @@ export default function program(): commander.Command {
         conf.task,
         taskRunner,
       );
-      const jobManager = new JobManagerImpl(conf.jobManager, jobRunner);
-      return new GitHubAppServer(conf.server, jobManager).start();
+      return new GitHubAppServer(conf.server, jobRunner).start();
     });
 }
