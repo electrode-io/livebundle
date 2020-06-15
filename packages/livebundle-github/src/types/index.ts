@@ -3,7 +3,6 @@ import { LiveBundleTask } from "livebundle-sdk";
 
 export interface Config {
   github: GitHubAppConfig;
-  jobManager: JobManagerConfig;
   qrcode: QrCodeServiceConfig;
   server: ServerConfig;
   task: LiveBundleTask;
@@ -33,15 +32,6 @@ export interface Job {
   repo: string;
   prNumber: number;
 }
-
-export interface JobManagerConfig {
-  maxConcurentJobs: number;
-}
-
-export interface JobManager {
-  add(job: Job): void;
-}
-
 export interface JobRunner {
   run(job: Job): Promise<void>;
 }

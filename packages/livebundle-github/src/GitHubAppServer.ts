@@ -2,7 +2,7 @@ import debug from "debug";
 import express from "express";
 import http from "http";
 import { AddressInfo } from "net";
-import { JobManager, ServerConfig } from "./types";
+import { JobRunner, ServerConfig } from "./types";
 
 const log = debug("livebundle-github:GitHubAppServer");
 export class GitHubAppServer {
@@ -11,7 +11,7 @@ export class GitHubAppServer {
 
   constructor(
     private readonly config: ServerConfig,
-    private readonly jobManager: JobManager,
+    private readonly jobRunner: JobRunner,
   ) {
     log(`Server config : ${JSON.stringify(config, null, 2)}`);
     this.app = express();
@@ -27,7 +27,7 @@ export class GitHubAppServer {
         const owner = repository.owner.login;
         const repo = repository.name;
 
-        this.jobManager.add({
+        this.jobRunner.run({
           installationId,
           owner,
           prNumber,
