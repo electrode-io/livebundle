@@ -17,4 +17,5 @@ RUN yarn workspace livebundle-github install --prod
 EXPOSE 3000
 ENV DEBUG *,-babel*
 WORKDIR /usr/src/app/packages/livebundle-github
+USER 1000
 CMD ["yarn", "start"]
