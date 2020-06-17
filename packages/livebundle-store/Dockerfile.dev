@@ -8,4 +8,5 @@ RUN yarn workspace livebundle-store install --prod
 EXPOSE 3000
 ENV DEBUG *
 WORKDIR /usr/src/app/packages/livebundle-store
+USER 1000
 CMD ["yarn", "start"]
