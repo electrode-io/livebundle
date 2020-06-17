@@ -191,6 +191,7 @@ github:
   function prepareStubs({
     createCommentStub = sandbox.stub(),
     cloneRepoAndCheckoutPrStub = sandbox.stub(),
+    getPrChangedFilesStub = sandbox.stub(),
     buildUrlStub = sandbox
       .stub<[string], string>()
       .returns("http://localhost:3000/content?margin=1&width=250"),
@@ -236,6 +237,17 @@ github:
       ],
       Promise<void>
     >;
+    getPrChangedFilesStub?: sinon.SinonStub<
+      [
+        {
+          installationId: number;
+          owner: string;
+          repo: string;
+          pull_number: number;
+        },
+      ],
+      Promise<string[]>
+    >;
     buildUrlStub?: sinon.SinonStub<[string], string>;
     execTaskStub?: sinon.SinonStub<
       [
@@ -261,6 +273,7 @@ github:
       gitHubApiStub: sandbox.createStubInstance(GitHubApiNullImpl, {
         createComment: createCommentStub,
         cloneRepoAndCheckoutPr: cloneRepoAndCheckoutPrStub,
+        getPrChangedFiles: getPrChangedFilesStub,
       }),
       qrCodeUrlBuilderStub: sandbox.createStubInstance(
         QRCodeUrlBuilderNullImpl,
@@ -273,6 +286,19 @@ github:
 });
 
 class GitHubApiNullImpl implements GitHubApi {
+  getPrChangedFiles({
+    installationId,
+    owner,
+    repo,
+    pull_number,
+  }: {
+    installationId: number;
+    owner: string;
+    repo: string;
+    pull_number: number;
+  }): Promise<string[]> {
+    throw new Error("Method not implemented.");
+  }
   public async createComment({
     installationId,
     owner,

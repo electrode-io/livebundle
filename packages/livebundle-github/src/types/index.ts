@@ -51,6 +51,18 @@ export interface GitHubApi {
     comment: string;
   }): Promise<void>;
 
+  getPrChangedFiles({
+    installationId,
+    owner,
+    repo,
+    pull_number,
+  }: {
+    installationId: number;
+    owner: string;
+    repo: string;
+    pull_number: number;
+  }): Promise<string[]>;
+
   cloneRepoAndCheckoutPr({
     installationId,
     owner,
