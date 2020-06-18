@@ -25,6 +25,7 @@
     "livebundle": "^0.1.9",
     "livebundle-sdk": "^0.1.7",
     "livebundle-utils": "^0.1.4",
+    "micromatch": "^4.0.2",
     "shelljs": "^0.8.4"
   }
 }

@@ -37,6 +37,23 @@
 #     f8xyaFUyVTosaxjUs6dY4hzb3EjonfuXZJznV/ThoNhNg+ldpWJI8A==
 #     -----END RSA PRIVATE KEY-----
 
+# Globs of files to ignore.
+# If a PR only contains changed files that are matching
+# these globs, LiveBundle will not trigger JS bundling.
+ignore:
+  [
+    "android/**",
+    "ios/**",
+    "__tests__/**",
+    ".buckconfig",
+    ".eslintrc.js",
+    ".flowconfig",
+    ".gitattributes",
+    ".gitignore",
+    ".prettierrc.js",
+    "**/*.md",
+  ]
+
 # LiveBundle QR Code service configuration
 qrcode:
   url: http://livebundle-qrcode:3000

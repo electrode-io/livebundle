@@ -2,6 +2,7 @@ import { Octokit } from "@octokit/rest";
 import { LiveBundleTask } from "livebundle-sdk";
 
 export interface Config {
+  ignore: string[];
   github: GitHubAppConfig;
   qrcode: QrCodeServiceConfig;
   server: ServerConfig;
@@ -50,6 +51,18 @@ export interface GitHubApi {
     issueNumber: number;
     comment: string;
   }): Promise<void>;
+
+  getPrChangedFiles({
+    installationId,
+    owner,
+    repo,
+    pull_number,
+  }: {
+    installationId: number;
+    owner: string;
+    repo: string;
+    pull_number: number;
+  }): Promise<string[]>;
 
   cloneRepoAndCheckoutPr({
     installationId,

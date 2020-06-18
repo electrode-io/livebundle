@@ -6,10 +6,12 @@ import { GitHubApiImpl, OctokitFactory } from "../src";
 import { ExecCmd, JWTIssuer } from "../src/types";
 
 class OctokitFactoryStubImpl implements OctokitFactory {
-  constructor(private readonly spy: sinon.SinonSpy) {}
+  public createCommentSpy = sinon.spy();
+  public listFilesStub = sinon.stub().resolves({ data: [] });
   create(installationId: number): Promise<Octokit> {
     return Promise.resolve(({
-      issues: { createComment: this.spy },
+      issues: { createComment: this.createCommentSpy },
+      pulls: { listFiles: this.listFilesStub },
     } as unknown) as Octokit);
   }
 }
@@ -29,8 +31,7 @@ class JWTIssuerNullImpl implements JWTIssuer {
 describe("GitHubApiImplTest", () => {
   describe("createComment", () => {
     it("should call octokit.issues.createComment", async () => {
-      const spy = sinon.spy();
-      const factory = new OctokitFactoryStubImpl(spy);
+      const factory = new OctokitFactoryStubImpl();
       const gh = new GitHubApiImpl(
         new JWTIssuerNullImpl(),
         factory,
@@ -43,7 +44,7 @@ describe("GitHubApiImplTest", () => {
         issueNumber: 1234,
         comment: "est",
       });
-      expect(spy.calledOnce).true;
+      expect(factory.createCommentSpy.calledOnce).true;
     });
   });
 
@@ -52,7 +53,7 @@ describe("GitHubApiImplTest", () => {
       const stub = sinon.createStubInstance(ExecCmdNullImpl);
       const gh = new GitHubApiImpl(
         new JWTIssuerNullImpl(),
-        new OctokitFactoryStubImpl(sinon.stub()),
+        new OctokitFactoryStubImpl(),
         stub,
       );
       await gh.cloneRepoAndCheckoutPr({
@@ -68,6 +69,76 @@ describe("GitHubApiImplTest", () => {
           "git checkout FETCH_HEAD",
         ),
       ).true;
+    });
+  });
+
+  describe("getPrChangedFiles", () => {
+    it("should call octokit.pulls.listFiles", async () => {
+      const factory = new OctokitFactoryStubImpl();
+      const gh = new GitHubApiImpl(
+        new JWTIssuerNullImpl(),
+        factory,
+        new ExecCmdNullImpl(),
+      );
+      await gh.getPrChangedFiles({
+        installationId: 1234,
+        owner: "foo",
+        repo: "bar",
+        pull_number: 1,
+      });
+      expect(factory.listFilesStub.calledOnce).true;
+    });
+
+    it("should return changed files names", async () => {
+      const factory = new OctokitFactoryStubImpl();
+      const changedFiles = ["index.js", "README.md", "foo/bar.txt"];
+      const changedFilesPage1 = [changedFiles[0], changedFiles[1]];
+      const changedFilesPage2 = [changedFiles[2]];
+      factory.listFilesStub = sinon
+        .stub()
+        .callsFake(
+          ({
+            owner,
+            repo,
+            pull_number,
+            per_page,
+            page,
+          }: {
+            owner: string;
+            repo: string;
+            pull_number: number;
+            per_page: number;
+            page: number;
+          }) => {
+            if (page === 1) {
+              return {
+                data: changedFilesPage1.map((f: string) => ({
+                  filename: f,
+                })),
+              };
+            } else if (page === 2) {
+              return {
+                data: changedFilesPage2.map((f: string) => ({
+                  filename: f,
+                })),
+              };
+            } else {
+              return { data: [] };
+            }
+          },
+        );
+      const gh = new GitHubApiImpl(
+        new JWTIssuerNullImpl(),
+        factory,
+        new ExecCmdNullImpl(),
+      );
+      const res = await gh.getPrChangedFiles({
+        installationId: 1234,
+        owner: "foo",
+        repo: "bar",
+        pull_number: 1,
+      });
+      expect(res).deep.equal(changedFiles);
     });
   });
 });

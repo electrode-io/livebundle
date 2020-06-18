@@ -11,6 +11,7 @@ import {
   taskSchema,
 } from "livebundle-sdk";
 import { createTmpDir, loadConfig } from "livebundle-utils";
+import micromatch from "micromatch";
 import path from "path";
 import shell from "shelljs";
 import { GitHubApi, Job, JobRunner, QRCodeUrlBuilder } from "./types";
@@ -23,6 +24,7 @@ export class JobRunnerImpl implements JobRunner {
     private readonly qrCodeUrlBuilder: QRCodeUrlBuilder,
     private readonly task: LiveBundleTask,
     private readonly taskRunner: TaskRunner,
+    private readonly ignore: string[],
   ) {}
 
   public async run(job: Job): Promise<void> {
@@ -41,6 +43,7 @@ export class JobRunnerImpl implements JobRunner {
         : undefined;
 
       let taskToRun = this.task;
+      let ignoreGlobs = this.ignore;
       if (userConfigFile) {
         const userConfig = await loadConfig<CliConfig>({
           configPath: path.resolve(userConfigFile),
@@ -49,6 +52,23 @@ export class JobRunnerImpl implements JobRunner {
         });
         if (userConfig?.github?.task) {
           taskToRun = userConfig.github.task;
+        }
+        if (userConfig?.github?.ignore) {
+          ignoreGlobs = userConfig?.github?.ignore;
+        }
+      }
+
+      if (ignoreGlobs?.length > 0) {
+        const prChangedFiles = await this.gitHubApi.getPrChangedFiles({
+          installationId,
+          owner,
+          repo,
+          pull_number: prNumber,
+        });
+        const nonIgnoredFiles = micromatch.not(prChangedFiles, ignoreGlobs);
+        if (nonIgnoredFiles.length === 0) {
+          log(`Skipping bundling as all changed files from PR are ignored`);
+          return;
         }
       }
 
