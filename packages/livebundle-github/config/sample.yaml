@@ -32,10 +32,6 @@ github:
     f8xyaFUyVTosaxjUs6dY4hzb3EjonfuXZJznV/ThoNhNg+ldpWJI8A==
     -----END RSA PRIVATE KEY-----
 
-# Job Manager configuration
-jobManager:
-  maxConcurentJobs: 4
-
 # LiveBundle QR Code service configuration
 qrcode:
   url: http://livebundle-qrcode:3000
