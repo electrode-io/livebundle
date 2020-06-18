@@ -16,6 +16,7 @@ export interface QRCodeTermConfig {
 }
 
 export interface GitHubConfig {
+  ignore?: string[];
   task: LiveBundleTask;
 }
 

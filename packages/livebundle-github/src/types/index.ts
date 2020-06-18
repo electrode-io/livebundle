@@ -2,6 +2,7 @@ import { Octokit } from "@octokit/rest";
 import { LiveBundleTask } from "livebundle-sdk";
 
 export interface Config {
+  ignore: string[];
   github: GitHubAppConfig;
   qrcode: QrCodeServiceConfig;
   server: ServerConfig;

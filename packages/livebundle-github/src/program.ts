@@ -57,6 +57,7 @@ export default function program(): commander.Command {
         qrCodeUrlBuilder,
         conf.task,
         taskRunner,
+        conf.ignore,
       );
       return new GitHubAppServer(conf.server, jobRunner).start();
     });

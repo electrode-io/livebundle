@@ -40,6 +40,7 @@ describe("JobRunnerImpl", () => {
         qrCodeUrlBuilderStub,
         { bundle: [], upload: { url: "http://test" } },
         taskRunnerStub,
+        [],
       );
 
       await sut.run(testJob);
@@ -57,6 +58,7 @@ describe("JobRunnerImpl", () => {
         qrCodeUrlBuilderStub,
         { bundle: [], upload: { url: "http://test" } },
         taskRunnerStub,
+        [],
       );
 
       await sut.run(testJob);
@@ -82,6 +84,7 @@ describe("JobRunnerImpl", () => {
         qrCodeUrlBuilderStub,
         { bundle: [], upload: { url: "http://test" } },
         taskRunnerStub,
+        [],
       );
 
       await sut.run(testJob);
@@ -144,6 +147,7 @@ github:
         qrCodeUrlBuilderStub,
         { bundle: [], upload: { url: "http://test" } },
         taskRunnerStub,
+        [],
       );
       await sut.run(testJob);
       expect(
@@ -182,9 +186,157 @@ github:
         qrCodeUrlBuilderStub,
         { bundle: [], upload: { url: "http://test" } },
         taskRunnerStub,
+        [],
       );
 
       await rejects(sut.run(testJob));
+    });
+
+    const defaultIgnoreList = [
+      "android/**",
+      "ios/**",
+      "__tests__/**",
+      ".buckconfig",
+      ".eslintrc.js",
+      ".flowconfig",
+      ".gitignore",
+      ".prettierrc.js",
+      "**/*.md",
+    ];
+
+    [
+      // 0
+      {
+        ignore: defaultIgnoreList,
+        changedPrFiles: ["App.js"],
+        shouldSkipBundling: false,
+      },
+      // 1
+      {
+        ignore: defaultIgnoreList,
+        changedPrFiles: ["android/build.gradle"],
+        shouldSkipBundling: true,
+      },
+      // 2
+      {
+        ignore: defaultIgnoreList,
+        changedPrFiles: ["README.md"],
+        shouldSkipBundling: true,
+      },
+      // 3
+      {
+        ignore: defaultIgnoreList,
+        changedPrFiles: ["README.md", "App.js"],
+        shouldSkipBundling: false,
+      },
+      // 4
+      {
+        ignore: defaultIgnoreList,
+        changedPrFiles: ["a/b/c/README.md"],
+        shouldSkipBundling: true,
+      },
+      // 5
+      {
+        ignore: defaultIgnoreList,
+        changedPrFiles: ["App.js", "src/foo/bar.js"],
+        shouldSkipBundling: false,
+      },
+    ].forEach(
+      (
+        scenario: {
+          ignore: string[];
+          changedPrFiles: string[];
+          shouldSkipBundling: boolean;
+        },
+        scenarioIdx,
+      ) => {
+        it(`should skip or not skip bundling based on ignore globs [scenario ${scenarioIdx}]`, async () => {
+          const {
+            gitHubApiStub,
+            qrCodeUrlBuilderStub,
+            taskRunnerStub,
+          } = prepareStubs({
+            getPrChangedFilesStub: sandbox
+              .stub<
+                [
+                  {
+                    installationId: number;
+                    owner: string;
+                    repo: string;
+                    pull_number: number;
+                  },
+                ],
+                Promise<string[]>
+              >()
+              .resolves(scenario.changedPrFiles),
+          });
+          const sut = new JobRunnerImpl(
+            gitHubApiStub,
+            qrCodeUrlBuilderStub,
+            { bundle: [], upload: { url: "http://test" } },
+            taskRunnerStub,
+            scenario.ignore,
+          );
+          await sut.run(testJob);
+          expect(
+            scenario.shouldSkipBundling
+              ? taskRunnerStub.execTask.notCalled
+              : taskRunnerStub.execTask.called,
+          ).true;
+        });
+      },
+    );
+
+    it("should use the ignore list from repository livebundle.yml configuration, if set", async () => {
+      const {
+        gitHubApiStub,
+        qrCodeUrlBuilderStub,
+        taskRunnerStub,
+      } = prepareStubs({
+        cloneRepoAndCheckoutPrStub: sandbox
+          .stub<
+            [
+              {
+                installationId: number;
+                owner: string;
+                repo: string;
+                prNumber: number;
+              },
+            ],
+            Promise<void>
+          >()
+          .callsFake(() => {
+            fs.writeFileSync(
+              path.resolve(process.cwd(), "livebundle.yaml"),
+              `# GitHub configuration
+github:
+  ignore: ["foo.js"]`,
+            );
+            return Promise.resolve();
+          }),
+        getPrChangedFilesStub: sandbox
+          .stub<
+            [
+              {
+                installationId: number;
+                owner: string;
+                repo: string;
+                pull_number: number;
+              },
+            ],
+            Promise<string[]>
+          >()
+          .resolves(["foo.js"]),
+      });
+      const sut = new JobRunnerImpl(
+        gitHubApiStub,
+        qrCodeUrlBuilderStub,
+        { bundle: [], upload: { url: "http://test" } },
+        taskRunnerStub,
+        [],
+      );
+      await sut.run(testJob);
+      expect(taskRunnerStub.execTask.notCalled).true;
     });
   });
 

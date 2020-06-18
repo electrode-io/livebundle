@@ -21,6 +21,12 @@
       },
       "required": ["appIdentifier", "clientId", "clientSecret", "privateKey"]
     },
+    "ignore": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "qrcode": {
       "type": "object",
       "properties": {
