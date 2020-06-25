@@ -1,6 +1,6 @@
 # LiveBundle
 
-[![ci][1]][2]
+[![ci][1]][2] [![codecov][3]][4]
 
 **This project is still in incubation.
 Heavy work is in progess to get to a proper initial MVP state.
@@ -50,3 +50,5 @@ Further development documentation material detailing technology stack, developme
 
 [1]: https://github.com/electrode-io/livebundle/workflows/ci/badge.svg
 [2]: https://github.com/electrode-io/livebundle/actions
+[3]: https://codecov.io/gh/electrode-io/livebundle/branch/master/graph/badge.svg?token=97VWVN63G0
+[4]: https://codecov.io/gh/electrode-io/livebundle
