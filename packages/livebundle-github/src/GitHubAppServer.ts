@@ -21,7 +21,7 @@ export class GitHubAppServer {
 
   private createAppRoutes() {
     this.app.post("/", async (req, res) => {
-      if (req.body?.action === "opened") {
+      if (["opened", "synchronize"].includes(req.body?.action)) {
         const { installation, repository, number: prNumber } = req.body;
         const installationId = installation.id;
         const owner = repository.owner.login;
