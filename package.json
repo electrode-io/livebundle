@@ -9,11 +9,12 @@
     "compile": "lerna run compile",
     "coverage": "nyc yarn test",
     "coverage:clean": "rimraf .nyc_output coverage",
+    "codecov": "nyc --reporter=lcov yarn test",
     "docker:start": "lerna run build && COMPOSE_FILE=docker-compose.dev.yml docker-compose up --build",
     "docker:clean": "COMPOSE_FILE=docker-compose.dev.yml docker-compose down --rmi local --volumes --remove-orphans",
     "build": "lerna run build",
     "lint": "eslint '*/**/*.{js,ts}'",
-    "test": "yarn build && lerna run test"
+    "test": "yarn build && lerna run test -- --timeout 5000"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
