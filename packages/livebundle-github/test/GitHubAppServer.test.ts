@@ -34,16 +34,14 @@ describe("GitHubAppServer", () => {
   });
 
   describe("functional tests", () => {
-    const jobManagerStub: sinon.SinonStubbedInstance<JobRunnerNullImpl> = sinon.createStubInstance(
-      JobRunnerNullImpl,
-    );
-    let jobRunnerRunStub: sinon.SinonStub<Job[], Promise<void>>;
+    const sandbox = sinon.createSandbox();
+    let jobRunnerStub: sinon.SinonStubbedInstance<JobRunnerNullImpl>;
 
     async function test(
       config: ServerConfig,
       func: (req: ChaiHttp.Agent, server: GitHubAppServer) => Promise<void>,
     ) {
-      const serv = new GitHubAppServer(config, new JobRunnerNullImpl());
+      const serv = new GitHubAppServer(config, jobRunnerStub);
       try {
         await serv.start();
         await func(chai.request(`http://${serv.address}:${serv.port}`), serv);
@@ -53,11 +51,11 @@ describe("GitHubAppServer", () => {
     }
 
     beforeEach(() => {
-      jobRunnerRunStub = jobManagerStub.run.resolves();
+      jobRunnerStub = sandbox.createStubInstance(JobRunnerNullImpl);
     });
 
     afterEach(() => {
-      jobRunnerRunStub.reset();
+      sandbox.restore();
     });
 
     describe("POST /", () => {
@@ -75,7 +73,7 @@ describe("GitHubAppServer", () => {
         });
       });
 
-      it("should add the job the job manager", async () => {
+      it("should add the job the job manager [opened PR]", async () => {
         await test(serverConfig, async (req) => {
           await req.post("/").send({
             action: "opened",
@@ -83,7 +81,19 @@ describe("GitHubAppServer", () => {
             repository: { owner: { login: "foo" }, name: "bar" },
             number: 456789,
           });
-          expect(jobRunnerRunStub.calledOnce);
+          expect(jobRunnerStub.run.calledOnce).true;
+        });
+      });
+
+      it("should add the job the job manager [updated PR]", async () => {
+        await test(serverConfig, async (req) => {
+          await req.post("/").send({
+            action: "synchronize",
+            installation: { id: 123456 },
+            repository: { owner: { login: "foo" }, name: "bar" },
+            number: 456789,
+          });
+          expect(jobRunnerStub.run.calledOnce).true;
         });
       });
     });
