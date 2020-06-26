@@ -15,7 +15,6 @@ export default function program(): commander.Command {
 
   return command
     .option("--config <string>", "path to the config")
-    .parse(process.argv)
     .action(async ({ config }: { config?: string }) => {
       const defaultConfigPath = path.resolve(
         __dirname,
