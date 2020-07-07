@@ -13,7 +13,7 @@ describe("program", () => {
     ).version;
     const sut = program().exitOverride();
     expect(() =>
-      sut.parse(["node", "livebundle-github", "--version"]),
+      sut.parse(["node", "livebundle-github-producer", "--version"]),
     ).to.throw(packageVersion);
   });
 
@@ -28,6 +28,6 @@ describe("program", () => {
     });
     const sut = program();
     const configPath = path.resolve(__dirname, "../config/sample.yaml");
-    sut.parse(["node", "livebundle-github", "--config", configPath]);
+    sut.parse(["node", "livebundle-github-producer", "--config", configPath]);
   });
 });

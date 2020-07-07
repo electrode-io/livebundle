@@ -7,6 +7,12 @@ export interface Config {
   qrcode: QrCodeServiceConfig;
   server: ServerConfig;
   task: LiveBundleTask;
+  queue: QueueConfig;
+}
+
+export interface QueueConfig {
+  url: string;
+  name: string;
 }
 
 export interface ServerConfig {
@@ -91,4 +97,8 @@ export interface QRCodeUrlBuilder {
 
 export interface ExecCmd {
   exec(...cmds: string[]): void;
+}
+
+export interface JobDequeuer {
+  start(): Promise<void>;
 }

@@ -24,7 +24,8 @@ Further development documentation material detailing technology stack, developme
 │   └── android           // Android client library
 ├── packages              // Node.js packages
 │   ├── livebundle        // Command line CLI
-│   ├── livebundle-github // GitHub application server
+│   ├── livebundle-github-consumer // GitHub application (consumer)
+│   ├── livebundle-github-producer // GitHub application (producer)
 │   ├── livebundle-metro-asset-plugin  // Metro asset plugin
 │   ├── livebundle-qrcode // QR Code server
 │   ├── livebundle-sdk    // SDK (used by CLI and GITHUB)

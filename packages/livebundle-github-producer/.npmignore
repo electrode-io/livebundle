@@ -1,0 +1,7 @@
+node_modules
+test
+src
+config.yaml
+Dockerfile
+Dockerfile.dev
+tsconfig.json

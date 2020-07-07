@@ -10,7 +10,7 @@ import { loadConfig } from "livebundle-utils";
 import path from "path";
 import { ExecCmdImpl } from "./ExecCmdImpl";
 import { GitHubApiImpl } from "./GitHubApiImpl";
-import { GitHubAppServer } from "./GitHubAppServer";
+import { JobDequeuerImpl } from "./JobDequeuerImpl";
 import { JobRunnerImpl } from "./JobRunnerImpl";
 import { JWTIssuerImpl } from "./JWTIssuerImpl";
 import { OctokitFactoryImpl } from "./OctokitFactoryImpl";
@@ -36,10 +36,11 @@ export default function program(): commander.Command {
       const conf = await loadConfig<Config>({
         configPath: config,
         defaultConfigPath,
-        defaultFileName: "livebundle-github",
+        defaultFileName: "livebundle-github-consumer",
         refSchemas: [taskSchema],
         schema: configSchema,
       });
+      console.log(JSON.stringify(conf, null, 2));
       const jwtIssuer = new JWTIssuerImpl(conf.github);
       const gitHubApi = new GitHubApiImpl(
         jwtIssuer,
@@ -59,6 +60,7 @@ export default function program(): commander.Command {
         taskRunner,
         conf.ignore,
       );
-      return new GitHubAppServer(conf.server, jobRunner).start();
+      const jobDequeuer = new JobDequeuerImpl(conf.queue, jobRunner);
+      jobDequeuer.start();
     });
 }

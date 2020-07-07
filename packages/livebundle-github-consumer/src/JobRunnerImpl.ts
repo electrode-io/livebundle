@@ -16,7 +16,7 @@ import path from "path";
 import shell from "shelljs";
 import { GitHubApi, Job, JobRunner, QRCodeUrlBuilder } from "./types";
 
-const log = debug("livebundle-github:JobRunner");
+const log = debug("livebundle-github-consumer:JobRunner");
 
 export class JobRunnerImpl implements JobRunner {
   public constructor(

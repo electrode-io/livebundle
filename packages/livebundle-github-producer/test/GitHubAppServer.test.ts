@@ -3,10 +3,10 @@ import chaiHttp from "chai-http";
 import "mocha";
 import sinon from "sinon";
 import { GitHubAppServer } from "../src/GitHubAppServer";
-import { Job, JobRunner, ServerConfig } from "../src/types";
+import { Job, JobQueuer, ServerConfig } from "../src/types";
 
-class JobRunnerNullImpl implements JobRunner {
-  public run(job: Job): Promise<void> {
+class JobQueuerImpl implements JobQueuer {
+  public queue(job: Job): Promise<void> {
     return Promise.resolve();
   }
 }
@@ -21,27 +21,27 @@ describe("GitHubAppServer", () => {
 
   describe("get address", () => {
     it("should throw if the server is not started", () => {
-      const sut = new GitHubAppServer(serverConfig, new JobRunnerNullImpl());
+      const sut = new GitHubAppServer(serverConfig, new JobQueuerImpl());
       expect(() => sut.address).to.throw();
     });
   });
 
   describe("get port", () => {
     it("should throw if the server is not started", () => {
-      const sut = new GitHubAppServer(serverConfig, new JobRunnerNullImpl());
+      const sut = new GitHubAppServer(serverConfig, new JobQueuerImpl());
       expect(() => sut.port).to.throw();
     });
   });
 
   describe("functional tests", () => {
     const sandbox = sinon.createSandbox();
-    let jobRunnerStub: sinon.SinonStubbedInstance<JobRunnerNullImpl>;
+    let jobQueuerStub: sinon.SinonStubbedInstance<JobQueuerImpl>;
 
     async function test(
       config: ServerConfig,
       func: (req: ChaiHttp.Agent, server: GitHubAppServer) => Promise<void>,
     ) {
-      const serv = new GitHubAppServer(config, jobRunnerStub);
+      const serv = new GitHubAppServer(config, jobQueuerStub);
       try {
         await serv.start();
         await func(chai.request(`http://${serv.address}:${serv.port}`), serv);
@@ -51,7 +51,7 @@ describe("GitHubAppServer", () => {
     }
 
     beforeEach(() => {
-      jobRunnerStub = sandbox.createStubInstance(JobRunnerNullImpl);
+      jobQueuerStub = sandbox.createStubInstance(JobQueuerImpl);
     });
 
     afterEach(() => {
@@ -81,7 +81,7 @@ describe("GitHubAppServer", () => {
             repository: { owner: { login: "foo" }, name: "bar" },
             number: 456789,
           });
-          expect(jobRunnerStub.run.calledOnce).true;
+          expect(jobQueuerStub.queue.calledOnce).true;
         });
       });
 
@@ -93,7 +93,7 @@ describe("GitHubAppServer", () => {
             repository: { owner: { login: "foo" }, name: "bar" },
             number: 456789,
           });
-          expect(jobRunnerStub.run.calledOnce).true;
+          expect(jobQueuerStub.queue.calledOnce).true;
         });
       });
     });

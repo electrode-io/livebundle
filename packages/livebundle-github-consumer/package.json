@@ -1,33 +1,33 @@
 {
-  "name": "livebundle-store",
-  "version": "0.1.13",
+  "name": "livebundle-github-consumer",
+  "version": "0.1.3",
   "main": "dist/index.js",
   "bin": {
-    "livebundle-store": "dist/cli.js"
+    "livebundle-github-consumer": "dist/cli.js"
   },
-  "license": "Apache-2.0",
   "scripts": {
     "build": "yarn clean && yarn compile",
     "clean": "rm -rf ./dist && rm -rf tsconfig.build.tsbuildinfo",
     "compile": "tsc -b tsconfig.build.json",
-    "docker:build": "yarn build && docker build -t livebundle/store .",
+    "docker:build": "yarn build && docker build -t livebundle/github-consumer .",
     "prepublishOnly": "yarn build",
     "start": "node dist/cli.js",
     "test": "mocha"
   },
+  "license": "Apache-2.0",
   "dependencies": {
+    "@octokit/auth-app": "^2.4.5",
+    "@octokit/rest": "^17.9.0",
+    "amqp-connection-manager": "^3.2.0",
+    "amqplib": "^0.5.6",
     "commander": "^5.1.0",
     "debug": "^4.1.1",
     "express": "^4.17.1",
-    "express-ws": "^4.0.0",
     "fs-extra": "^9.0.0",
+    "livebundle": "^0.1.11",
+    "livebundle-sdk": "^0.1.9",
     "livebundle-utils": "^0.1.4",
-    "lodash": "^4.17.15",
-    "multer": "^1.4.2",
-    "shelljs": "^0.8.4",
-    "source-map": "^0.7.3",
-    "tmp": "^0.2.1",
-    "uuid": "^8.0.0",
-    "yauzl": "^2.10.0"
+    "micromatch": "^4.0.2",
+    "shelljs": "^0.8.4"
   }
 }

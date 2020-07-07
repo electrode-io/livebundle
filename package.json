@@ -18,6 +18,8 @@
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@sinonjs/fake-timers": "^6.0.1",
+    "@types/amqplib": "^0.5.13",
+    "@types/amqp-connection-manager": "^2.0.10",
     "@types/chai": "^4.2.11",
     "@types/chai-http": "^4.2.0",
     "@types/commander": "^2.12.2",
