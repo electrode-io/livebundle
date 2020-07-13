@@ -54,6 +54,7 @@ export class QRCodeServer {
       const { margin: defaultMargin, width: defaultWidth } = this.config.qrcode;
       this.log(`Encoding ${content}`);
       res.writeHead(200, {
+        "Cache-Control": "public, max-age=604800, immutable",
         "Content-Type": "image/png",
       });
       qrcode.toFileStream(res, content, {
