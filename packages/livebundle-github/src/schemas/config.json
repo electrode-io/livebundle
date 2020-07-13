@@ -32,7 +32,7 @@
       "properties": {
         "url": {
           "type": "string",
-          "pattern": "^http://[^:]+:\\d+$"
+          "format": "uri"
         },
         "margin": {
           "type": "number",
