@@ -1,11 +1,12 @@
 FROM node:12-alpine
 WORKDIR /usr/src/app
 RUN yarn init . --yes
-RUN yarn add livebundle-qrcode@0.1.10
+RUN yarn add livebundle-github-consumer@0.1.3
 
 FROM node:12-alpine
+RUN apk add --no-cache git
 WORKDIR /usr/src/app
 COPY --from=0 /usr/src/app .
 EXPOSE 3000
 USER 1000
-CMD [ "yarn", "livebundle-qrcode" ]
+CMD [ "yarn", "livebundle-github-consumer" ]

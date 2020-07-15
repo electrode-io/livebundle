@@ -5,7 +5,7 @@ import sinon from "sinon";
 describe("index", () => {
   it("should not fail importing cli", () => {
     const argv = process.argv;
-    process.argv = ["node", "livebundle-github", "--help"];
+    process.argv = ["node", "livebundle-github-consumer", "--help"];
     const exit = process.exit;
     sinon.stub(process, "exit").callsFake(() => {
       throw new Error("test");

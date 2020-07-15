@@ -1,6 +1,6 @@
 {
   "name": "livebundle-qrcode",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "main": "dist/index.js",
   "bin": {
     "livebundle-qrcode": "dist/cli.js"
