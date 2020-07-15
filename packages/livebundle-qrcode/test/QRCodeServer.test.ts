@@ -70,10 +70,19 @@ describe("QRCodeServer", () => {
         });
       });
 
-      it("should have Content-Type header set to image/png", async () => {
+      it("should have Content-Type header set to 'image/png'", async () => {
         await test(defaultConfig, async (req) => {
           const res = await req.get("/foo");
           expect(res.get("Content-Type")).eql("image/png");
+        });
+      });
+
+      it("should have Cache-Control header set to 'public, max-age=604800, immutable'", async () => {
+        await test(defaultConfig, async (req) => {
+          const res = await req.get("/foo");
+          expect(res.get("Cache-Control")).eql(
+            "public, max-age=604800, immutable",
+          );
         });
       });
 
