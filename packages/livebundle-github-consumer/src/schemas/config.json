@@ -18,8 +18,7 @@
         "privateKey": {
           "type": "string"
         }
-      },
-      "required": ["appIdentifier", "clientId", "clientSecret", "privateKey"]
+      }
     },
     "ignore": {
       "type": "array",
@@ -74,6 +73,5 @@
         }
       }
     }
-  },
-  "required": ["github"]
+  }
 }
