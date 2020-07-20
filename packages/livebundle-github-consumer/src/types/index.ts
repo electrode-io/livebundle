@@ -25,6 +25,7 @@ export interface GitHubAppConfig {
   appIdentifier: number;
   clientId: string;
   clientSecret: string;
+  [key: string]: any;
 }
 
 export interface QrCodeServiceConfig {

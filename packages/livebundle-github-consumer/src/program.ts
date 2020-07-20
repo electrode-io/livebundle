@@ -15,6 +15,10 @@ import { JobRunnerImpl } from "./JobRunnerImpl";
 import { JWTIssuerImpl } from "./JWTIssuerImpl";
 import { OctokitFactoryImpl } from "./OctokitFactoryImpl";
 import { QRCodeUrlBuilderImpl } from "./QRCodeUrlBuilderImpl";
+import {
+  getErrorMessage,
+  reconciliateGitHubAppConfig,
+} from "./reconciliateGitHubAppConfig";
 import { configSchema } from "./schemas";
 import { Config } from "./types";
 
@@ -40,8 +44,12 @@ export default function program(): commander.Command {
         refSchemas: [taskSchema],
         schema: configSchema,
       });
+      const recGitHubAppConfig = reconciliateGitHubAppConfig(conf.github);
+      if (!recGitHubAppConfig.config) {
+        throw new Error(getErrorMessage(recGitHubAppConfig));
+      }
       console.log(JSON.stringify(conf, null, 2));
-      const jwtIssuer = new JWTIssuerImpl(conf.github);
+      const jwtIssuer = new JWTIssuerImpl(recGitHubAppConfig.config!);
       const gitHubApi = new GitHubApiImpl(
         jwtIssuer,
         new OctokitFactoryImpl(jwtIssuer),
