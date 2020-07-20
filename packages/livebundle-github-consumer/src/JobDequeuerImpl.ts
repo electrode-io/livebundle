@@ -16,11 +16,16 @@ export class JobDequeuerImpl implements JobDequeuer {
     private readonly jobRunner: JobRunner,
   ) {}
 
-  private onMessage(msg: ConsumeMessage) {
+  private async onMessage(msg: ConsumeMessage) {
     const msgStr = msg.content.toString();
     log(`Received ${msgStr}`);
-    this.chan.ack(msg);
-    this.jobRunner.run(JSON.parse(msgStr) as Job).catch((err) => log(err));
+    try {
+      await this.jobRunner.run(JSON.parse(msgStr) as Job);
+      this.chan.ack(msg);
+    } catch (e) {
+      log("Failed to process ${msgStr}. Error : ${e}");
+      this.chan.nack(msg);
+    }
   }
 
   public async init(): Promise<void> {
