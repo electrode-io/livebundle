@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="store_url">StoreUrl</string>
+    <string name="livebundle_scan">"LiveBundle Scan"</string>
+    <string name="livebundle_reset">"LiveBundle Reset"</string>
+    <string name="livebundle_deeplink_intent">LiveBundle DeepLink Intent</string>
+</resources>

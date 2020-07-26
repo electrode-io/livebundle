@@ -1,0 +1,20 @@
+android {
+  compileSdkVersion versions.compileSdk
+  defaultConfig {
+    minSdkVersion versions.minSdk
+    targetSdkVersion versions.targetSdk
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+  }
+}
+
+dependencies {
+  api project(':livebundle')
+  api deps.kotlinStdlib
+  implementation deps.appCompat
+  implementation deps.cameraxCore
+  implementation deps.cameraxCamera2
+  implementation deps.cameraxLifecycle
+  implementation deps.cameraxView
+  implementation deps.mlkitBarcodeScanning
+  implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+}
