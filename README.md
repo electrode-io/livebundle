@@ -47,6 +47,7 @@ Further development documentation material detailing technology stack, developme
 
 - [LiveBundle website](https://github.com/electrode-io/livebundle-website) contains the LiveBundle website and user documentation.
 - [LiveBundle sample](https://github.com/electrode-io/livebundle-sample) contains a sample React Native application wired with LiveBundle, used for the getting started guide.
+- [LiveBundle Helm Chart](https://github.com/electrode-io/livebundle-chart) contains the [Helm](https://helm.sh) chart to setup a LiveBundle infra in a [Kubernetes](https://kubernetes.io) cluster.
 - [LiveBundle Docker starter](https://github.com/electrode-io/livebundle-docker-starter) contains necessary files to spin up a basic LiveBundle complete infrastructure in Docker.
 
 [1]: https://github.com/electrode-io/livebundle/workflows/ci/badge.svg
