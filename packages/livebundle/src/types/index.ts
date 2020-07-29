@@ -1,6 +1,6 @@
 import { LiveBundleTask } from "livebundle-sdk";
 
-export interface Config {
+export interface Config extends Record<string, unknown> {
   qrcode: QRCodeConfig;
   task: LiveBundleTask;
   github?: GitHubConfig;

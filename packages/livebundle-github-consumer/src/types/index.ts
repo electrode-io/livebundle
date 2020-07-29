@@ -1,7 +1,7 @@
 import { Octokit } from "@octokit/rest";
 import { LiveBundleTask } from "livebundle-sdk";
 
-export interface Config {
+export interface Config extends Record<string, unknown> {
   ignore: string[];
   github: GitHubAppConfig;
   qrcode: QrCodeServiceConfig;

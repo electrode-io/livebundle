@@ -17,11 +17,11 @@
   "license": "Apache-2.0",
   "dependencies": {
     "amqp-connection-manager": "^3.2.0",
-    "amqplib": "^0.5.6",
-    "commander": "^5.1.0",
+    "amqplib": "^0.6.0",
+    "commander": "^6.0.0",
     "debug": "^4.1.1",
     "express": "^4.17.1",
-    "fs-extra": "^9.0.0",
+    "fs-extra": "^9.0.1",
     "livebundle-utils": "^0.1.4"
   }
 }

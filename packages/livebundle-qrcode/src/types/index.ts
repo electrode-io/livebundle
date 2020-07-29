@@ -1,4 +1,4 @@
-export interface Config {
+export interface Config extends Record<string, unknown> {
   server: ServerConfig;
   qrcode: QRCodeConfig;
 }

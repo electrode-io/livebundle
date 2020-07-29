@@ -32,7 +32,7 @@ export interface ServerPaths {
   packages: string;
 }
 
-export interface Config {
+export interface Config extends Record<string, unknown> {
   accessKeys: string[];
   server: ServerConfig;
   store: StoreConfig;
