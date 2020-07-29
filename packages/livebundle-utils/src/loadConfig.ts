@@ -7,7 +7,7 @@ import { schemaValidate } from "./schemaValidate";
 
 const log = debug("livebundle-utils:loadConfig");
 
-export async function loadConfig<T>({
+export async function loadConfig<T extends Record<string, unknown>>({
   config,
   configPath,
   defaultConfig,
