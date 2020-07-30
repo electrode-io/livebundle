@@ -1,9 +1,11 @@
 import commander, { Command } from "commander";
 import fs from "fs-extra";
 import { loadConfig } from "livebundle-utils";
+import { ChannelFactoryProducerImpl } from "livebundle-utils/src/ChannelFactoryProducerImpl";
+import { ConnectionFactoryImpl } from "livebundle-utils/src/ConnectionFactoryImpl";
 import path from "path";
 import { GitHubAppServer } from "./GitHubAppServer";
-import { JobQueuerImpl } from "./JobQueuerImpl";
+import { JobProducerImpl } from "./JobProducerImpl";
 import { configSchema } from "./schemas";
 import { Config } from "./types";
 
@@ -28,7 +30,11 @@ export default function program(): commander.Command {
         defaultFileName: "livebundle-github-producer",
         schema: configSchema,
       });
-      const jobQueuer = new JobQueuerImpl(conf.queue);
-      return new GitHubAppServer(conf.server, jobQueuer).start();
+      const jobProducer = await JobProducerImpl.init(
+        conf.queue,
+        new ChannelFactoryProducerImpl(),
+        new ConnectionFactoryImpl(),
+      );
+      return new GitHubAppServer(conf.server, jobProducer).start();
     });
 }

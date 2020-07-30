@@ -3,9 +3,9 @@ import chaiHttp from "chai-http";
 import "mocha";
 import sinon from "sinon";
 import { GitHubAppServer } from "../src/GitHubAppServer";
-import { Job, JobQueuer, ServerConfig } from "../src/types";
+import { Job, JobProducer, ServerConfig } from "../src/types";
 
-class JobQueuerImpl implements JobQueuer {
+class JobProducerImpl implements JobProducer {
   public queue(job: Job): Promise<void> {
     return Promise.resolve();
   }
@@ -21,21 +21,21 @@ describe("GitHubAppServer", () => {
 
   describe("get address", () => {
     it("should throw if the server is not started", () => {
-      const sut = new GitHubAppServer(serverConfig, new JobQueuerImpl());
+      const sut = new GitHubAppServer(serverConfig, new JobProducerImpl());
       expect(() => sut.address).to.throw();
     });
   });
 
   describe("get port", () => {
     it("should throw if the server is not started", () => {
-      const sut = new GitHubAppServer(serverConfig, new JobQueuerImpl());
+      const sut = new GitHubAppServer(serverConfig, new JobProducerImpl());
       expect(() => sut.port).to.throw();
     });
   });
 
   describe("functional tests", () => {
     const sandbox = sinon.createSandbox();
-    let jobQueuerStub: sinon.SinonStubbedInstance<JobQueuerImpl>;
+    let jobQueuerStub: sinon.SinonStubbedInstance<JobProducerImpl>;
 
     async function test(
       config: ServerConfig,
@@ -51,7 +51,7 @@ describe("GitHubAppServer", () => {
     }
 
     beforeEach(() => {
-      jobQueuerStub = sandbox.createStubInstance(JobQueuerImpl);
+      jobQueuerStub = sandbox.createStubInstance(JobProducerImpl);
     });
 
     afterEach(() => {

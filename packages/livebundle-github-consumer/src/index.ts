@@ -1,6 +1,6 @@
 export * from "./ExecCmdImpl";
 export * from "./GitHubApiImpl";
-export * from "./JobDequeuerImpl";
+export * from "./JobConsumerImpl";
 export * from "./JobRunnerImpl";
 export * from "./JWTIssuerImpl";
 export * from "./OctokitFactoryImpl";

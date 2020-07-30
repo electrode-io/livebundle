@@ -7,10 +7,12 @@ import {
   taskSchema,
 } from "livebundle-sdk";
 import { loadConfig } from "livebundle-utils";
+import { ChannelFactoryConsumerImpl } from "livebundle-utils/src/ChannelFactoryConsumerImpl";
+import { ConnectionFactoryImpl } from "livebundle-utils/src/ConnectionFactoryImpl";
 import path from "path";
 import { ExecCmdImpl } from "./ExecCmdImpl";
 import { GitHubApiImpl } from "./GitHubApiImpl";
-import { JobDequeuerImpl } from "./JobDequeuerImpl";
+import { JobConsumerImpl } from "./JobConsumerImpl";
 import { JobRunnerImpl } from "./JobRunnerImpl";
 import { JWTIssuerImpl } from "./JWTIssuerImpl";
 import { OctokitFactoryImpl } from "./OctokitFactoryImpl";
@@ -48,8 +50,7 @@ export default function program(): commander.Command {
       if (!recGitHubAppConfig.config) {
         throw new Error(getErrorMessage(recGitHubAppConfig));
       }
-      console.log(JSON.stringify(conf, null, 2));
-      const jwtIssuer = new JWTIssuerImpl(recGitHubAppConfig.config!);
+      const jwtIssuer = new JWTIssuerImpl(recGitHubAppConfig.config);
       const gitHubApi = new GitHubApiImpl(
         jwtIssuer,
         new OctokitFactoryImpl(jwtIssuer),
@@ -68,7 +69,11 @@ export default function program(): commander.Command {
         taskRunner,
         conf.ignore,
       );
-      const jobDequeuer = new JobDequeuerImpl(conf.queue, jobRunner);
-      jobDequeuer.start();
+      JobConsumerImpl.init(
+        conf.queue,
+        jobRunner,
+        new ChannelFactoryConsumerImpl(),
+        new ConnectionFactoryImpl(),
+      );
     });
 }

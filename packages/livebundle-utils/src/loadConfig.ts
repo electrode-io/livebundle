@@ -26,16 +26,18 @@ export async function loadConfig<T extends Record<string, unknown>>({
 }): Promise<T> {
   log(`config: ${JSON.stringify(config, null, 2)}
 configPath: ${configPath}
-defaultConfig: ${JSON.stringify(config, null, 2)}
+defaultConfig: ${JSON.stringify(defaultConfig, null, 2)}
 defaultConfigPath: ${defaultConfigPath}
 defaultFileName: ${defaultFileName}
 refSchemas: ${refSchemas.map((s) => s["$id"])}
 schema: ${schema && schema["$id"]}`);
 
+  log(`defaultConfig: ${defaultConfig ?? "toto"}`);
   const resolvedDefaultConfig: T =
-    defaultConfig ?? defaultConfigPath
+    defaultConfig ??
+    (defaultConfigPath
       ? await loadYamlFile(defaultConfigPath as string)
-      : ({} as T);
+      : ({} as T));
 
   const paths = configPath
     ? [configPath]
@@ -52,16 +54,17 @@ schema: ${schema && schema["$id"]}`);
   log(`resolvedConfigPath: ${resolvedConfigPath}`);
 
   const resolvedConfig: T =
-    config ?? resolvedConfigPath
+    config ??
+    (resolvedConfigPath
       ? await loadYamlFile(resolvedConfigPath as string)
-      : ({} as T);
+      : ({} as T));
   if (schema) {
     schemaValidate({ data: resolvedConfig, refSchemas, schema });
   }
 
   return _.mergeWith(
     {},
-    resolvedDefaultConfig ?? {},
+    resolvedDefaultConfig,
     resolvedConfig,
     (objVal, srcVal) => {
       // Do not merge arrays
