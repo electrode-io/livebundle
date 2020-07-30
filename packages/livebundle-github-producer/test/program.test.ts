@@ -4,9 +4,16 @@ import "mocha";
 import path from "path";
 import sinon from "sinon";
 import * as GitHubAppServer from "../src/GitHubAppServer";
+import { JobProducerImpl } from "../src/JobProducerImpl";
 import program from "../src/program";
+import { Job } from "../src/types";
 
 describe("program", () => {
+  const sandbox = sinon.createSandbox();
+  afterEach(() => {
+    sandbox.restore();
+  });
+
   it("should return package version", () => {
     const packageVersion = fs.readJSONSync(
       path.resolve(__dirname, "../package.json"),
@@ -18,7 +25,10 @@ describe("program", () => {
   });
 
   it("should start the GitHubAppServer", (done) => {
-    const s = sinon.stub(GitHubAppServer, "GitHubAppServer").callsFake(() => {
+    sandbox
+      .stub(JobProducerImpl, "init")
+      .resolves({ queue: (job: Job) => Promise.resolve() });
+    const s = sandbox.stub(GitHubAppServer, "GitHubAppServer").callsFake(() => {
       return {
         start: () => {
           s.restore();

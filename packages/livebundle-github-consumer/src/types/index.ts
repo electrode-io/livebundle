@@ -100,6 +100,4 @@ export interface ExecCmd {
   exec(...cmds: string[]): void;
 }
 
-export interface JobDequeuer {
-  start(): Promise<void>;
-}
+export interface JobConsumer {}

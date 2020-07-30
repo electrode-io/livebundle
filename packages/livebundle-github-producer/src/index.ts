@@ -1,4 +1,4 @@
 export * from "./GitHubAppServer";
-export * from "./JobQueuerImpl";
+export * from "./JobProducerImpl";
 export * from "./program";
 export * from "./types";

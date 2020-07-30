@@ -18,4 +18,19 @@ describe("schemaValidate", () => {
       }),
     ).to.throw();
   });
+
+  it("should throw if the data does not match the schema", () => {
+    expect(() =>
+      schemaValidate({
+        data: { a: 0 },
+        schema: {
+          properties: {
+            a: {
+              type: "string",
+            },
+          },
+        },
+      }),
+    ).to.throw();
+  });
 });

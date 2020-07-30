@@ -13,13 +13,13 @@ export interface QueueConfig {
   name: string;
 }
 
-export interface Job {
+export interface Job extends Record<string, unknown> {
   installationId: number;
   owner: string;
   repo: string;
   prNumber: number;
 }
 
-export interface JobQueuer {
+export interface JobProducer {
   queue(job: Job): Promise<void>;
 }
