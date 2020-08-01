@@ -32,7 +32,6 @@ defaultFileName: ${defaultFileName}
 refSchemas: ${refSchemas.map((s) => s["$id"])}
 schema: ${schema && schema["$id"]}`);
 
-  log(`defaultConfig: ${defaultConfig ?? "toto"}`);
   const resolvedDefaultConfig: T =
     defaultConfig ??
     (defaultConfigPath
