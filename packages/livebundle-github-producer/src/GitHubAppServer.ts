@@ -20,6 +20,10 @@ export class GitHubAppServer {
   }
 
   private createAppRoutes() {
+    this.app.get("/healthz", (req, res) => {
+      res.status(200).send("ok");
+    });
+
     this.app.post("/", async (req, res) => {
       if (["opened", "synchronize"].includes(req.body?.action)) {
         const { installation, repository, number: prNumber } = req.body;
