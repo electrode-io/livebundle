@@ -1,7 +1,7 @@
 FROM node:12-alpine
 WORKDIR /usr/src/app
 RUN yarn init . --yes
-RUN yarn add livebundle-qrcode@0.1.11
+RUN yarn add livebundle-qrcode@0.1.12
 
 FROM node:12-alpine
 WORKDIR /usr/src/app

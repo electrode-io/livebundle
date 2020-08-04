@@ -1,7 +1,7 @@
 FROM node:12-alpine
 WORKDIR /usr/src/app
 RUN yarn init . --yes
-RUN yarn add livebundle-github-consumer@0.1.9
+RUN yarn add livebundle-github-consumer@0.1.10
 
 FROM node:12-alpine
 RUN apk add --no-cache git
