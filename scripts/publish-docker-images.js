@@ -66,7 +66,7 @@ packages.forEach((pkg) => {
       dockerPushCmd(image, version),
       dockerPushCmd(image, "0.1"),
       dockerPushCmd(image, "latest"),
-    ].forEach((cmd) => execSync(cmd, { stdio: "inherit " }));
+    ].forEach((cmd) => execSync(cmd, { stdio: "inherit" }));
   } else {
     console.log(`Skipping [already published to DockerHub]`);
   }
