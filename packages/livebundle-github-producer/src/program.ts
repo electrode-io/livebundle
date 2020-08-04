@@ -1,8 +1,10 @@
 import commander, { Command } from "commander";
 import fs from "fs-extra";
-import { loadConfig } from "livebundle-utils";
-import { ChannelFactoryProducerImpl } from "livebundle-utils/src/ChannelFactoryProducerImpl";
-import { ConnectionFactoryImpl } from "livebundle-utils/src/ConnectionFactoryImpl";
+import {
+  ChannelFactoryProducerImpl,
+  ConnectionFactoryImpl,
+  loadConfig,
+} from "livebundle-utils";
 import path from "path";
 import { GitHubAppServer } from "./GitHubAppServer";
 import { JobProducerImpl } from "./JobProducerImpl";

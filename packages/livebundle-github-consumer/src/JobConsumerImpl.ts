@@ -1,7 +1,7 @@
 import { ChannelWrapper } from "amqp-connection-manager";
 import { ConsumeMessage } from "amqplib";
 import debug from "debug";
-import { QueueConfig } from "livebundle-github-producer/src";
+import { QueueConfig } from "livebundle-github-producer";
 import { ChannelFactory, ConnectionFactory } from "livebundle-utils";
 import { Job, JobConsumer, JobRunner } from "./types";
 
