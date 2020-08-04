@@ -1,6 +1,6 @@
 {
   "name": "livebundle-github-consumer",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "main": "dist/index.js",
   "bin": {
     "livebundle-github-consumer": "dist/cli.js"
@@ -24,9 +24,9 @@
     "debug": "^4.1.1",
     "express": "^4.17.1",
     "fs-extra": "^9.0.1",
-    "livebundle": "^0.1.12",
-    "livebundle-sdk": "^0.1.10",
-    "livebundle-utils": "^0.1.4",
+    "livebundle": "^0.1.13",
+    "livebundle-sdk": "^0.1.11",
+    "livebundle-utils": "^0.1.5",
     "micromatch": "^4.0.2",
     "shelljs": "^0.8.4"
   }

@@ -1,6 +1,6 @@
 {
   "name": "livebundle-qrcode",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "main": "dist/index.js",
   "bin": {
     "livebundle-qrcode": "dist/cli.js"
@@ -20,7 +20,7 @@
     "debug": "^4.1.1",
     "express": "^4.17.1",
     "fs-extra": "^9.0.1",
-    "livebundle-utils": "^0.1.4",
+    "livebundle-utils": "^0.1.5",
     "qrcode": "^1.4.4"
   },
   "types": "./types/index.d.ts"
