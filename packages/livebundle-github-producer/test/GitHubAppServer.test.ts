@@ -97,5 +97,21 @@ describe("GitHubAppServer", () => {
         });
       });
     });
+
+    describe("GET /healthz", () => {
+      it("should return HTTP 200", async () => {
+        await test(serverConfig, async (req) => {
+          const res = await req.get("/healthz");
+          expect(res).to.have.status(200);
+        });
+      });
+
+      it("should return 'ok' text", async () => {
+        await test(serverConfig, async (req) => {
+          const res = await req.get("/healthz");
+          expect(res.text).eql("ok");
+        });
+      });
+    });
   });
 });

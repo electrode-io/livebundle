@@ -48,6 +48,10 @@ export class QRCodeServer {
   }
 
   private createAppRoutes() {
+    this.app.get("/healthz", (req, res) => {
+      res.status(200).send("ok");
+    });
+
     this.app.get("/:content", (req, res) => {
       const { content } = req.params;
       const { margin, width }: { margin?: string; width?: string } = req.query;
