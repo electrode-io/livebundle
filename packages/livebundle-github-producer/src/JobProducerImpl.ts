@@ -1,7 +1,9 @@
 import { ChannelWrapper } from "amqp-connection-manager";
 import debug from "debug";
-import { ChannelFactoryProducerImpl } from "livebundle-utils/src/ChannelFactoryProducerImpl";
-import { ConnectionFactoryImpl } from "livebundle-utils/src/ConnectionFactoryImpl";
+import {
+  ChannelFactoryProducerImpl,
+  ConnectionFactoryImpl,
+} from "livebundle-utils";
 import { Job, JobProducer, QueueConfig } from "./types";
 
 const log = debug("livebundle-github-producer:JobQueuerImpl");

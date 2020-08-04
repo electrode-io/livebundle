@@ -6,9 +6,11 @@ import {
   TaskRunnerImpl,
   taskSchema,
 } from "livebundle-sdk";
-import { loadConfig } from "livebundle-utils";
-import { ChannelFactoryConsumerImpl } from "livebundle-utils/src/ChannelFactoryConsumerImpl";
-import { ConnectionFactoryImpl } from "livebundle-utils/src/ConnectionFactoryImpl";
+import {
+  ChannelFactoryConsumerImpl,
+  ConnectionFactoryImpl,
+  loadConfig,
+} from "livebundle-utils";
 import path from "path";
 import { ExecCmdImpl } from "./ExecCmdImpl";
 import { GitHubApiImpl } from "./GitHubApiImpl";
