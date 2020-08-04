@@ -1,6 +1,6 @@
 {
   "name": "livebundle-sdk",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "main": "dist/index.js",
   "license": "Apache-2.0",
   "scripts": {
@@ -16,7 +16,7 @@
     "form-data": "^3.0.0",
     "fs-extra": "^9.0.1",
     "got": "^11.5.1",
-    "livebundle-utils": "^0.1.5",
+    "livebundle-utils": "^0.1.6",
     "tmp": "^0.2.1",
     "uuid": "^8.3.0",
     "yazl": "^2.5.1"
