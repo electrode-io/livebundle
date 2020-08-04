@@ -6,4 +6,6 @@ export * from "./JWTIssuerImpl";
 export * from "./OctokitFactoryImpl";
 export * from "./program";
 export * from "./QRCodeUrlBuilderImpl";
+export * from "./reconciliateGitHubAppConfig";
+export * from "./schemas";
 export * from "./types";
