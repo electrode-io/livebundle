@@ -1,8 +1,0 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="livebundle.scanner">
-  <uses-feature android:name="android.hardware.camera.any" />
-  <uses-permission android:name="android.permission.CAMERA" />
-  <application>
-    <activity android:name=".LiveBundleScannerActivity" android:exported="true">
-    </activity>
-  </application>
-</manifest>

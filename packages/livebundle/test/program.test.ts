@@ -35,10 +35,20 @@ describe("program", () => {
           id: "ddfc3672-a9c3-11ea-9994-0b1552c573a2",
         },
       ],
+      links: {
+        qrcode: "https://qrcode.png",
+        metadata: "https://metadata.json",
+      },
       timestamp: 1591646945250,
     });
     sandbox.stub(console, "log");
     const sut = program({ op: sandbox.stub() }).exitOverride();
-    await sut.parseAsync(["node", "livebundle", "upload"]);
+    await sut.parseAsync([
+      "node",
+      "livebundle",
+      "upload",
+      "--config",
+      "config/sample.yaml",
+    ]);
   });
 });

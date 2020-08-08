@@ -30,10 +30,28 @@ task:
     - dev: false
       entry: index.js
       platform: android
-
   # Store configuration
-  upload:
-    # LiveBundle store access key
-    # accessKey:
-    # LiveBundle store server url
-    url: http://localhost:3000
+  #upload:
+  # Azure blob storage store configuration
+  # There is no default value here
+  # Replace them with your own
+  #
+  # We recommend using env variables here rather
+  # than YAML configuration, to limit exposure
+  # especially for the SAS token.
+  # The corresponding env variables are :
+  # account   => LB_UPLOAD_AZURE_ACCOUNT
+  # container => LB_UPLOAD_AZURE_CONTAINER
+  # sasToken  => LB_UPLOAD_AZURE_SASTOKEN
+  #azure:
+  #  account: <azure-store-account-name>
+  #  container: <azure-store-container-name>
+  #  sasToken: <azure-shared-access-signature-token>
+  # Notifier configuration
+  # We recommend using env variable here rather than
+  # YAML configuration, for the gitHubToken
+  # token   => LB_NOTIFY_GITHUB_TOKEN
+  #notify:
+  #  github:
+  #    baseUrl: https://api.github.com
+  #    token: <github-token>

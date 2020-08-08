@@ -34,12 +34,35 @@
     "upload": {
       "type": "object",
       "properties": {
-        "accessKey": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string",
-          "format": "uri"
+        "azure": {
+          "type": "object",
+          "properties": {
+            "account": {
+              "type": "string"
+            },
+            "container": {
+              "type": "string"
+            },
+            "sasToken": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "notify": {
+    "type": "object",
+    "properties": {
+      "github": {
+        "type": "object",
+        "properties": {
+          "baseUrl": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          }
         }
       }
     }

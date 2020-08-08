@@ -1,4 +1,0 @@
-rootProject.name = 'livebundle-root'
-
-include ':livebundle'
-include ':livebundle-scanner'

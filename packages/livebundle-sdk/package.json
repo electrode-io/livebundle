@@ -1,6 +1,6 @@
 {
   "name": "livebundle-sdk",
-  "version": "0.1.12",
+  "version": "0.2.11",
   "main": "dist/index.js",
   "license": "Apache-2.0",
   "scripts": {
@@ -12,11 +12,14 @@
     "test": "mocha"
   },
   "dependencies": {
+    "@azure/storage-blob": "^12.0.0",
+    "@octokit/rest": "^18.0.3",
     "debug": "^4.1.1",
     "form-data": "^3.0.0",
     "fs-extra": "^9.0.1",
     "got": "^11.5.1",
     "livebundle-utils": "^0.1.6",
+    "qrcode": "^1.4.4",
     "tmp": "^0.2.1",
     "uuid": "^8.3.0",
     "yazl": "^2.5.1"

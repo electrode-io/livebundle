@@ -1,6 +1,0 @@
-node_modules
-test
-src
-Dockerfile.dev
-Dockerfile.prod
-tsconfig.json

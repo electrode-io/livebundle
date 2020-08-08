@@ -1,9 +1,11 @@
 import {
-  LiveBundleHttpCli,
-  LiveBundleSdk,
+  AzureStorageImpl,
+  GitHubNotifierImpl,
+  Notifier,
+  Package,
   TaskRunnerImpl,
+  UploaderImpl,
 } from "livebundle-sdk";
-import type { Package } from "livebundle-store";
 import emoji from "node-emoji";
 import ora from "ora";
 import { Config } from "./types";
@@ -12,13 +14,24 @@ export async function upload(
   conf: Config,
   { enableSpinners = true }: { enableSpinners?: boolean } = {},
 ): Promise<Package> {
-  const httpCli = new LiveBundleHttpCli(conf.task.upload.url, {
-    accessKey: conf.task.upload.accessKey,
-  });
-  const sdk = new LiveBundleSdk(httpCli);
+  const azureStorage = new AzureStorageImpl(conf.task.upload.azure);
+
+  let notifier: Notifier | undefined;
+  if (conf.task.notify?.github) {
+    if (!conf.task.notify.github.token) {
+      if (!process.env["LB_NOTIFY_GITHUB_TOKEN"]) {
+        throw new Error("Missing GitHub token");
+      }
+      conf.task.notify.github.token = process.env["LB_NOTIFY_GITHUB_TOKEN"];
+    }
+
+    notifier = new GitHubNotifierImpl(conf.task.notify.github);
+  }
+
+  const uploader = new UploaderImpl(azureStorage);
   let spinner: ora.Ora | undefined;
 
-  const res = await new TaskRunnerImpl(sdk).execTask(conf.task, {
+  const res = await new TaskRunnerImpl(uploader, notifier).execTask(conf.task, {
     bundlingStarted: (bundle) => {
       spinner = ora({ isEnabled: !!enableSpinners });
       spinner.start(

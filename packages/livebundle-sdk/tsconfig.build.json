@@ -9,9 +9,6 @@
   "include": ["./src/**/*", "./src/**/*.json"],
   "references": [
     {
-      "path": "../livebundle-store/tsconfig.build.json"
-    },
-    {
       "path": "../livebundle-utils/tsconfig.build.json"
     }
   ]

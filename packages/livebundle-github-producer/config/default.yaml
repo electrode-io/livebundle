@@ -1,9 +1,0 @@
-# Server configuration
-server:
-  host: 0.0.0.0
-  port: 3000
-
-# AMQP queue configuration
-queue:
-  url: amqp://queue:5672
-  name: livebundle
