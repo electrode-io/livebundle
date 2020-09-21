@@ -1,23 +1,8 @@
-import { StoragePipelineOptions } from "@azure/storage-blob";
-
 export interface LocalBundle {
   dev: boolean;
   platform: Platform;
   sourceMapPath: string;
   bundlePath: string;
-}
-
-export interface UploadTask {
-  azure: AzureBlobStorageConfig;
-}
-
-export interface NotifyTask {
-  github: GitHubNotifierConfig;
-}
-
-export interface GitHubNotifierConfig {
-  baseUrl: string;
-  token: string;
 }
 
 export interface BundleTask {
@@ -33,38 +18,28 @@ export interface PrepareTask {
 export interface LiveBundleTask {
   prepare?: PrepareTask;
   bundle: BundleTask[];
-  upload: UploadTask;
-  notify: NotifyTask;
+  storage: Record<string, unknown>;
 }
 
-export interface AzureBlobStorageConfig {
-  account: string;
-  container: string;
-  sasToken: string;
-  options?: StoragePipelineOptions;
-  [key: string]: any;
+export interface LiveBundleConfig {
+  bundler: Record<string, unknown>;
+  storage: Record<string, unknown>;
+  generators: Record<string, unknown>;
+  notifiers: Record<string, unknown>;
 }
 
-export interface ReactNativeAsset {
-  files: string[];
-  hash: string;
+export interface Bundler {
+  bundle(): Promise<LocalBundle[]>;
 }
 
-export interface TaskRunner {
-  execTask(
-    task: LiveBundleTask,
-    {
-      bundlingStarted,
-      bundlingCompleted,
-      uploadStarted,
-      cwd,
-    }: {
-      bundlingStarted?: (bundle: BundleTask) => void;
-      bundlingCompleted?: (bundle: BundleTask) => void;
-      uploadStarted?: ({ bundles }: { bundles: LocalBundle[] }) => void;
-      cwd?: string;
-    },
-  ): Promise<Package>;
+export interface Generator {
+  generate({
+    id,
+    type,
+  }: {
+    id: string;
+    type: LiveBundleContentType;
+  }): Promise<any>;
 }
 
 export interface Uploader {
@@ -88,9 +63,16 @@ export interface Storage {
   ): Promise<void>;
   readonly baseUrl: string;
 }
-
 export interface Notifier {
-  notify(pkg: Package, opts?: Record<string, unknown>): Promise<void>;
+  notify({
+    generators,
+    pkg,
+    type,
+  }: {
+    generators: Record<string, Record<string, unknown>>;
+    pkg?: Package;
+    type: LiveBundleContentType;
+  }): Promise<void>;
 }
 
 export type Platform = "android" | "ios";
@@ -115,13 +97,7 @@ export type BundleCli = Omit<Bundle, "id">;
 export interface Package {
   id: string;
   bundles: Bundle[];
-  links: PackageLinks;
   timestamp: number;
-}
-
-export interface PackageLinks {
-  metadata: string;
-  qrcode: string;
 }
 
 export interface PackageCli {
@@ -147,3 +123,57 @@ export interface ServerConfig {
 export interface StoreConfig {
   path: string;
 }
+
+export enum LiveBundleContentType {
+  PACKAGE,
+  SESSION,
+}
+
+export interface LiveBundle {
+  upload(config: LiveBundleConfig): Promise<void>;
+  live(config: LiveBundleConfig): Promise<void>;
+}
+
+export interface ReactNativeAsset {
+  files: string[];
+  hash: string;
+}
+
+export interface ModuleLoader {
+  loadLiveBundleBundlerModule(
+    name: string,
+    config: Record<string, unknown>,
+    uploader: Uploader,
+  ): Promise<NamedBundler>;
+  loadLiveBundleGeneratorModule(
+    name: string,
+    config: Record<string, unknown>,
+    storage: Storage,
+  ): Promise<NamedGenerator>;
+  loadLiveBundleNotifierModule(
+    name: string,
+    config: Record<string, unknown>,
+  ): Promise<NamedNotifier>;
+  loadLiveBundleStorageModule(
+    name: string,
+    config: Record<string, unknown>,
+  ): Promise<NamedStorage>;
+  loadModules(
+    config: LiveBundleConfig,
+  ): Promise<{
+    bundler: NamedBundler;
+    storage: NamedStorage;
+    generators: NamedGenerator[];
+    notifiers: NamedNotifier[];
+    uploader: Uploader;
+  }>;
+}
+
+export interface Named {
+  name: string;
+}
+
+export type NamedBundler = Bundler & Named;
+export type NamedStorage = Storage & Named;
+export type NamedGenerator = Generator & Named;
+export type NamedNotifier = Notifier & Named;

@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://electrode.io/schemas/bundler-metro.json",
+  "type": "object",
+  "properties": {
+    "bundles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dev": {
+            "type": "boolean"
+          },
+          "entry": {
+            "type": "string"
+          },
+          "platform": {
+            "enum": ["android", "ios"]
+          }
+        }
+      }
+    }
+  }
+}

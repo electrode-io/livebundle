@@ -1,0 +1,7 @@
+image:
+  # Local image path
+  path: .livebundle/qrcode.png
+  # Margin around QR code image
+  margin: 1
+  # Width of QR code image (QR Code is a square)
+  width: 250

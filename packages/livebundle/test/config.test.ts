@@ -1,6 +1,5 @@
 import { doesNotReject } from "assert";
-import { taskSchema } from "livebundle-sdk";
-import { loadConfig } from "livebundle-utils";
+import { loadConfig, taskSchema } from "livebundle-sdk";
 import "mocha";
 import path from "path";
 import { configSchema } from "../src/schemas";

@@ -1,0 +1,10 @@
+# Missing bundler
+
+storage:
+  fs:
+
+generators:
+  qrcode:
+
+notifiers:
+  terminal:

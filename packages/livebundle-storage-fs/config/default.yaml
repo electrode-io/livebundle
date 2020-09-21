@@ -1,0 +1,3 @@
+# Path to local directory to use for storage
+# Leave empty to use a temporary directory
+storageDir:

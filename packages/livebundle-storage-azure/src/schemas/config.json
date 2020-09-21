@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://electrode.io/schemas/storage-azure.json",
+  "type": "object",
+  "properties": {
+    "url": {
+      "type": "string"
+    },
+    "container": {
+      "type": "string"
+    },
+    "sasToken": {
+      "type": "string"
+    }
+  }
+}

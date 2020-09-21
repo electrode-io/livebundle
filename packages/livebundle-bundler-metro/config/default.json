@@ -1,0 +1,14 @@
+{
+  "bundles": [
+    {
+      "dev": true,
+      "entry": "index.js",
+      "platform": "android"
+    },
+    {
+      "dev": true,
+      "entry": "index.js",
+      "platform": "ios"
+    }
+  ]
+}

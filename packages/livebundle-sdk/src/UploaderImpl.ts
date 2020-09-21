@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import qrcode from "qrcode";
 import tmp from "tmp";
 import { v4 as uuidv4 } from "uuid";
 import yazl from "yazl";
@@ -8,9 +7,9 @@ import {
   Bundle,
   LocalBundle,
   Package,
-  ReactNativeAsset,
   Storage,
   Uploader,
+  ReactNativeAsset,
 } from "./types";
 
 export class UploaderImpl implements Uploader {
@@ -29,10 +28,6 @@ export class UploaderImpl implements Uploader {
       id: uuidv4(),
       bundles: [],
       timestamp: Date.now(),
-      links: {
-        metadata: "",
-        qrcode: "",
-      },
     };
 
     const tmpZippedBundlesDir = tmp.dirSync({ unsafeCleanup: true }).name;
@@ -52,15 +47,17 @@ export class UploaderImpl implements Uploader {
       const zippedBundleFile = new yazl.ZipFile();
       zippedBundleFile.addFile(bundlePath, bundleMetadata.id);
       zippedBundleFile.end();
-      zippedBundleFile.outputStream
-        .pipe(fs.createWriteStream(zippedBundlePath))
-        .on("close", () => {
-          this.storage.storeFile(
-            zippedBundlePath,
-            `packages/${pkg.id}/${bundleMetadata.id}`,
-          );
-        });
-
+      await new Promise((resolve) => {
+        zippedBundleFile.outputStream
+          .pipe(fs.createWriteStream(zippedBundlePath))
+          .on("close", () => {
+            this.storage.storeFile(
+              zippedBundlePath,
+              `packages/${pkg.id}/${bundleMetadata.id}`,
+            );
+            resolve();
+          });
+      });
       pkg.bundles.push(bundleMetadata);
     }
 
@@ -71,16 +68,6 @@ export class UploaderImpl implements Uploader {
       stringifiedMetadata.length,
       metadataPath,
     );
-    pkg.links.metadata = `${this.storage.baseUrl}/${metadataPath}`;
-
-    const tmpDir = tmp.dirSync({ unsafeCleanup: true }).name;
-    const qrCodeFile = path.join(tmpDir, "qrcode.png");
-    await qrcode.toFile(qrCodeFile, pkg.id, { width: 200 });
-    const qrcodePath = `packages/${pkg.id}/qrcode.png`;
-    await this.storage.storeFile(qrCodeFile, qrcodePath, {
-      contentType: "image/png",
-    });
-    pkg.links.qrcode = `${this.storage.baseUrl}/${qrcodePath}`;
 
     return pkg;
   }

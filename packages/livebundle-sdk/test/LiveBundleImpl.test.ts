@@ -1,0 +1,154 @@
+import "mocha";
+import {
+  NamedStorage,
+  NamedNotifier,
+  NamedBundler,
+  NamedGenerator,
+  Uploader,
+  LiveBundleContentType,
+  Package,
+  LocalBundle,
+  ReactNativeAsset,
+  ModuleLoaderImpl,
+  LiveBundleImpl,
+} from "../src";
+import { v4 as uuidv4 } from "uuid";
+import sinon from "sinon";
+
+describe("LiveBundleImpl", () => {
+  const sandbox = sinon.createSandbox();
+
+  afterEach(() => {
+    sandbox.reset();
+  });
+
+  after(() => {
+    sandbox.restore();
+  });
+
+  describe("upload", () => {
+    it("should go through", async () => {
+      const moduleLoaderStub = sandbox.createStubInstance(ModuleLoaderImpl);
+      moduleLoaderStub.loadModules.resolves({
+        bundler: new FakeBundler(),
+        storage: new FakeStorage(),
+        uploader: new FakeUploader(),
+        generators: [new FakeGenerator()],
+        notifiers: [new FakeNotifier()],
+      });
+      const sut = new LiveBundleImpl(moduleLoaderStub);
+      await sut.upload({
+        bundler: {
+          fake: null,
+        },
+        generators: {
+          fake: null,
+        },
+        notifiers: {
+          fake: null,
+        },
+        storage: {
+          fake: null,
+        },
+      });
+    });
+  });
+
+  describe("live", () => {
+    it("should go through", async () => {
+      const moduleLoaderStub = sandbox.createStubInstance(ModuleLoaderImpl);
+      moduleLoaderStub.loadModules.resolves({
+        bundler: new FakeBundler(),
+        storage: new FakeStorage(),
+        uploader: new FakeUploader(),
+        generators: [new FakeGenerator()],
+        notifiers: [new FakeNotifier()],
+      });
+      const sut = new LiveBundleImpl(moduleLoaderStub);
+      await sut.live({
+        bundler: {
+          fake: null,
+        },
+        generators: {
+          fake: null,
+        },
+        notifiers: {
+          fake: null,
+        },
+        storage: {
+          fake: null,
+        },
+      });
+    });
+  });
+});
+
+class FakeStorage implements NamedStorage {
+  name: string;
+  store(
+    content: string,
+    contentLength: number,
+    targetPath: string,
+  ): Promise<void> {
+    return Promise.resolve();
+  }
+  storeFile(
+    filePath: string,
+    targetPath: string,
+    options?: { contentType?: string | undefined },
+  ): Promise<void> {
+    return Promise.resolve();
+  }
+  baseUrl: string;
+}
+
+class FakeNotifier implements NamedNotifier {
+  name: string;
+  notify({
+    generators,
+    pkg,
+    type,
+  }: {
+    generators: Record<string, Record<string, unknown>>;
+    pkg?: Package | undefined;
+    type: LiveBundleContentType;
+  }): Promise<void> {
+    return Promise.resolve();
+  }
+}
+
+class FakeGenerator implements NamedGenerator {
+  name: string;
+  generate({
+    id,
+    type,
+  }: {
+    id: string;
+    type: LiveBundleContentType;
+  }): Promise<any> {
+    return Promise.resolve({});
+  }
+}
+
+class FakeBundler implements NamedBundler {
+  name: string;
+  bundle(): Promise<LocalBundle[]> {
+    return Promise.resolve([]);
+  }
+}
+
+class FakeUploader implements Uploader {
+  uploadPackage({ bundles }: { bundles: LocalBundle[] }): Promise<Package> {
+    return Promise.resolve({
+      id: uuidv4(),
+      bundles: [],
+      timestamp: Date.now(),
+    });
+  }
+  uploadAssets(assets: ReactNativeAsset[]): Promise<void> {
+    return Promise.resolve();
+  }
+  getAssetsTemplateLiteral(): string {
+    return "";
+  }
+}

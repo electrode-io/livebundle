@@ -36,8 +36,7 @@ module.exports = {
 
 ## Configuring LiveBundle CLI
 
-- Create a `livebundle.yaml` file in your top level React Native application directory.
-- Add the desired LiveBundle configuration in this file. For reference, you can have a look to the [minimalistic `livebundle.yaml` configuration](https://github.com/electrode-io/react-native-livebundle/blob/master/example/livebundle.yaml) in the LiveBundle demo application. You can also refer to the [full sample configuration](./packages/livebundle/config/sample.yaml) part of this repository.
+- To generate an initial good default config, you can run `livebundle init` command from your React Native application directory.
 
 *BLE Remark: Of course we will beef up the configuration documentation. It should be part of the website documentation anyway, not this README. Also we should have on near term a LiveBudle command to generate a basic starter livebundle.yaml configuration file*
 
@@ -53,7 +52,7 @@ Using yarn
 
 `$ yarn livebundle upload`
 
-Note that an Azure SAS Token is needed for the upload. It should either be set in the `livebundle.yaml` configuration, or set as `LB_UPLOAD_AZURE_SASTOKEN` env variable.
+Note that an Azure SAS Token is needed for the upload. It should either be set in the `livebundle.yaml` configuration, or set as `LB_STORAGE_AZURE_SASTOKEN` env variable.
 
 It is also possible to have different LiveBundle configuration file *(for example, could have a `livebundle.ci.yaml` containing LiveBundle configuration when running on CI only)*. By default, the `livebundle` command will load the `livebundle.yaml` configuration. To inform `livebundle` to use a different configuration file, just use the `--config` option which takes the path of the configuration file to us.
 
@@ -63,10 +62,18 @@ It is also possible to have different LiveBundle configuration file *(for exampl
 .
 ├── lerna.json            // Lerna configuration
 ├── packages              // Node.js packages
-│   ├── livebundle        // Command line CLI
-│   ├── livebundle-metro-asset-plugin  // Metro asset plugin
-│   ├── livebundle-sdk    // SDK (used by CLI and GITHUB)
-│   └── livebundle-utils  // Misc shared utils
+│   ├── livebundle                      // Command line CLI
+│   ├── livebundle-bunder-metro         // Metro Bundler
+│   ├── livebundle-generator-deeplink   // Deep link generator
+│   ├── livebundle-generator-qrcode     // QR Code generator
+│   ├── livebundle-metro-asset-plugin   // Metro asset plugin
+│   ├── livebundle-notifier-github      // GitHub notifier
+│   ├── livebundle-notifier-terminal    // Terminal notifier
+│   ├── livebundle-notifier-viewer      // Viewer notifier
+│   ├── livebundle-sdk                  // SDK
+│   ├── livebundle-storage-azure        // Azure Storage provider
+│   ├── livebundle-storage-fs           // File System Storage provider
+│   └── livebundle-utils                // Misc utilities
 ├── README.md             // This README ;)
 ├── tsconfig.build.json   // TypeScript config used for builds
 ├── tsconfig.json         // TypeScript config used by monorepo

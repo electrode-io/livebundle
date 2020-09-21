@@ -1,57 +1,87 @@
-# QRCode generation configuration
-qrcode:
-  term:
-    # Indicates whether to generate a QR Code in the terminal
-    generate: true
-    # Indicates whether to generate a small QR Code
-    small: true
-  image:
-    # Indicates whether to generate a QR Code image
-    generate: true
-    # Margin around QR code image
-    margin: 1
-    # Width of QR code image (also height given QR Code is a square)
-    width: 250
-    # Indicates whether to open the image after generation
-    open: true
+# LiveBundle configuration
+# Note that some components do not expose any configuration
+# but need to declared in the configuration to be activated
+# For example, the deep link generator does not have any
+# configuration, but declaring it in the configuration
+# causes its activation
 
-# SDK task configuration
-task:
-  bundle:
-    - dev: true
-      entry: index.js
-      platform: ios
-    - dev: false
-      entry: index.js
-      platform: ios
-    - dev: true
-      entry: index.js
-      platform: android
-    - dev: false
-      entry: index.js
-      platform: android
-  # Store configuration
-  #upload:
-  # Azure blob storage store configuration
-  # There is no default value here
-  # Replace them with your own
+#
+# JavaScript bundler configuration
+# Only one bundler can be specified
+bundler:
+  # Metro bundler configuration
   #
-  # We recommend using env variables here rather
-  # than YAML configuration, to limit exposure
+  metro:
+    # Bundles to generate and include in the LiveBundle package
+    bundles:
+      - dev: true
+        entry: index.js
+        platform: android
+      - dev: true
+        entry: index.js
+        platform: ios
+
+#
+# Storage provider configuration
+# Only one storage provider can be specified
+storage:
+  # File system storage provider configuration
+  # Comment or remove this whole section when using
+  # a different storage provider
+  #
+  fs:
+    # Local directory for storage
+    # Leave empty to use a temporary directory
+    storageDir:
+
+  # Azure blob storage provider configuration
+  # We recommend using env variables here instead of
+  # YAML configuration, to limit exposure
   # especially for the SAS token.
   # The corresponding env variables are :
-  # account   => LB_UPLOAD_AZURE_ACCOUNT
-  # container => LB_UPLOAD_AZURE_CONTAINER
-  # sasToken  => LB_UPLOAD_AZURE_SASTOKEN
+  # accountUrl  => LB_STORAGE_AZURE_ACCOUNTURL
+  # container   => LB_STORAGE_AZURE_CONTAINER
+  # sasToken    => LB_STORAGE_AZURE_SASTOKEN
+  #
   #azure:
-  #  account: <azure-store-account-name>
-  #  container: <azure-store-container-name>
+  #  accountUrl: <azure-store-account-url>
+  #  container: <azure-container-name>
   #  sasToken: <azure-shared-access-signature-token>
-  # Notifier configuration
+
+#
+# Generators configuration
+# One or more generator(s) can be specified
+generators:
+  # QR Code generator configuration
+  #
+  qrcode:
+    # Margin around QR code image
+    margin: 1
+    # Width of QR code image (QR Code is a square)
+    width: 250
+
+  # Deep Link generator configuration
+  #
+  deeplink:
+
+#
+# Notifiers configuration
+notifiers:
+  # Terminal notifier configuration
+  #
+  terminal:
+
+  # Viewer notifier configuration
+  #
+  viewer:
+
+  #
+  # GitHub notifier configuration
   # We recommend using env variable here rather than
-  # YAML configuration, for the gitHubToken
-  # token   => LB_NOTIFY_GITHUB_TOKEN
-  #notify:
-  #  github:
-  #    baseUrl: https://api.github.com
-  #    token: <github-token>
+  # YAML configuration, for the token
+  # The corresponding env variables is :
+  # token => LB_NOTIFIER_GITHUB_TOKEN
+  #
+  #github:
+  #  baseUrl: https://api.github.com
+  #  token: <github-token>

@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://electrode.io/schemas/generator-qrcode.json",
+  "type": "object",
+  "properties": {
+    "image": {
+      "type": "object",
+      "properties": {
+        "margin": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": { "$data": "1/width" }
+        },
+        "width": {
+          "type": "number",
+          "minimum": 100
+        },
+        "path": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

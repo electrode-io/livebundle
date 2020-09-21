@@ -6,10 +6,5 @@
     "typeRoots": ["./typings"],
     "rootDir": "./src"
   },
-  "include": ["./src/**/*", "./src/**/*.json"],
-  "references": [
-    {
-      "path": "../livebundle-utils/tsconfig.build.json"
-    }
-  ]
+  "include": ["./src/**/*", "./src/**/*.json"]
 }

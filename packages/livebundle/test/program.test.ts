@@ -4,7 +4,17 @@ import "mocha";
 import path from "path";
 import sinon from "sinon";
 import program from "../src/program";
-import * as up from "../src/upload";
+import { LiveBundleConfig, LiveBundle } from "livebundle-sdk";
+import tmp from "tmp";
+
+class FakeLiveBundle implements LiveBundle {
+  public async upload(config: LiveBundleConfig): Promise<void> {
+    return Promise.resolve();
+  }
+  public async live(config: LiveBundleConfig): Promise<void> {
+    return Promise.resolve();
+  }
+}
 
 describe("program", () => {
   const sandbox = sinon.createSandbox();
@@ -17,38 +27,148 @@ describe("program", () => {
     const packageVersion = fs.readJSONSync(
       path.resolve(__dirname, "../package.json"),
     ).version;
-    const sut = program().exitOverride();
+    const sut = program({ livebundle: new FakeLiveBundle() }).exitOverride();
     expect(() => sut.parse(["node", "livebundle", "--version"])).to.throw(
       packageVersion,
     );
   });
 
-  it("should go through", async () => {
-    const stub = sandbox.stub(up, "upload");
-    stub.resolves({
-      id: "c1150afc-a9c3-11ea-ae16-6781412c6775",
-      bundles: [
-        {
-          dev: true,
-          platform: "android",
-          sourceMap: "d7234084-a9c3-11ea-96eb-8b7599b91a40",
-          id: "ddfc3672-a9c3-11ea-9994-0b1552c573a2",
-        },
-      ],
-      links: {
-        qrcode: "https://qrcode.png",
-        metadata: "https://metadata.json",
-      },
-      timestamp: 1591646945250,
+  describe("upload command", () => {
+    it("should go through", async () => {
+      sandbox.stub(console, "log");
+      const sut = program({ livebundle: new FakeLiveBundle() }).exitOverride();
+      await sut.parseAsync([
+        "node",
+        "livebundle",
+        "upload",
+        "--config",
+        "config/default.yaml",
+      ]);
     });
-    sandbox.stub(console, "log");
-    const sut = program({ op: sandbox.stub() }).exitOverride();
-    await sut.parseAsync([
-      "node",
-      "livebundle",
-      "upload",
-      "--config",
-      "config/sample.yaml",
-    ]);
+
+    it("should not throw if the config is invalid", async () => {
+      sandbox.stub(console, "error");
+      const sut = program({ livebundle: new FakeLiveBundle() }).exitOverride();
+      await sut.parseAsync([
+        "node",
+        "livebundle",
+        "upload",
+        "--config",
+        path.join(__dirname, "fixtures/invalid.config.yaml"),
+      ]);
+    });
+
+    it("should log an error to the console if the config is invalid", async () => {
+      const consoleErrorStub = sandbox.stub(console, "error");
+      const sut = program({ livebundle: new FakeLiveBundle() }).exitOverride();
+      await sut.parseAsync([
+        "node",
+        "livebundle",
+        "upload",
+        "--config",
+        path.join(__dirname, "fixtures/invalid.config.yaml"),
+      ]);
+      sinon.assert.calledOnce(consoleErrorStub);
+    });
+
+    it("should not throw if the livebundle upload fails", async () => {
+      const lbStub = sandbox.createStubInstance(FakeLiveBundle);
+      lbStub.upload.rejects("boom");
+      const sut = program({ livebundle: lbStub }).exitOverride();
+      await sut.parseAsync([
+        "node",
+        "livebundle",
+        "upload",
+        "--config",
+        "config/default.yaml",
+      ]);
+    });
+  });
+
+  describe("live command", () => {
+    it("should go through", async () => {
+      sandbox.stub(console, "log");
+      const sut = program({ livebundle: new FakeLiveBundle() }).exitOverride();
+      await sut.parseAsync([
+        "node",
+        "livebundle",
+        "live",
+        "--config",
+        "config/default.yaml",
+      ]);
+    });
+
+    it("should not throw if the config is invalid", async () => {
+      sandbox.stub(console, "error");
+      const sut = program({ livebundle: new FakeLiveBundle() }).exitOverride();
+      await sut.parseAsync([
+        "node",
+        "livebundle",
+        "live",
+        "--config",
+        path.join(__dirname, "fixtures/invalid.config.yaml"),
+      ]);
+    });
+
+    it("should log an error to the console if the config is invalid", async () => {
+      const consoleErrorStub = sandbox.stub(console, "error");
+      const sut = program({ livebundle: new FakeLiveBundle() }).exitOverride();
+      await sut.parseAsync([
+        "node",
+        "livebundle",
+        "live",
+        "--config",
+        path.join(__dirname, "fixtures/invalid.config.yaml"),
+      ]);
+      sinon.assert.calledOnce(consoleErrorStub);
+    });
+
+    it("should not throw if the livebundle upload fails", async () => {
+      const lbStub = sandbox.createStubInstance(FakeLiveBundle);
+      lbStub.live.rejects("boom");
+      const sut = program({ livebundle: lbStub }).exitOverride();
+      await sut.parseAsync([
+        "node",
+        "livebundle",
+        "live",
+        "--config",
+        "config/default.yaml",
+      ]);
+    });
+  });
+
+  describe("init command", () => {
+    it("should create a livebundle.yaml config", async () => {
+      sandbox.stub(console, "log");
+      const tmpDir = tmp.dirSync({ unsafeCleanup: true }).name;
+      const cwd = process.cwd();
+      try {
+        process.chdir(tmpDir);
+        const sut = program({
+          livebundle: new FakeLiveBundle(),
+        }).exitOverride();
+        await sut.parseAsync(["node", "livebundle", "init"]);
+        expect(fs.existsSync(path.join(tmpDir, "livebundle.yaml"))).true;
+      } finally {
+        process.chdir(cwd);
+      }
+    });
+
+    it("should log to console.error if livebundle.yaml already exist", async () => {
+      const consoleErrorStub = sandbox.stub(console, "error");
+      const tmpDir = tmp.dirSync({ unsafeCleanup: true }).name;
+      fs.writeFileSync(path.join(tmpDir, "livebundle.yaml"), "");
+      const cwd = process.cwd();
+      try {
+        process.chdir(tmpDir);
+        const sut = program({
+          livebundle: new FakeLiveBundle(),
+        }).exitOverride();
+        await sut.parseAsync(["node", "livebundle", "init"]);
+        sinon.assert.calledOnce(consoleErrorStub);
+      } finally {
+        process.chdir(cwd);
+      }
+    });
   });
 });
