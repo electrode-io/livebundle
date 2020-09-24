@@ -45,14 +45,21 @@ describe("GitHubNotifierImpl", () => {
     number: 1234,
   };
 
+  let ghEventPathBackup: string | undefined;
+
   beforeEach(() => {
     stubs.octokit.issues = {
       createComment: stubs.createComment,
     };
+    ghEventPathBackup = process.env.GITHUB_EVENT_PATH;
+    delete process.env.GITHUB_EVENT_PATH;
   });
 
   afterEach(() => {
     sandbox.reset();
+    if (ghEventPathBackup) {
+      process.env.GITHUB_EVENT_PATH = ghEventPathBackup;
+    }
   });
 
   after(() => {
