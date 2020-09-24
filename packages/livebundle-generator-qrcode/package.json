@@ -1,6 +1,6 @@
 {
   "name": "livebundle-generator-qrcode",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "main": "dist/index.js",
   "license": "Apache-2.0",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "debug": "^4.1.1",
-    "livebundle-sdk": "^0.2.11",
+    "livebundle-sdk": "^0.3.0",
     "qrcode": "^1.4.4"
   }
 }
