@@ -94,7 +94,7 @@ export class ModuleLoaderImpl implements ModuleLoader {
       moduleConfig = reconciliateConfig({
         curConfig: moduleConfig,
         envVarToConfigKey: Module.envVarToConfigKey,
-      });
+      }).config!;
     }
     if (Module.defaultConfig) {
       moduleConfig = await loadConfig<Record<string, unknown>>({

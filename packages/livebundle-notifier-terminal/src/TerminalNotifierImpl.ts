@@ -34,12 +34,12 @@ export class TerminalNotifierImpl implements Notifier {
     const qrCodeTerminal: string = generators.qrcode?.terminalImage as string;
 
     if (qrCodeTerminal) {
-      this.logger.log(qrCodeTerminal);
+      this.logger.log(`\n${chalk.bold.blue("QR Code")}\n${qrCodeTerminal}`);
     }
 
     if (deepLinkUrl) {
       this.logger.log(
-        `${chalk.bold.blue("Deep Link URL:")} ${chalk.bold(deepLinkUrl)}`,
+        `${chalk.bold.blue("Deep Link URL")}\n${chalk.bold(deepLinkUrl)}`,
       );
     }
   }

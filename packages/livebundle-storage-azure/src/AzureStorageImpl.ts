@@ -70,7 +70,7 @@ export class AzureStorageImpl implements Storage {
     },
   ): Promise<void> {
     log(
-      `store(filePath: ${filePath}, targetPath: ${targetPath}, options: ${JSON.stringify(
+      `storeFile(filePath: ${filePath}, targetPath: ${targetPath}, options: ${JSON.stringify(
         options,
         null,
         2,
