@@ -1,6 +1,6 @@
 {
   "name": "livebundle",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "main": "dist/index.js",
   "bin": {
     "livebundle": "dist/cli.js"
@@ -21,7 +21,7 @@
     "fs-extra": "^9.0.1",
     "livebundle-bundler-metro": "^0.3.0",
     "livebundle-generator-deeplink": "^0.3.0",
-    "livebundle-generator-qrcode": "^0.3.0",
+    "livebundle-generator-qrcode": "^0.3.1",
     "livebundle-metro-asset-plugin": "^0.1.7",
     "livebundle-notifier-github": "^0.3.0",
     "livebundle-notifier-terminal": "^0.3.0",
