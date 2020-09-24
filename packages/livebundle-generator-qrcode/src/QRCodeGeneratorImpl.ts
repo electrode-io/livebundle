@@ -41,7 +41,7 @@ export class QRCodeGeneratorImpl implements Generator {
     //
     // Generate as local png image file
     const localImagePath = path.resolve(this.config.image.path);
-    qrcode.toFile(localImagePath, pkgId, {
+    await qrcode.toFile(localImagePath, pkgId, {
       margin: this.config.image.margin,
       width: this.config.image.width,
     });
