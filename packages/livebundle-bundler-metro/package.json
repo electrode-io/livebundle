@@ -1,6 +1,6 @@
 {
   "name": "livebundle-bundler-metro",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "main": "dist/index.js",
   "license": "Apache-2.0",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "debug": "^4.1.1",
-    "livebundle-sdk": "^0.3.0",
+    "livebundle-sdk": "^0.3.1",
     "tmp": "^0.2.1"
   }
 }
