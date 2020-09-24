@@ -36,19 +36,21 @@ export class FsStorageImpl implements Storage {
     content: string,
     contentLength: number,
     targetPath: string,
-  ): Promise<void> {
+  ): Promise<string> {
     log(`store(contentLength: ${contentLength}, targetPath: ${targetPath})`);
 
     const tp = path.join(this.storageDir, targetPath);
     await fs.ensureDir(path.dirname(tp));
     await fs.writeFile(tp, content, { encoding: "utf8" });
+    return tp;
   }
 
-  async storeFile(filePath: string, targetPath: string): Promise<void> {
+  async storeFile(filePath: string, targetPath: string): Promise<string> {
     log(`store(filePath: ${filePath}, targetPath: ${targetPath})`);
 
     const tp = path.join(this.storageDir, targetPath);
     await fs.ensureDir(path.dirname(tp));
     await fs.copyFile(filePath, tp);
+    return tp;
   }
 }

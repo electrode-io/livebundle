@@ -4,6 +4,7 @@ export interface AzureBlobStorageConfig {
   accountUrl: string;
   container: string;
   sasToken?: string;
+  sasTokenReads?: string;
   options?: StoragePipelineOptions;
   [key: string]: any;
 }

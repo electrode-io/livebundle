@@ -17,10 +17,15 @@ export class AzureStorageImpl implements Storage {
     return `${this.accountUrl}/${this.azureConfig.container}`;
   }
 
+  public getFilePathUrl(p: string): string {
+    return `${this.baseUrl}/${p}${this.config.sasTokenReads ?? ""}`;
+  }
+
   public static readonly envVarToConfigKey: Record<string, string> = {
     LB_STORAGE_AZURE_ACCOUNTURL: "accountUrl",
     LB_STORAGE_AZURE_CONTAINER: "container",
     LB_STORAGE_AZURE_SASTOKEN: "sasToken",
+    LB_STORAGE_AZURE_SASTOKENDOWNLOAD: "sasTokenReads",
   };
 
   public constructor(
@@ -47,7 +52,7 @@ export class AzureStorageImpl implements Storage {
     content: string,
     contentLength: number,
     targetPath: string,
-  ): Promise<void> {
+  ): Promise<string> {
     log(`store(contentLength: ${contentLength}, targetPath: ${targetPath})`);
 
     const containerClient = this.blobServiceClient.getContainerClient(
@@ -56,6 +61,7 @@ export class AzureStorageImpl implements Storage {
     const blockBlobClient = containerClient.getBlockBlobClient(targetPath);
     try {
       await blockBlobClient.upload(content, contentLength);
+      return this.getFilePathUrl(targetPath);
     } catch (e) {
       log(`Failed to upload data to ${targetPath}. Error: ${e}`);
       throw e;
@@ -68,7 +74,7 @@ export class AzureStorageImpl implements Storage {
     options?: {
       contentType?: string;
     },
-  ): Promise<void> {
+  ): Promise<string> {
     log(
       `storeFile(filePath: ${filePath}, targetPath: ${targetPath}, options: ${JSON.stringify(
         options,
@@ -85,6 +91,7 @@ export class AzureStorageImpl implements Storage {
       await blockBlobClient.uploadFile(filePath, {
         blobHTTPHeaders: { blobContentType: options?.contentType },
       });
+      return this.getFilePathUrl(targetPath);
     } catch (e) {
       log(`Failed to upload file to ${targetPath}. Error: ${e}`);
       throw e;

@@ -11,14 +11,14 @@ class FakeStorage implements Storage {
     content: string,
     contentLength: number,
     targetPath: string,
-  ): Promise<void> {
+  ): Promise<string> {
     throw new Error("Method not implemented.");
   }
   storeFile(
     filePath: string,
     targetPath: string,
     options?: { contentType?: string | undefined },
-  ): Promise<void> {
+  ): Promise<string> {
     throw new Error("Method not implemented.");
   }
   baseUrl: string;

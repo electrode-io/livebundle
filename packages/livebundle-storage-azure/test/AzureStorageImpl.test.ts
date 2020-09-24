@@ -18,9 +18,12 @@ describe("AzureStorageImpl", () => {
     getContainerClient: sinon.stub(),
   };
 
+  const accountUrl = "https://foo.blob.core.windows.net";
+  const container = "bar";
+
   const storageConfig: AzureBlobStorageConfig = {
-    accountUrl: "https://foo.blob.core.windows.net",
-    container: "bar",
+    accountUrl,
+    container,
   };
 
   beforeEach(() => {
@@ -50,9 +53,26 @@ describe("AzureStorageImpl", () => {
   });
 
   describe("get baseUrl", () => {
-    it("should return the base url including container", async () => {
+    it("should return the base url including container", () => {
       const sut = new AzureStorageImpl(storageConfig);
-      expect(sut.baseUrl).equal("https://foo.blob.core.windows.net/bar");
+      expect(sut.baseUrl).equal(`${accountUrl}/${container}`);
+    });
+  });
+
+  describe("getFilePathUrl", () => {
+    it("should return the correct url [without reads sas token]", () => {
+      const sut = new AzureStorageImpl(storageConfig);
+      const p = "foo/file";
+      expect(sut.getFilePathUrl(p)).equal(`${accountUrl}/${container}/${p}`);
+    });
+
+    it("should return the correct url [with reads sas token]", () => {
+      const sasTokenReads = "?dummyToken";
+      const sut = new AzureStorageImpl({ ...storageConfig, sasTokenReads });
+      const p = "foo/file";
+      expect(sut.getFilePathUrl(p)).equal(
+        `${accountUrl}/${container}/${p}${sasTokenReads}`,
+      );
     });
   });
 

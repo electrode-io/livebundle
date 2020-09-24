@@ -53,14 +53,14 @@ export interface Storage {
     content: string,
     contentLength: number,
     targetPath: string,
-  ): Promise<void>;
+  ): Promise<string>;
   storeFile(
     filePath: string,
     targetPath: string,
     options?: {
       contentType?: string;
     },
-  ): Promise<void>;
+  ): Promise<string>;
   readonly baseUrl: string;
 }
 export interface Notifier {

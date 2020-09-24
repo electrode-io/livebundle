@@ -59,10 +59,13 @@ export class QRCodeGeneratorImpl implements Generator {
     const qrcodePath = `${
       type === LiveBundleContentType.PACKAGE ? "packages" : "sessions"
     }/${id}/qrcode.png`;
-    await this.storage.storeFile(localImagePath, qrcodePath, {
-      contentType: "image/png",
-    });
-    const remoteImagePath = `${this.storage.baseUrl}/${qrcodePath}`;
+    const remoteImagePath = await this.storage.storeFile(
+      localImagePath,
+      qrcodePath,
+      {
+        contentType: "image/png",
+      },
+    );
 
     return {
       localImagePath,

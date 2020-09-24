@@ -3,13 +3,16 @@
   "$id": "http://electrode.io/schemas/storage-azure.json",
   "type": "object",
   "properties": {
-    "url": {
+    "accountUrl": {
       "type": "string"
     },
     "container": {
       "type": "string"
     },
     "sasToken": {
+      "type": "string"
+    },
+    "sasTokenReads": {
       "type": "string"
     }
   }
