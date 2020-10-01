@@ -10,27 +10,25 @@ import { configSchema } from "./schemas";
 import tmp from "tmp";
 import path from "path";
 import cp from "child_process";
-import util from "util";
-const execAsync = util.promisify(cp.exec);
 
 const log = debug("livebundle-bundler-metro:MetroBundlerImpl");
 
 export class MetroBundlerImpl implements Bundler {
-  private readonly exec;
+  private readonly spawn;
   private readonly parseAssetsFunc = parseAssetsFile;
 
   public constructor(
     private readonly config: MetroBundlerConfig,
     private readonly uploader: Uploader,
     {
-      exec,
+      spawn,
       parseAssetsFunc,
     }: {
-      exec?: typeof execAsync;
+      spawn?: typeof cp.spawn;
       parseAssetsFunc?: typeof parseAssetsFile;
     } = {},
   ) {
-    this.exec = exec ?? execAsync;
+    this.spawn = spawn ?? cp.spawn;
     this.parseAssetsFunc = parseAssetsFunc ?? parseAssetsFile;
   }
 
@@ -60,14 +58,31 @@ export class MetroBundlerImpl implements Bundler {
       const sourceMapPath = path.join(tmpDir, "index.map");
       const { dev, entry, platform } = bundle;
 
-      const cmd = `npx react-native bundle \
+      const cmdArgs = `react-native bundle \
 --bundle-output ${bundlePath} \
 --dev ${dev} \
 --entry-file ${entry} \
 --platform ${platform} \
---sourcemap-output ${sourceMapPath}`;
-      log(`Running ${cmd}`);
-      await this.exec(cmd, { cwd: process.cwd() });
+--sourcemap-output ${sourceMapPath}`.split(" ");
+      log(`Running npx ${cmdArgs}`);
+      await new Promise((resolve, reject) => {
+        const npx = this.spawn("npx", cmdArgs, { cwd: process.cwd() });
+        npx.stdout.on("data", (data) => {
+          log(data.toString());
+        });
+
+        npx.stderr.on("data", (data) => {
+          log(`stderr: ${data.toString()}`);
+        });
+
+        npx.on("close", (code) => {
+          if (code !== 0) {
+            reject(`npx ${cmdArgs} failed with exit code ${code}`);
+          } else {
+            resolve();
+          }
+        });
+      });
       const assets = await this.parseAssetsFunc(
         path.resolve(".livebundle/assets.json"),
       );
