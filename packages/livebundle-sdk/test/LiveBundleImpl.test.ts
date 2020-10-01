@@ -89,15 +89,15 @@ class FakeStorage implements NamedStorage {
     content: string,
     contentLength: number,
     targetPath: string,
-  ): Promise<void> {
-    return Promise.resolve();
+  ): Promise<string> {
+    return Promise.resolve("");
   }
   storeFile(
     filePath: string,
     targetPath: string,
     options?: { contentType?: string | undefined },
-  ): Promise<void> {
-    return Promise.resolve();
+  ): Promise<string> {
+    return Promise.resolve("");
   }
   baseUrl: string;
 }

@@ -16,14 +16,14 @@ class FakeStorageImpl implements Storage {
     contentLength: number,
     targetPath: string,
   ): Promise<string> {
-    return Promise.resolve();
+    return Promise.resolve("");
   }
   storeFile(
     filePath: string,
     targetPath: string,
     options?: { contentType?: string | undefined },
   ): Promise<string> {
-    return Promise.resolve();
+    return Promise.resolve("");
   }
   baseUrl: string;
 }
