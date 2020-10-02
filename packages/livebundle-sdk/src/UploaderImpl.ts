@@ -15,10 +15,6 @@ import {
 export class UploaderImpl implements Uploader {
   constructor(private readonly storage: Storage) {}
 
-  public getAssetsTemplateLiteral(): string {
-    return `\`${this.storage.baseUrl}/assets/\${hash}/\${name}.\${type}\``;
-  }
-
   public async uploadPackage({
     bundles,
   }: {

@@ -71,15 +71,6 @@ describe("UploaderImpl", () => {
     sandbox.restore();
   });
 
-  describe("getAssetsTemplateLiteral", () => {
-    it("should return the correct template litteral string", () => {
-      const sut = new UploaderImpl(stubs.storage);
-      expect(sut.getAssetsTemplateLiteral()).equal(
-        `\`${stubs.storage.baseUrl}/assets/\${hash}/\${name}.\${type}\``,
-      );
-    });
-  });
-
   describe("uploadPackage", () => {
     it("should return the resulting Package", async () => {
       const sut = new UploaderImpl(stubs.storage);
