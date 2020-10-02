@@ -45,7 +45,6 @@ export interface Generator {
 export interface Uploader {
   uploadPackage({ bundles }: { bundles: LocalBundle[] }): Promise<Package>;
   uploadAssets(assets: ReactNativeAsset[]): Promise<void>;
-  getAssetsTemplateLiteral(): string;
 }
 
 export interface Storage {

@@ -22,9 +22,6 @@ class NullUploader implements Uploader {
   uploadAssets(assets: ReactNativeAsset[]): Promise<void> {
     return Promise.resolve();
   }
-  getAssetsTemplateLiteral(): string {
-    return "";
-  }
 }
 
 describe("MetroBundlerImpl", () => {
