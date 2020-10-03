@@ -26,7 +26,7 @@ export class LiveBundleImpl implements LiveBundle {
 
     const bundles: LocalBundle[] = await bundler.bundle();
 
-    const pkg = await uploader.uploadPackage({ bundles });
+    const pkg = await uploader.upload({ bundles });
 
     const generatorsOutput: Record<string, Record<string, unknown>> = {};
     for (const generator of generators) {

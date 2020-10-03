@@ -1,26 +1,32 @@
 import "mocha";
-import MetroBundlerImpl, { MetroBundlerConfig } from "../src";
+import MetroBundlerImpl, {
+  BundleAssetsResolver,
+  MetroBundlerConfig,
+} from "../src";
 import { v4 as uuidv4 } from "uuid";
 import sinon from "sinon";
 import {
   LocalBundle,
   Package,
-  Uploader,
   ReactNativeAsset,
+  Uploader,
 } from "livebundle-sdk";
 import { expect } from "chai";
 import { rejects } from "assert";
 
 class NullUploader implements Uploader {
-  uploadPackage({ bundles }: { bundles: LocalBundle[] }): Promise<Package> {
+  upload({ bundles }: { bundles: LocalBundle[] }): Promise<Package> {
     return Promise.resolve({
       id: uuidv4(),
       bundles: [],
       timestamp: Date.now(),
     });
   }
-  uploadAssets(assets: ReactNativeAsset[]): Promise<void> {
-    return Promise.resolve();
+}
+
+class NullBundleAssetsResolver implements BundleAssetsResolver {
+  resolveAssets(bundlePath: string): Promise<ReactNativeAsset[]> {
+    return Promise.resolve([]);
   }
 }
 
@@ -37,10 +43,7 @@ describe("MetroBundlerImpl", () => {
 
   describe("create", () => {
     it("should return an instance of MetroBundlerImpl", async () => {
-      const res = await MetroBundlerImpl.create(
-        bundlerConfig,
-        new NullUploader(),
-      );
+      const res = await MetroBundlerImpl.create(bundlerConfig);
       expect(res).instanceOf(MetroBundlerImpl);
     });
   });
@@ -73,10 +76,9 @@ describe("MetroBundlerImpl", () => {
 
     it("should go through", async () => {
       const spawn = sandbox.stub().returns(spawnRes);
-
-      const sut = new MetroBundlerImpl(bundlerConfig, new NullUploader(), {
+      const sut = new MetroBundlerImpl(bundlerConfig, {
+        bundleAssetsResolver: new NullBundleAssetsResolver(),
         spawn,
-        parseAssetsFunc: async () => Promise.resolve([]),
       });
       await sut.bundle();
     });
@@ -85,10 +87,9 @@ describe("MetroBundlerImpl", () => {
       const spawn = sandbox
         .stub()
         .returns({ ...spawnRes, on: onCloseEvent(1) });
-
-      const sut = new MetroBundlerImpl(bundlerConfig, new NullUploader(), {
+      const sut = new MetroBundlerImpl(bundlerConfig, {
+        bundleAssetsResolver: new NullBundleAssetsResolver(),
         spawn,
-        parseAssetsFunc: async () => Promise.resolve([]),
       });
       await rejects(sut.bundle());
     });

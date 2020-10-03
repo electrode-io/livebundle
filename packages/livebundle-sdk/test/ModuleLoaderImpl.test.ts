@@ -36,7 +36,6 @@ describe("ModuleLoaderImpl", () => {
             "../../livebundle-bundler-metro/config/default.json",
           ),
         ),
-        sinon.createStubInstance(UploaderImpl),
       );
       expect(res).not.undefined;
     });

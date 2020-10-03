@@ -3,6 +3,7 @@ export interface LocalBundle {
   platform: Platform;
   sourceMapPath: string;
   bundlePath: string;
+  assets: ReactNativeAsset[];
 }
 
 export interface BundleTask {
@@ -43,8 +44,7 @@ export interface Generator {
 }
 
 export interface Uploader {
-  uploadPackage({ bundles }: { bundles: LocalBundle[] }): Promise<Package>;
-  uploadAssets(assets: ReactNativeAsset[]): Promise<void>;
+  upload({ bundles }: { bundles: LocalBundle[] }): Promise<Package>;
 }
 
 export interface Storage {
@@ -142,7 +142,6 @@ export interface ModuleLoader {
   loadLiveBundleBundlerModule(
     name: string,
     config: Record<string, unknown>,
-    uploader: Uploader,
   ): Promise<NamedBundler>;
   loadLiveBundleGeneratorModule(
     name: string,

@@ -3,19 +3,12 @@ import path from "path";
 import tmp from "tmp";
 import { v4 as uuidv4 } from "uuid";
 import yazl from "yazl";
-import {
-  Bundle,
-  LocalBundle,
-  Package,
-  Storage,
-  Uploader,
-  ReactNativeAsset,
-} from "./types";
+import { Bundle, LocalBundle, Package, Storage, Uploader } from "./types";
 
 export class UploaderImpl implements Uploader {
   constructor(private readonly storage: Storage) {}
 
-  public async uploadPackage({
+  public async upload({
     bundles,
   }: {
     bundles: LocalBundle[];
@@ -55,6 +48,15 @@ export class UploaderImpl implements Uploader {
           });
       });
       pkg.bundles.push(bundleMetadata);
+
+      for (const asset of bundle.assets) {
+        for (const file of asset.files) {
+          await this.storage.storeFile(
+            file,
+            `assets/${asset.hash}/${path.basename(file)}`,
+          );
+        }
+      }
     }
 
     const stringifiedMetadata = JSON.stringify(pkg);
@@ -66,16 +68,5 @@ export class UploaderImpl implements Uploader {
     );
 
     return pkg;
-  }
-
-  public async uploadAssets(assets: ReactNativeAsset[]): Promise<void> {
-    for (const asset of assets) {
-      for (const file of asset.files) {
-        await this.storage.storeFile(
-          file,
-          `assets/${asset.hash}/${path.basename(file)}`,
-        );
-      }
-    }
   }
 }

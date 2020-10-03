@@ -17,14 +17,13 @@ export class ModuleLoaderImpl implements ModuleLoader {
   public async loadLiveBundleBundlerModule(
     name: string,
     config: Record<string, unknown>,
-    uploader: Uploader,
   ): Promise<NamedBundler> {
     const { Module, moduleConfig } = await this.loadLiveBundleModule(
       "bundler",
       name,
       config,
     );
-    const module = Module.create(moduleConfig, uploader) as NamedBundler;
+    const module = Module.create(moduleConfig) as NamedBundler;
     module.name = name;
     return module;
   }
@@ -133,7 +132,6 @@ export class ModuleLoaderImpl implements ModuleLoader {
     const bundler: NamedBundler = await this.loadLiveBundleBundlerModule(
       bundlerModuleName,
       config.bundler[bundlerModuleName] as Record<string, unknown>,
-      uploader,
     );
     bundler.name = bundlerModuleName;
 

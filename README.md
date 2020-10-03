@@ -21,24 +21,11 @@ Using yarn
 
 `$ yarn add livebundle --dev`
 
-Once installed, you will need to add the following asset plugin in your `metro.config.js` file
-
-```javascript
-module.exports = {
-  transformer: {
-    assetPlugins: ['livebundle-metro-asset-plugin'],
-    // Other transformer properties
-  }
-}
-```
-
-*BLE Remark: This step shouldn't be needed in the near future as we will instead perform bundle static analysis to detect assets, rather than relying on a plugin, to simplify the setup experience*
-
 ## Configuring LiveBundle CLI
 
-- To generate an initial good default config, you can run `livebundle init` command from your React Native application directory.
-
-*BLE Remark: Of course we will beef up the configuration documentation. It should be part of the website documentation anyway, not this README. Also we should have on near term a LiveBudle command to generate a basic starter livebundle.yaml configuration file*
+To generate an initial default config, you can run `livebundle init` command from your React Native application directory.\
+This default configuration is working out of the box but uses a local file storage provider, which is pretty much useless appart from testing purposes.\
+Configuration should be updated to use the Azure storage provider to use LiveBundle end to end.
 
 ## Using LiveBundle CLI
 
@@ -66,7 +53,6 @@ It is also possible to have different LiveBundle configuration file *(for exampl
 │   ├── livebundle-bunder-metro         // Metro Bundler
 │   ├── livebundle-generator-deeplink   // Deep link generator
 │   ├── livebundle-generator-qrcode     // QR Code generator
-│   ├── livebundle-metro-asset-plugin   // Metro asset plugin
 │   ├── livebundle-notifier-github      // GitHub notifier
 │   ├── livebundle-notifier-terminal    // Terminal notifier
 │   ├── livebundle-notifier-viewer      // Viewer notifier

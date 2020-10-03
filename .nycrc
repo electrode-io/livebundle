@@ -15,7 +15,6 @@
     "**/types/**",
     "**/schemas/**",
     ".eslintrc.js",
-    "packages/livebundle-metro-asset-plugin/**",
     "native-libs/**"
   ],
   "reporter": [
