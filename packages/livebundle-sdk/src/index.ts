@@ -9,4 +9,3 @@ export * from "./loadYamlFile";
 export * from "./schemaValidate";
 export * from "./types";
 export * from "./reconciliateConfig";
-export * from "./parseAssetsFile";

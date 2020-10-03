@@ -1,42 +1,36 @@
 import debug from "debug";
-import { MetroBundlerConfig } from "./types";
-import {
-  Bundler,
-  Uploader,
-  LocalBundle,
-  parseAssetsFile,
-} from "livebundle-sdk";
+import { MetroBundlerConfig, BundleAssetsResolver } from "./types";
+import { Bundler, LocalBundle, ReactNativeAsset } from "livebundle-sdk";
 import { configSchema } from "./schemas";
 import tmp from "tmp";
 import path from "path";
 import cp from "child_process";
+import { BundleAssetsResolverImpl } from "./BundleAssetsResolverImpl";
 
 const log = debug("livebundle-bundler-metro:MetroBundlerImpl");
 
 export class MetroBundlerImpl implements Bundler {
   private readonly spawn;
-  private readonly parseAssetsFunc = parseAssetsFile;
+  private readonly bundleAssetsResolver;
 
   public constructor(
     private readonly config: MetroBundlerConfig,
-    private readonly uploader: Uploader,
     {
-      spawn,
-      parseAssetsFunc,
+      bundleAssetsResolver = new BundleAssetsResolverImpl(),
+      spawn = cp.spawn,
     }: {
+      bundleAssetsResolver?: BundleAssetsResolver;
       spawn?: typeof cp.spawn;
-      parseAssetsFunc?: typeof parseAssetsFile;
     } = {},
   ) {
-    this.spawn = spawn ?? cp.spawn;
-    this.parseAssetsFunc = parseAssetsFunc ?? parseAssetsFile;
+    this.bundleAssetsResolver = bundleAssetsResolver;
+    this.spawn = spawn;
   }
 
   public static async create(
     config: MetroBundlerConfig,
-    uploader: Uploader,
   ): Promise<MetroBundlerImpl> {
-    return new MetroBundlerImpl(config, uploader);
+    return new MetroBundlerImpl(config);
   }
 
   public static readonly defaultConfig: Record<
@@ -50,9 +44,6 @@ export class MetroBundlerImpl implements Bundler {
     log(`bundle()`);
     const bundles: LocalBundle[] = [];
     for (const bundle of this.config.bundles) {
-      /*if (bundlingStarted) {
-        bundlingStarted(bundle);
-      }*/
       const tmpDir = tmp.dirSync({ unsafeCleanup: true }).name;
       const bundlePath = path.join(tmpDir, "index.bundle");
       const sourceMapPath = path.join(tmpDir, "index.map");
@@ -83,19 +74,16 @@ export class MetroBundlerImpl implements Bundler {
           }
         });
       });
-      const assets = await this.parseAssetsFunc(
-        path.resolve(".livebundle/assets.json"),
+      const assets: ReactNativeAsset[] = await this.bundleAssetsResolver.resolveAssets(
+        bundlePath,
       );
-      await this.uploader.uploadAssets(assets);
       bundles.push({
+        assets,
         bundlePath,
         dev,
         platform,
         sourceMapPath,
       });
-      /*if (bundlingCompleted) {
-        bundlingCompleted(bundle);
-      }*/
     }
     return bundles;
   }

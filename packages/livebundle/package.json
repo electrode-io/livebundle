@@ -22,7 +22,6 @@
     "livebundle-bundler-metro": "^0.3.1",
     "livebundle-generator-deeplink": "^0.3.1",
     "livebundle-generator-qrcode": "^0.3.2",
-    "livebundle-metro-asset-plugin": "^0.1.7",
     "livebundle-notifier-github": "^0.3.1",
     "livebundle-notifier-terminal": "^0.3.1",
     "livebundle-notifier-viewer": "^0.3.1",

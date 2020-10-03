@@ -1,0 +1,24 @@
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0]).registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/assets",
+    "width": 183,
+    "height": 196,
+    "scales": [1],
+    "hash": "bb8622afa4965c14c383537fb704bc59",
+    "name": "foo",
+    "type": "png"
+  });
+},409,[185]);
+__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  module.exports = _$$_REQUIRE(_dependencyMap[0]).registerAsset({
+    "__packager_asset": true,
+    "httpServerLocation": "/assets/node_modules/foo",
+    "width": 183,
+    "height": 196,
+    "scales": [1,2,3],
+    "hash": "a69fa1c2dd77bd4d143b4b77b1d98b88",
+    "name": "bar",
+    "type": "png"
+  });
+},409,[185]);

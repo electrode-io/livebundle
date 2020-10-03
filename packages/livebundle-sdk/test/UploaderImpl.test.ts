@@ -44,12 +44,14 @@ describe("UploaderImpl", () => {
 
   const bundles: LocalBundle[] = [
     {
+      assets,
       dev: true,
       platform: "android",
       sourceMapPath: path.join(__dirname, "fixtures/index.android.map"),
       bundlePath: path.join(__dirname, "fixtures/index.android.bundle"),
     },
     {
+      assets,
       dev: true,
       platform: "ios",
       sourceMapPath: path.join(__dirname, "fixtures/index.ios.map"),
@@ -71,31 +73,23 @@ describe("UploaderImpl", () => {
     sandbox.restore();
   });
 
-  describe("uploadPackage", () => {
+  describe("upload", () => {
     it("should return the resulting Package", async () => {
       const sut = new UploaderImpl(stubs.storage);
-      const res: Package = await sut.uploadPackage({ bundles });
+      const res: Package = await sut.upload({ bundles });
       expect(res).not.undefined;
     });
 
     it("should store the resulting bundles", async () => {
       const sut = new UploaderImpl(stubs.storage);
-      const res: Package = await sut.uploadPackage({ bundles });
-      sinon.assert.calledTwice(stubs.storage.storeFile);
+      await sut.upload({ bundles });
+      sinon.assert.called(stubs.storage.storeFile);
     });
 
     it("should store the resulting metadata file", async () => {
       const sut = new UploaderImpl(stubs.storage);
-      const res: Package = await sut.uploadPackage({ bundles });
-      sinon.assert.calledOnce(stubs.storage.store);
-    });
-  });
-
-  describe("uploadAssets", () => {
-    it("should store each asset", async () => {
-      const sut = new UploaderImpl(stubs.storage);
-      await sut.uploadAssets(assets);
-      sinon.assert.calledOnce(stubs.storage.storeFile);
+      await sut.upload({ bundles });
+      sinon.assert.called(stubs.storage.store);
     });
   });
 });

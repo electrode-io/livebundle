@@ -8,7 +8,6 @@ import {
   LiveBundleContentType,
   Package,
   LocalBundle,
-  ReactNativeAsset,
   ModuleLoaderImpl,
   LiveBundleImpl,
 } from "../src";
@@ -138,14 +137,11 @@ class FakeBundler implements NamedBundler {
 }
 
 class FakeUploader implements Uploader {
-  uploadPackage({ bundles }: { bundles: LocalBundle[] }): Promise<Package> {
+  upload({ bundles }: { bundles: LocalBundle[] }): Promise<Package> {
     return Promise.resolve({
       id: uuidv4(),
       bundles: [],
       timestamp: Date.now(),
     });
-  }
-  uploadAssets(assets: ReactNativeAsset[]): Promise<void> {
-    return Promise.resolve();
   }
 }
