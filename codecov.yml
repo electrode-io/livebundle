@@ -1,2 +1,9 @@
 codecov:
   token: a9264ea5-63e6-4770-b7d3-c00d733a68ef
+
+coverage:
+  status:
+    project:
+      default:
+        # Allow for 2% coverage reduction without failing
+        threshold: 2%
