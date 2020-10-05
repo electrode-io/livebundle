@@ -2,11 +2,16 @@ import "mocha";
 import { ModuleLoaderImpl } from "../src";
 import fs from "fs-extra";
 import path from "path";
-import { UploaderImpl, Bundler, Storage } from "livebundle-sdk";
-import sinon from "sinon";
+import { Storage } from "livebundle-sdk";
 import { expect } from "chai";
 
 class FakeStorage implements Storage {
+  hasFile(filePath: string): Promise<boolean> {
+    throw new Error("Method not implemented.");
+  }
+  downloadFile(filePath: string): Promise<Buffer> {
+    throw new Error("Method not implemented.");
+  }
   store(
     content: string,
     contentLength: number,

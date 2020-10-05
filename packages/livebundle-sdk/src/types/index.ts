@@ -60,6 +60,8 @@ export interface Storage {
       contentType?: string;
     },
   ): Promise<string>;
+  hasFile(filePath: string): Promise<boolean>;
+  downloadFile(filePath: string): Promise<Buffer>;
   readonly baseUrl: string;
 }
 export interface Notifier {

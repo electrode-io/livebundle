@@ -16,6 +16,8 @@ describe("AzureStorageImpl", () => {
     uploadFile: sandbox.stub(),
     getBlockBlobClient: sandbox.stub(),
     getContainerClient: sinon.stub(),
+    exists: sandbox.stub().resolves(true),
+    downloadToBuffer: sandbox.stub().resolves(Buffer.from("", "utf8")),
   };
 
   const accountUrl = "https://foo.blob.core.windows.net";
@@ -33,6 +35,8 @@ describe("AzureStorageImpl", () => {
     stubs.getBlockBlobClient.returns({
       upload: stubs.upload,
       uploadFile: stubs.uploadFile,
+      exists: stubs.exists,
+      downloadToBuffer: stubs.downloadToBuffer,
     });
     stubs.blobServiceClient.getContainerClient = stubs.getContainerClient;
   });
@@ -154,6 +158,40 @@ describe("AzureStorageImpl", () => {
       });
       stubs.uploadFile.rejects();
       await rejects(sut.storeFile(tmpFilePath, targetPath));
+    });
+  });
+
+  describe("hasFile", () => {
+    it("should return true if the file exists", async () => {
+      const targetPath = "/target/file";
+      const sut = new AzureStorageImpl(storageConfig, {
+        blobServiceClient: stubs.blobServiceClient,
+      });
+      stubs.exists.resolves(true);
+      const result = await sut.hasFile(targetPath);
+      expect(result).true;
+    });
+
+    it("should return false if the file does not exists", async () => {
+      const targetPath = "/target/file";
+      const sut = new AzureStorageImpl(storageConfig, {
+        blobServiceClient: stubs.blobServiceClient,
+      });
+      stubs.exists.resolves(false);
+      const result = await sut.hasFile(targetPath);
+      expect(result).false;
+    });
+  });
+
+  describe("downloadFile", () => {
+    it("should return the download file as a Buffer", async () => {
+      const targetPath = "/target/file";
+      const sut = new AzureStorageImpl(storageConfig, {
+        blobServiceClient: stubs.blobServiceClient,
+      });
+      stubs.downloadToBuffer.resolves(Buffer.from("foo", "utf8"));
+      const result = await sut.downloadFile(targetPath);
+      expect(result.toString()).equals("foo");
     });
   });
 });

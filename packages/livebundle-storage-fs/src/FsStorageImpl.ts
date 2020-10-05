@@ -28,6 +28,18 @@ export class FsStorageImpl implements Storage {
     fs.ensureDir(this.storageDir);
   }
 
+  hasFile(filePath: string): Promise<boolean> {
+    log(`hasFile(filePath: ${filePath})`);
+
+    return fs.pathExists(path.join(this.storageDir, filePath));
+  }
+
+  downloadFile(filePath: string): Promise<Buffer> {
+    log(`downloadFile(filePath: ${filePath})`);
+
+    return fs.readFile(path.join(this.storageDir, filePath));
+  }
+
   public static async create(config: FsStorageConfig): Promise<FsStorageImpl> {
     return new FsStorageImpl(config);
   }
