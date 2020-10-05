@@ -1,6 +1,6 @@
 import "mocha";
 import { UploaderImpl } from "../src";
-import sinon from "sinon";
+import sinon, { stub } from "sinon";
 import {
   Storage,
   LocalBundle,
@@ -11,6 +11,12 @@ import { expect } from "chai";
 import path from "path";
 
 class FakeStorageImpl implements Storage {
+  hasFile(filePath: string): Promise<boolean> {
+    return Promise.resolve(true);
+  }
+  downloadFile(filePath: string): Promise<Buffer> {
+    return Promise.resolve(Buffer.from("[]", "utf8"));
+  }
   store(
     content: string,
     contentLength: number,
@@ -90,6 +96,78 @@ describe("UploaderImpl", () => {
       const sut = new UploaderImpl(stubs.storage);
       await sut.upload({ bundles });
       sinon.assert.called(stubs.storage.store);
+    });
+  });
+
+  describe("getExistingAssetsHashesFromStorage", () => {
+    it("should return an empty array if the assets metadata file does not exist in storage", async () => {
+      stubs.storage.hasFile.resolves(false);
+      const sut = new UploaderImpl(stubs.storage);
+      const result = await sut.getExistingAssetsHashesFromStorage();
+      expect(result).to.be.an("array").empty;
+    });
+
+    it("should return an array containing the existing assets md5 hashes if the assets metadata file exist", async () => {
+      const assetsHashes = [
+        "a69fa1c2dd77bd4d143b4b77b1d98b88",
+        "45be446141257a3b182e4da7425360b0",
+      ];
+      stubs.storage.hasFile.resolves(true);
+      stubs.storage.downloadFile.resolves(
+        Buffer.from(JSON.stringify(assetsHashes), "utf-8"),
+      );
+      const sut = new UploaderImpl(stubs.storage);
+      const result = await sut.getExistingAssetsHashesFromStorage();
+      expect(result).to.deep.equal(assetsHashes);
+    });
+  });
+
+  describe("uploadAssetsMetadata", () => {
+    it("should generate and upload the assets/metadata.json file", async () => {
+      const assetsHashes = [
+        "a69fa1c2dd77bd4d143b4b77b1d98b88",
+        "45be446141257a3b182e4da7425360b0",
+      ];
+      const stringified = JSON.stringify(assetsHashes);
+      const sut = new UploaderImpl(stubs.storage);
+      await sut.uploadAssetsMetadata(assetsHashes);
+      sinon.assert.calledOnceWithExactly(
+        stubs.storage.store,
+        stringified,
+        stringified.length,
+        "assets/metadata.json",
+      );
+    });
+  });
+
+  describe("getNewAssets", () => {
+    it("should return an empty array if all assets are already in storage", () => {
+      const sut = new UploaderImpl(stubs.storage);
+      const result = sut.getNewAssets(
+        [
+          { files: ["/foo/bar.png"], hash: "a69fa1c2dd77bd4d143b4b77b1d98b88" },
+          { files: ["/foo/baz.png"], hash: "45be446141257a3b182e4da7425360b0" },
+        ],
+        [
+          "a69fa1c2dd77bd4d143b4b77b1d98b88",
+          "45be446141257a3b182e4da7425360b0",
+        ],
+      );
+      expect(result).to.be.an("array").empty;
+    });
+
+    it("should return an array containing the assets that are not yet in storage", () => {
+      const sut = new UploaderImpl(stubs.storage);
+      const result = sut.getNewAssets(
+        [
+          { files: ["/foo/bar.png"], hash: "a69fa1c2dd77bd4d143b4b77b1d98b88" },
+          { files: ["/foo/baz.png"], hash: "45be446141257a3b182e4da7425360b0" },
+        ],
+        ["45be446141257a3b182e4da7425360b0"],
+      );
+      expect(result).to.deep.equal([
+        { files: ["/foo/bar.png"], hash: "a69fa1c2dd77bd4d143b4b77b1d98b88" },
+      ]);
     });
   });
 });

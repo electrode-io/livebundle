@@ -42,6 +42,26 @@ export class AzureStorageImpl implements Storage {
       );
   }
 
+  hasFile(filePath: string): Promise<boolean> {
+    log(`hasFile(filePath: ${filePath})`);
+
+    const containerClient = this.blobServiceClient.getContainerClient(
+      this.config.container,
+    );
+    const blockBlobClient = containerClient.getBlockBlobClient(filePath);
+    return blockBlobClient.exists();
+  }
+
+  downloadFile(filePath: string): Promise<Buffer> {
+    log(`downloadFile(filePath: ${filePath})`);
+
+    const containerClient = this.blobServiceClient.getContainerClient(
+      this.config.container,
+    );
+    const blockBlobClient = containerClient.getBlockBlobClient(filePath);
+    return blockBlobClient.downloadToBuffer();
+  }
+
   public static async create(
     azureConfig: AzureBlobStorageConfig,
   ): Promise<AzureStorageImpl> {

@@ -3,7 +3,17 @@ import path from "path";
 import tmp from "tmp";
 import { v4 as uuidv4 } from "uuid";
 import yazl from "yazl";
-import { Bundle, LocalBundle, Package, Storage, Uploader } from "./types";
+import {
+  Bundle,
+  LocalBundle,
+  Package,
+  Storage,
+  Uploader,
+  ReactNativeAsset,
+} from "./types";
+import debug from "debug";
+
+const log = debug("livebundle-sdk:UploaderImpl");
 
 export class UploaderImpl implements Uploader {
   constructor(private readonly storage: Storage) {}
@@ -13,6 +23,8 @@ export class UploaderImpl implements Uploader {
   }: {
     bundles: LocalBundle[];
   }): Promise<Package> {
+    log(`upload`);
+
     const pkg: Package = {
       id: uuidv4(),
       bundles: [],
@@ -49,14 +61,10 @@ export class UploaderImpl implements Uploader {
       });
       pkg.bundles.push(bundleMetadata);
 
-      for (const asset of bundle.assets) {
-        for (const file of asset.files) {
-          await this.storage.storeFile(
-            file,
-            `assets/${asset.hash}/${path.basename(file)}`,
-          );
-        }
-      }
+      const assetsInStorage = await this.getExistingAssetsHashesFromStorage();
+      const newAssets = this.getNewAssets(bundle.assets, assetsInStorage);
+      await this.uploadAssets(newAssets);
+      await this.uploadAssetsMetadata(bundle.assets.map((a) => a.hash));
     }
 
     const stringifiedMetadata = JSON.stringify(pkg);
@@ -68,5 +76,45 @@ export class UploaderImpl implements Uploader {
     );
 
     return pkg;
+  }
+
+  public async getExistingAssetsHashesFromStorage(): Promise<string[]> {
+    const assetsMetadataFile = "assets/metadata.json";
+    const hasFile = await this.storage.hasFile(assetsMetadataFile);
+    log(`hasFile: ${hasFile}`);
+    return (await this.storage.hasFile(assetsMetadataFile))
+      ? this.storage
+          .downloadFile(assetsMetadataFile)
+          .then((f) => JSON.parse(f.toString()))
+      : [];
+  }
+
+  public getNewAssets(
+    assets: ReactNativeAsset[],
+    existingAssetsHashes: string[],
+  ): ReactNativeAsset[] {
+    return assets.filter((a) => !existingAssetsHashes.includes(a.hash));
+  }
+
+  public async uploadAssets(assets: ReactNativeAsset[]): Promise<void> {
+    log(`uploadAssets(assets: ${JSON.stringify(assets, null, 2)})`);
+    for (const asset of assets) {
+      for (const file of asset.files) {
+        await this.storage.storeFile(
+          file,
+          `assets/${asset.hash}/${path.basename(file)}`,
+        );
+      }
+    }
+  }
+
+  public async uploadAssetsMetadata(metadata: string[]): Promise<string> {
+    log(`uploadAssetsMetadata(metadata: ${JSON.stringify(metadata, null, 2)})`);
+    const stringified = JSON.stringify(metadata);
+    return this.storage.store(
+      stringified,
+      stringified.length,
+      "assets/metadata.json",
+    );
   }
 }

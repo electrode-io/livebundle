@@ -83,6 +83,12 @@ describe("LiveBundleImpl", () => {
 });
 
 class FakeStorage implements NamedStorage {
+  hasFile(filePath: string): Promise<boolean> {
+    return Promise.resolve(true);
+  }
+  downloadFile(filePath: string): Promise<Buffer> {
+    return Promise.resolve(Buffer.from("[]", "utf8"));
+  }
   name: string;
   store(
     content: string,
