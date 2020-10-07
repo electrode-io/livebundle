@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "fs-extra";
 import path from "path";
 import tmp from "tmp";
 import { v4 as uuidv4 } from "uuid";
@@ -100,10 +100,45 @@ export class UploaderImpl implements Uploader {
     log(`uploadAssets(assets: ${JSON.stringify(assets, null, 2)})`);
     for (const asset of assets) {
       for (const file of asset.files) {
-        await this.storage.storeFile(
-          file,
-          `assets/${asset.hash}/${path.basename(file)}`,
+        const [fileDir, fileName, fileExt] = [
+          path.dirname(file),
+          path.basename(file),
+          path.extname(file),
+        ];
+        const fileNameWithoutExt = fileName.replace(fileExt, "");
+        const [androidFile, iosFile] = ["android", "ios"].map((p) =>
+          path.join(fileDir, `${fileNameWithoutExt}.${p}${fileExt}`),
         );
+        if (!(await fs.pathExists(file))) {
+          // If the file path does not exist, it may be because its a platform
+          // specific asset. Let's look if the android/ios flavors exists, and
+          // use these files in that case.
+          if (await fs.pathExists(androidFile)) {
+            await this.storage.storeFile(
+              androidFile,
+              `assets/${asset.hash}/${fileNameWithoutExt}.android${fileExt}`,
+            );
+          }
+          if (await fs.pathExists(iosFile)) {
+            await this.storage.storeFile(
+              iosFile,
+              `assets/${asset.hash}/${fileNameWithoutExt}.ios${fileExt}`,
+            );
+          }
+        } else {
+          // Otherwise upload two versions of the file
+          // One for android and one for ios
+          // This is because we are not using metro bundler to serve assets
+          // so the platform specific version cannot be dynamically selected
+          await this.storage.storeFile(
+            file,
+            `assets/${asset.hash}/${fileNameWithoutExt}.android${fileExt}`,
+          );
+          await this.storage.storeFile(
+            file,
+            `assets/${asset.hash}/${fileNameWithoutExt}.ios${fileExt}`,
+          );
+        }
       }
     }
   }

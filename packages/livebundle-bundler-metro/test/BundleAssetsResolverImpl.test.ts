@@ -1,10 +1,8 @@
 import "mocha";
-import sinon from "sinon";
 import { expect } from "chai";
 import { rejects } from "assert";
 import { BundleAssetsResolverImpl } from "../src";
 import path from "path";
-import { cwd } from "process";
 
 describe("BundleAssetsResolverImpl", () => {
   const minifiedBundle = path.join(__dirname, "fixtures/minified.bundle");

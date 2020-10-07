@@ -23,7 +23,9 @@ export class BundleAssetsResolverImpl implements BundleAssetsResolver {
     const registerAssetStatements = await this.findRegisterAssetStatements(
       bundlePath,
     );
-    return this.mapRegisterAssetStatements(registerAssetStatements, { cwd });
+    return this.mapRegisterAssetStatements(registerAssetStatements, {
+      cwd,
+    });
   }
 
   public mapRegisterAssetStatements(
