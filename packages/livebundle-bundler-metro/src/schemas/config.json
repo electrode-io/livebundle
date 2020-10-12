@@ -17,8 +17,10 @@
           "platform": {
             "enum": ["android", "ios"]
           }
-        }
+        },
+        "required": ["dev", "entry", "platform"]
       }
     }
-  }
+  },
+  "required": ["bundles"]
 }

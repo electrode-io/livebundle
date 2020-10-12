@@ -6,6 +6,8 @@ import { configSchema } from "./schemas";
 import { Config } from "./types";
 import emoji from "node-emoji";
 import ora from "ora";
+import _ from "lodash";
+import { resolveConfigPath } from "./resolveConfigPath";
 
 const pJsonPath = path.resolve(__dirname, "..", "package.json");
 const pJson = fs.readJSONSync(pJsonPath);
@@ -28,8 +30,7 @@ export default function program({
       let conf;
       try {
         conf = await loadConfig<Config>({
-          configPath: config,
-          defaultFileName: "livebundle",
+          configPath: config ?? resolveConfigPath(),
           schema: configSchema,
         });
       } catch (e) {
@@ -59,7 +60,6 @@ export default function program({
       try {
         conf = await loadConfig<Config>({
           configPath: config,
-          defaultFileName: "livebundle",
           schema: configSchema,
         });
       } catch (e) {

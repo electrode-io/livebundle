@@ -28,7 +28,7 @@ export function reconciliateConfig<T extends Record<string, unknown>>({
   } = {
     ambiguousConfigProps: [],
     missingConfigProps: [],
-    config: curConfig as T,
+    config: (curConfig as T) ?? ({} as T),
   };
 
   for (const [envVar, configKey] of Object.entries(envVarToConfigKey)) {
@@ -39,10 +39,7 @@ export function reconciliateConfig<T extends Record<string, unknown>>({
     } else if ((!curConfig || !curConfig[configKey]) && envVarVal) {
       // Config property is defined as an env var
       (res.config as Record<string, unknown>)[configKey] = envVarVal;
-    } else if (curConfig && !curConfig[configKey] && !envVarVal) {
-      // Config property is defined nowhere
-      res.missingConfigProps.push([envVar, configKey]);
-    } else {
+    } else if (curConfig && curConfig[configKey]) {
       // Config property is defined in config
       (res.config as Record<string, unknown>)[configKey] = curConfig![
         configKey
@@ -50,10 +47,7 @@ export function reconciliateConfig<T extends Record<string, unknown>>({
     }
   }
 
-  if (
-    res.ambiguousConfigProps.length > 0 ||
-    res.missingConfigProps.length > 0
-  ) {
+  if (res.ambiguousConfigProps.length > 0) {
     res.config = undefined;
   }
 
@@ -66,27 +60,16 @@ export function reconciliateConfig<T extends Record<string, unknown>>({
 
 export function getErrorMessage({
   ambiguousConfigProps,
-  missingConfigProps,
 }: {
   ambiguousConfigProps: [string, string][];
-  missingConfigProps: [string, string][];
 }): string {
   const hasAmbiguousConfigProps = ambiguousConfigProps.length > 0;
-  const hasMissingConfigProps = missingConfigProps.length > 0;
   return `${
     hasAmbiguousConfigProps
       ? `=== Ambiguous configuration properties ===
 ${ambiguousConfigProps.map(
   ([env, prop]) =>
     `- ${prop} is defined in config as well as environment variable ${env}\n`,
-)}`
-      : ""
-  }${
-    hasMissingConfigProps
-      ? `=== Missing configuration properties ===
-${missingConfigProps.map(
-  ([env, prop]) =>
-    `- Missing '${prop}' in config. Either set it in config or as environment variable ${env}\n`,
 )}`
       : ""
   }`;

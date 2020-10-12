@@ -15,5 +15,6 @@
     "sasTokenReads": {
       "type": "string"
     }
-  }
+  },
+  "required": ["accountUrl", "container"]
 }

@@ -9,5 +9,6 @@
     "token": {
       "type": "string"
     }
-  }
+  },
+  "required": ["baseUrl", "token"]
 }

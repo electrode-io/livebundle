@@ -38,7 +38,7 @@ describe("reconciliateConfig", () => {
     expect(res.config).deep.equal(finalConfig);
   });
 
-  it("should throw if property is missing from config and not set as env var", () => {
+  it("should not throw if property is missing from config and not set as env var", () => {
     expect(() =>
       reconciliateConfig({
         curConfig: {
@@ -47,7 +47,7 @@ describe("reconciliateConfig", () => {
         },
         envVarToConfigKey,
       }),
-    ).to.throw();
+    ).to.not.throw();
   });
 
   it("should throw if property is present in config and also set as env var", () => {
@@ -66,35 +66,12 @@ describe("reconciliateConfig", () => {
 });
 
 describe("getErrorMessage", () => {
-  it("should return the correct error message [ambiguous & missing props]", () => {
+  it("should return the correct error message [ambiguous props]", () => {
     const errorMessage = getErrorMessage({
       ambiguousConfigProps: [["LB_TEST_PROPA", "propA"]],
-      missingConfigProps: [["LB_TEST_PROPB", "propB"]],
     });
     expect(errorMessage).equal(`=== Ambiguous configuration properties ===
 - propA is defined in config as well as environment variable LB_TEST_PROPA
-=== Missing configuration properties ===
-- Missing 'propB' in config. Either set it in config or as environment variable LB_TEST_PROPB
-`);
-  });
-
-  it("should return the correct error message [ambiguous props only]", () => {
-    const errorMessage = getErrorMessage({
-      ambiguousConfigProps: [["LB_TEST_PROPA", "propA"]],
-      missingConfigProps: [],
-    });
-    expect(errorMessage).equal(`=== Ambiguous configuration properties ===
-- propA is defined in config as well as environment variable LB_TEST_PROPA
-`);
-  });
-
-  it("should return the correct error message [missing props only]", () => {
-    const errorMessage = getErrorMessage({
-      ambiguousConfigProps: [],
-      missingConfigProps: [["LB_TEST_PROPB", "propB"]],
-    });
-    expect(errorMessage).equal(`=== Missing configuration properties ===
-- Missing 'propB' in config. Either set it in config or as environment variable LB_TEST_PROPB
 `);
   });
 });
