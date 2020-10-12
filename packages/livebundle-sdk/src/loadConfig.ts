@@ -12,7 +12,6 @@ export async function loadConfig<T extends Record<string, unknown>>({
   configPath,
   defaultConfig,
   defaultConfigPath,
-  defaultFileName,
   refSchemas = [],
   schema,
 }: {
@@ -20,7 +19,6 @@ export async function loadConfig<T extends Record<string, unknown>>({
   configPath?: string;
   defaultConfig?: T;
   defaultConfigPath?: string;
-  defaultFileName?: string;
   refSchemas?: Record<string, unknown>[];
   schema?: Record<string, unknown>;
 }): Promise<T> {
@@ -28,7 +26,6 @@ export async function loadConfig<T extends Record<string, unknown>>({
 configPath: ${configPath}
 defaultConfig: ${JSON.stringify(defaultConfig, null, 2)}
 defaultConfigPath: ${defaultConfigPath}
-defaultFileName: ${defaultFileName}
 refSchemas: ${refSchemas.map((s) => s["$id"])}
 schema: ${schema && schema["$id"]}`);
 
@@ -38,30 +35,11 @@ schema: ${schema && schema["$id"]}`);
       ? await loadYamlFile(defaultConfigPath as string)
       : ({} as T));
 
-  const paths = configPath
-    ? [configPath]
-    : [
-        path.resolve(`${defaultFileName}.yml`),
-        path.resolve(`${defaultFileName}.yaml`),
-        `/etc/livebundle/${defaultFileName}.yml`,
-        `/etc/livebundle/${defaultFileName}.yaml`,
-        `${process.env.HOME}/${defaultFileName}.yml`,
-        `${process.env.HOME}/${defaultFileName}.yaml`,
-      ];
-
-  const resolvedConfigPath = _.find(paths, (p) => fs.pathExistsSync(p));
-  log(`resolvedConfigPath: ${resolvedConfigPath}`);
-
   const resolvedConfig: T =
     config ??
-    (resolvedConfigPath
-      ? await loadYamlFile(resolvedConfigPath as string)
-      : ({} as T));
-  if (schema) {
-    schemaValidate({ data: resolvedConfig, refSchemas, schema });
-  }
+    (configPath ? await loadYamlFile(configPath as string) : ({} as T));
 
-  return _.mergeWith(
+  const finalConfig: T = _.mergeWith(
     {},
     resolvedDefaultConfig,
     resolvedConfig,
@@ -72,4 +50,10 @@ schema: ${schema && schema["$id"]}`);
       }
     },
   ) as T;
+
+  if (schema) {
+    schemaValidate({ data: finalConfig, refSchemas, schema });
+  }
+
+  return finalConfig;
 }

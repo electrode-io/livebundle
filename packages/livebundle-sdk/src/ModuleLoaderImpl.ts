@@ -95,13 +95,13 @@ export class ModuleLoaderImpl implements ModuleLoader {
         envVarToConfigKey: Module.envVarToConfigKey,
       }).config!;
     }
-    if (Module.defaultConfig) {
-      moduleConfig = await loadConfig<Record<string, unknown>>({
-        config: moduleConfig,
-        defaultConfig: Module.defaultConfig,
-        schema: Module.schema,
-      });
-    }
+
+    moduleConfig = await loadConfig<Record<string, unknown>>({
+      config: moduleConfig,
+      defaultConfig: Module.defaultConfig,
+      schema: Module.schema,
+    });
+
     return {
       Module,
       moduleConfig,

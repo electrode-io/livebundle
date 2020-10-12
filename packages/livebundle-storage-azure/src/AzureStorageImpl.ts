@@ -2,6 +2,7 @@ import { BlobServiceClient } from "@azure/storage-blob";
 import debug from "debug";
 import { AzureBlobStorageConfig } from "./types";
 import { Storage } from "livebundle-sdk";
+import { configSchema } from "./schemas";
 
 const log = debug("livebundle-storage-impl:AzureStorageImpl");
 
@@ -21,6 +22,8 @@ export class AzureStorageImpl implements Storage {
     return `${this.baseUrl}/${p}${this.config.sasTokenReads ?? ""}`;
   }
 
+  public static readonly schema: Record<string, unknown> = configSchema;
+
   public static readonly envVarToConfigKey: Record<string, string> = {
     LB_STORAGE_AZURE_ACCOUNTURL: "accountUrl",
     LB_STORAGE_AZURE_CONTAINER: "container",
@@ -36,7 +39,7 @@ export class AzureStorageImpl implements Storage {
     this.blobServiceClient =
       blobServiceClient ??
       new BlobServiceClient(
-        `${this.accountUrl}${azureConfig.sasToken}`,
+        `${this.accountUrl}${azureConfig.sasToken ?? ""}`,
         undefined,
         azureConfig.options,
       );

@@ -15,6 +15,10 @@ export class FsStorageImpl implements Storage {
     return this.storageDir;
   }
 
+  public static readonly envVarToConfigKey: Record<string, string> = {
+    LB_STORAGE_FS_STORAGEDIR: "storageDir",
+  };
+
   public static readonly defaultConfig: Record<
     string,
     unknown
