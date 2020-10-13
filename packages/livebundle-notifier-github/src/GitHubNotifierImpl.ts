@@ -75,14 +75,14 @@ ${qrcodeContent ?? ""}
 ${deepLinkContent ?? ""}
 `;
 
-    if (process.env.LB_NOTIFY_GITHUB_PRURL) {
-      // Using LB_NOTIFY_GITHUB_PRURL env var
+    if (process.env.LB_NOTIFIER_GITHUB_PRURL) {
+      // Using LB_NOTIFIER_GITHUB_PRURL env var
       // In case GitHub actions are not used
       //
       // PR URL format
       // https://github.com/owner/repo/pull/1234
       const re = /^https:\/\/.+\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)$/;
-      const reMatch = process.env.LB_NOTIFY_GITHUB_PRURL.match(re);
+      const reMatch = process.env.LB_NOTIFIER_GITHUB_PRURL.match(re);
       if (reMatch) {
         await this.octokit.issues.createComment({
           owner: reMatch[1],
@@ -92,7 +92,7 @@ ${deepLinkContent ?? ""}
         });
       } else {
         console.error(
-          `Invalid LB_NOTIFY_GITHUB_PRURL format : ${process.env.LB_NOTIFY_GITHUB_PRURL}
+          `Invalid LB_NOTIFIER_GITHUB_PRURL format : ${process.env.LB_NOTIFIER_GITHUB_PRURL}
 Skipping GitHub PR notification`,
         );
       }
