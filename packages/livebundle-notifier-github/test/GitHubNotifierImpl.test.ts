@@ -79,7 +79,7 @@ describe("GitHubNotifierImpl", () => {
         octokit: stubs.octokit,
       });
       try {
-        process.env.LB_NOTIFY_GITHUB_PRURL =
+        process.env.LB_NOTIFIER_GITHUB_PRURL =
           "https://github.com/owner/repo/pull/1234";
         await sut.notify({
           ...notifyPayload,
@@ -87,11 +87,11 @@ describe("GitHubNotifierImpl", () => {
         });
         sinon.assert.notCalled(stubs.createComment);
       } finally {
-        delete process.env.LB_NOTIFY_GITHUB_PRURL;
+        delete process.env.LB_NOTIFIER_GITHUB_PRURL;
       }
     });
 
-    it("should not post a PR comment if LB_NOTIFY_GITHUB_PRURL and GITHUB_EVENT_PATH are missing", async () => {
+    it("should not post a PR comment if LB_NOTIFIER_GITHUB_PRURL and GITHUB_EVENT_PATH are missing", async () => {
       const sut = new GitHubNotifierImpl(notifierConfig, {
         octokit: stubs.octokit,
       });
@@ -99,29 +99,29 @@ describe("GitHubNotifierImpl", () => {
       sinon.assert.notCalled(stubs.createComment);
     });
 
-    it("should not post a PR comment if LB_NOTIFY_GITHUB_PRURL is invalid", async () => {
+    it("should not post a PR comment if LB_NOTIFIER_GITHUB_PRURL is invalid", async () => {
       const sut = new GitHubNotifierImpl(notifierConfig, {
         octokit: stubs.octokit,
       });
       try {
-        process.env.LB_NOTIFY_GITHUB_PRURL = "https://invalid";
+        process.env.LB_NOTIFIER_GITHUB_PRURL = "https://invalid";
         await sut.notify(notifyPayload);
         sinon.assert.notCalled(stubs.createComment);
       } finally {
-        delete process.env.LB_NOTIFY_GITHUB_PRURL;
+        delete process.env.LB_NOTIFIER_GITHUB_PRURL;
       }
     });
 
-    it("should work with LB_NOTIFY_GITHUB_PRURL env var [GitHub action not used]", async () => {
+    it("should work with LB_NOTIFIER_GITHUB_PRURL env var [GitHub action not used]", async () => {
       const sut = new GitHubNotifierImpl(notifierConfig, {
         octokit: stubs.octokit,
       });
       try {
-        process.env.LB_NOTIFY_GITHUB_PRURL =
+        process.env.LB_NOTIFIER_GITHUB_PRURL =
           "https://github.com/owner/repo/pull/1234";
         await sut.notify(notifyPayload);
       } finally {
-        delete process.env.LB_NOTIFY_GITHUB_PRURL;
+        delete process.env.LB_NOTIFIER_GITHUB_PRURL;
       }
     });
 
@@ -130,7 +130,7 @@ describe("GitHubNotifierImpl", () => {
         octokit: stubs.octokit,
       });
       try {
-        process.env.LB_NOTIFY_GITHUB_PRURL =
+        process.env.LB_NOTIFIER_GITHUB_PRURL =
           "https://github.com/owner/repo/pull/1234";
         const payload = JSON.parse(JSON.stringify(notifyPayload));
         delete payload.generators.deeplink;
@@ -142,7 +142,7 @@ describe("GitHubNotifierImpl", () => {
           body: sinon.match("QR Code"),
         });
       } finally {
-        delete process.env.LB_NOTIFY_GITHUB_PRURL;
+        delete process.env.LB_NOTIFIER_GITHUB_PRURL;
       }
     });
 
@@ -151,7 +151,7 @@ describe("GitHubNotifierImpl", () => {
         octokit: stubs.octokit,
       });
       try {
-        process.env.LB_NOTIFY_GITHUB_PRURL =
+        process.env.LB_NOTIFIER_GITHUB_PRURL =
           "https://github.com/owner/repo/pull/1234";
         const payload = JSON.parse(JSON.stringify(notifyPayload));
         delete payload.generators.qrcode;
@@ -163,16 +163,16 @@ describe("GitHubNotifierImpl", () => {
           body: sinon.match("Deep Link"),
         });
       } finally {
-        delete process.env.LB_NOTIFY_GITHUB_PRURL;
+        delete process.env.LB_NOTIFIER_GITHUB_PRURL;
       }
     });
 
-    it("should post proper PR comment [LB_NOTIFY_GITHUB_PRURL]", async () => {
+    it("should post proper PR comment [LB_NOTIFIER_GITHUB_PRURL]", async () => {
       const sut = new GitHubNotifierImpl(notifierConfig, {
         octokit: stubs.octokit,
       });
       try {
-        process.env.LB_NOTIFY_GITHUB_PRURL =
+        process.env.LB_NOTIFIER_GITHUB_PRURL =
           "https://github.com/owner/repo/pull/1234";
         await sut.notify(notifyPayload);
         sinon.assert.calledOnceWithExactly(stubs.createComment, {
@@ -182,7 +182,7 @@ describe("GitHubNotifierImpl", () => {
           body: sinon.match("QR Code").and(sinon.match("Deep Link")),
         });
       } finally {
-        delete process.env.LB_NOTIFY_GITHUB_PRURL;
+        delete process.env.LB_NOTIFIER_GITHUB_PRURL;
       }
     });
 
