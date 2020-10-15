@@ -39,14 +39,16 @@ storage:
   # YAML configuration, to limit exposure
   # especially for the SAS token.
   # The corresponding env variables are :
-  # accountUrl  => LB_STORAGE_AZURE_ACCOUNTURL
-  # container   => LB_STORAGE_AZURE_CONTAINER
-  # sasToken    => LB_STORAGE_AZURE_SASTOKEN
+  # accountUrl    => LB_STORAGE_AZURE_ACCOUNTURL
+  # container     => LB_STORAGE_AZURE_CONTAINER
+  # sasToken      => LB_STORAGE_AZURE_SASTOKEN
+  # sasTokenReads => LB_STORAGE_AZURE_SASTOKENREADS
   #
   #azure:
   #  accountUrl: <azure-store-account-url>
   #  container: <azure-container-name>
-  #  sasToken: <azure-shared-access-signature-token>
+  #  sasToken: <azure-shared-access-signature-token-for-uploads>
+  #  sasTokenReads: <azure-sastoken-for-reads>
 
 #
 # Generators configuration
