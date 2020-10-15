@@ -28,7 +28,7 @@ export class AzureStorageImpl implements Storage {
     LB_STORAGE_AZURE_ACCOUNTURL: "accountUrl",
     LB_STORAGE_AZURE_CONTAINER: "container",
     LB_STORAGE_AZURE_SASTOKEN: "sasToken",
-    LB_STORAGE_AZURE_SASTOKENDOWNLOAD: "sasTokenReads",
+    LB_STORAGE_AZURE_SASTOKENREADS: "sasTokenReads",
   };
 
   public constructor(
