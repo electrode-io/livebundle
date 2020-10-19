@@ -10,7 +10,7 @@ export interface QrCodeGeneratorImageConfig {
   path: string;
 }
 
-export interface QrCodeGeneratorResult {
+export interface QrCodeGeneratorResult extends Record<string, unknown> {
   localImagePath: string;
   remoteImagePath: string;
   terminalImage: string;

@@ -40,7 +40,7 @@ export interface Generator {
   }: {
     id: string;
     type: LiveBundleContentType;
-  }): Promise<any>;
+  }): Promise<Record<string, unknown>>;
 }
 
 export interface Uploader {
