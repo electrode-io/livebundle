@@ -6,7 +6,6 @@ import { configSchema } from "./schemas";
 import { Config } from "./types";
 import emoji from "node-emoji";
 import ora from "ora";
-import _ from "lodash";
 import { resolveConfigPath } from "./resolveConfigPath";
 
 const pJsonPath = path.resolve(__dirname, "..", "package.json");
@@ -25,10 +24,14 @@ export default function program({
   uploadCommand
     .name("upload")
     .option("--config <string>", "Path to config file")
+    .option("--cwd <string>", "Set current working directory")
     .description("bundle and upload resulting bundles")
-    .action(async ({ config }: { config?: string }) => {
+    .action(async ({ config, cwd }: { config?: string; cwd?: string }) => {
       let conf;
       try {
+        if (cwd) {
+          process.chdir(cwd);
+        }
         conf = await loadConfig<Config>({
           configPath: config ?? resolveConfigPath(),
           schema: configSchema,
