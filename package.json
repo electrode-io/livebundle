@@ -9,7 +9,7 @@
     "compile": "lerna run compile",
     "coverage": "nyc yarn test",
     "coverage:clean": "rimraf .nyc_output coverage",
-    "debug": "node --nolazy --inspect -r ts-node/register/transpile-only packages/livebundle/src/cli.ts",
+    "debug": "node --nolazy --inspect -r ts-node/register -r tsconfig-paths/register packages/livebundle/src/cli.ts",
     "build": "lerna run build",
     "lint": "eslint '*/**/*.{js,ts}'",
     "test": "yarn build && lerna run test"
@@ -63,6 +63,7 @@
     "rimraf": "^3.0.2",
     "sinon": "^9.2.0",
     "source-map-support": "^0.5.19",
+    "tsconfig-paths": "^3.9.0",
     "ts-node": "^9.0.0",
     "tslint": "^6.1.3",
     "tslint-no-unused-expression-chai": "^0.1.4",
