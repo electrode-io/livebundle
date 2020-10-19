@@ -8,7 +8,7 @@ import {
   LiveBundleContentType,
   Package,
   LocalBundle,
-  ModuleLoaderImpl,
+  PluginLoaderImpl,
   LiveBundleImpl,
 } from "../src";
 import { v4 as uuidv4 } from "uuid";
@@ -27,7 +27,7 @@ describe("LiveBundleImpl", () => {
 
   describe("upload", () => {
     it("should go through", async () => {
-      const moduleLoaderStub = sandbox.createStubInstance(ModuleLoaderImpl);
+      const moduleLoaderStub = sandbox.createStubInstance(PluginLoaderImpl);
       moduleLoaderStub.loadModules.resolves({
         bundler: new FakeBundler(),
         storage: new FakeStorage(),
@@ -55,7 +55,7 @@ describe("LiveBundleImpl", () => {
 
   describe("live", () => {
     it("should go through", async () => {
-      const moduleLoaderStub = sandbox.createStubInstance(ModuleLoaderImpl);
+      const moduleLoaderStub = sandbox.createStubInstance(PluginLoaderImpl);
       moduleLoaderStub.loadModules.resolves({
         bundler: new FakeBundler(),
         storage: new FakeStorage(),

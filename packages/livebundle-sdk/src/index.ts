@@ -2,7 +2,7 @@ export * from "./schemas";
 export * from "./types";
 export * from "./UploaderImpl";
 export * from "./LiveBundleImpl";
-export * from "./ModuleLoaderImpl";
+export * from "./PluginLoaderImpl";
 export * from "./createTmpDir";
 export * from "./loadConfig";
 export * from "./loadYamlFile";

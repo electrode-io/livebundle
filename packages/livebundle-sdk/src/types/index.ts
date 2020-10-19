@@ -140,7 +140,7 @@ export interface ReactNativeAsset {
   hash: string;
 }
 
-export interface ModuleLoader {
+export interface PluginLoader {
   loadLiveBundleBundlerModule(
     name: string,
     config: Record<string, unknown>,

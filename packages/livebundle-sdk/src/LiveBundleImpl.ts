@@ -3,7 +3,7 @@ import {
   LocalBundle,
   LiveBundleContentType,
   LiveBundle,
-  ModuleLoader,
+  PluginLoader,
 } from "./types";
 import debug from "debug";
 import { v4 as uuidv4 } from "uuid";
@@ -12,7 +12,7 @@ import ip from "ip";
 const log = debug("livebundle-sdk:LiveBundleImpl");
 
 export class LiveBundleImpl implements LiveBundle {
-  public constructor(private readonly moduleLoader: ModuleLoader) {}
+  public constructor(private readonly moduleLoader: PluginLoader) {}
 
   public async upload(config: LiveBundleConfig): Promise<void> {
     log(`upload(config: ${JSON.stringify(config, null, 2)})`);
