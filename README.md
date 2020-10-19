@@ -8,42 +8,31 @@
 
 [![ci][1]][2] [![codecov][3]][4]
 
-**This project is still in incubation.
-If you are cloning this repository at this stage, be ready for a wild ride with potential consequent repository updates and breaking changes from one day to the next. _Or to put it another way : 'Not ready for production'._**
+**Website** livebundle.io\
+**Documentation**  docs.livebundle.io
 
-## Adding LiveBundle CLI to your React Native application
+# Debugging
 
-Using npm
+Debugging can be achieved with [Visual Studio Code][5].
 
-`$ npm install livebundle --save-dev`
+## CLI
 
-Using yarn
+To debug the CLI, run `yarn debug` from the root directory.\
+This is equivalent to running the `livebundle` CLI executable, but with debugging enabled. It is possible to supply any supported command and option(s) as if directly running the `livebundle` CLI executable.
 
-`$ yarn add livebundle --dev`
+## Mocha Tests
 
-## Configuring LiveBundle CLI
+To debug mocha tests, launch `Mocha Tests` debug configuration from the IDE.
 
-To generate an initial default config, you can run `livebundle init` command from your React Native application directory.\
-This default configuration is working out of the box but uses a local file storage provider, which is pretty much useless appart from testing purposes.\
-Configuration should be updated to use the Azure storage provider to use LiveBundle end to end.
+<img src="./assets/run-mocha-tests.png" width="250">
 
-## Using LiveBundle CLI
+# Logging
 
-To generate and upload a new LiveBundle package.
+LiveBundle is using the [debug][6] library to for logging.\
+Please refer to this library documentation for reference.\
+In a nutshell, to enable all logs, just set the `DEBUG=*` environment variable.
 
-Using npm
-
-`$ npm run livebundle upload`
-
-Using yarn
-
-`$ yarn livebundle upload`
-
-Note that an Azure SAS Token is needed for the upload. It should either be set in the `livebundle.yaml` configuration, or set as `LB_STORAGE_AZURE_SASTOKEN` env variable.
-
-It is also possible to have different LiveBundle configuration file *(for example, could have a `livebundle.ci.yaml` containing LiveBundle configuration when running on CI only)*. By default, the `livebundle` command will load the `livebundle.yaml` configuration. To inform `livebundle` to use a different configuration file, just use the `--config` option which takes the path of the configuration file to us.
-
-## Repository structure _(curated)_
+# Repository structure _(curated)_
 
 ```
 .
@@ -72,7 +61,7 @@ It is also possible to have different LiveBundle configuration file *(for exampl
     └── settings.json     // VSCode workspace configuration
 ```
 
-## Related repositories
+# Related repositories
 
 - [react-native-livebundle](https://github.com/electrode-io/react-native-livebundle) contains LiveBundle React Native native module along with a demo application.
 - [LiveBundle website](https://github.com/electrode-io/livebundle-website) contains the LiveBundle website and user documentation *(outdated)*
@@ -81,3 +70,5 @@ It is also possible to have different LiveBundle configuration file *(for exampl
 [2]: https://github.com/electrode-io/livebundle/actions
 [3]: https://codecov.io/gh/electrode-io/livebundle/branch/master/graph/badge.svg?token=97VWVN63G0
 [4]: https://codecov.io/gh/electrode-io/livebundle
+[5]: https://code.visualstudio.com/
+[6]: https://www.npmjs.com/package/debug
