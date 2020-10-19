@@ -13,12 +13,14 @@
 
 # Debugging
 
-Debugging can be achieved with [Visual Studio Code][5].
+Debugging can be achieved in [Visual Studio Code][5].
 
 ## CLI
 
-To debug the CLI, run `yarn debug` from the root directory.\
-This is equivalent to running the `livebundle` CLI executable, but with debugging enabled. It is possible to supply any supported command and option(s) as if directly running the `livebundle` CLI executable.
+To debug the CLI, open livebundle project in Visual Studio Code and run `yarn debug` from a Visual Studio code terminal *(important, otherwise Visual Studio code will not auto attach debugger)*.
+
+This is equivalent to running the `livebundle` CLI executable, but with debugging enabled.
+It is thus possible to provide any supported command and option(s) as if directly running the `livebundle` CLI executable.
 
 ## Mocha Tests
 
