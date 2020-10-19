@@ -77,6 +77,13 @@ describe("program", () => {
       sinon.assert.calledOnce(consoleErrorStub);
     });
 
+    it("should log an error to the console if the config is missing", async () => {
+      const consoleErrorStub = sandbox.stub(console, "error");
+      const sut = program({ livebundle: new FakeLiveBundle() }).exitOverride();
+      await sut.parseAsync(["node", "livebundle", "upload"]);
+      sinon.assert.calledOnce(consoleErrorStub);
+    });
+
     it("should not throw if the livebundle upload fails", async () => {
       const lbStub = sandbox.createStubInstance(FakeLiveBundle);
       lbStub.upload.rejects("boom");
