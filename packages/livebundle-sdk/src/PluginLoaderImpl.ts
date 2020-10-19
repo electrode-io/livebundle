@@ -1,7 +1,7 @@
 import {
   NamedBundler,
   NamedGenerator,
-  ModuleLoader,
+  PluginLoader,
   NamedNotifier,
   NamedStorage,
   Storage,
@@ -11,9 +11,9 @@ import {
 import { loadConfig, reconciliateConfig, UploaderImpl } from ".";
 import debug from "debug";
 
-const log = debug("livebundle-sdk:ModuleLoaderImpl");
+const log = debug("livebundle-sdk:PluginLoaderImpl");
 
-export class ModuleLoaderImpl implements ModuleLoader {
+export class PluginLoaderImpl implements PluginLoader {
   public async loadLiveBundleBundlerModule(
     name: string,
     config: Record<string, unknown>,

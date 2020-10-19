@@ -1,5 +1,5 @@
 import "mocha";
-import { ModuleLoaderImpl } from "../src";
+import { PluginLoaderImpl } from "../src";
 import fs from "fs-extra";
 import path from "path";
 import { Storage } from "livebundle-sdk";
@@ -29,10 +29,10 @@ class FakeStorage implements Storage {
   baseUrl: string;
 }
 
-describe("ModuleLoaderImpl", () => {
+describe("PluginLoaderImpl", () => {
   describe("loadLiveBundleBundlerModule", () => {
     it("should load the bundler module", async () => {
-      const sut = new ModuleLoaderImpl();
+      const sut = new PluginLoaderImpl();
       const res = await sut.loadLiveBundleBundlerModule(
         "metro",
         await fs.readJSON(
@@ -48,7 +48,7 @@ describe("ModuleLoaderImpl", () => {
 
   describe("loadLiveBundleGeneratorModule", () => {
     it("should load the generator module", async () => {
-      const sut = new ModuleLoaderImpl();
+      const sut = new PluginLoaderImpl();
       const res = await sut.loadLiveBundleGeneratorModule(
         "deeplink",
         {},
@@ -60,7 +60,7 @@ describe("ModuleLoaderImpl", () => {
 
   describe("loadLiveBundleNotifierModule", () => {
     it("should load the notifier module", async () => {
-      const sut = new ModuleLoaderImpl();
+      const sut = new PluginLoaderImpl();
       const res = await sut.loadLiveBundleNotifierModule("github", {
         token: "abcd",
         baseUrl: "https://foo",
@@ -71,7 +71,7 @@ describe("ModuleLoaderImpl", () => {
 
   describe("loadLiveBundleStorageModule", () => {
     it("should load the storage module", async () => {
-      const sut = new ModuleLoaderImpl();
+      const sut = new PluginLoaderImpl();
       const res = await sut.loadLiveBundleStorageModule("fs", {});
       expect(res).not.undefined;
     });
@@ -79,7 +79,7 @@ describe("ModuleLoaderImpl", () => {
 
   describe("loadModules", () => {
     it("should load the modules declared in configuration", async () => {
-      const sut = new ModuleLoaderImpl();
+      const sut = new PluginLoaderImpl();
       const res = await sut.loadModules({
         bundler: {
           metro: null,
