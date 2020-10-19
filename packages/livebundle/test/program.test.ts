@@ -18,8 +18,14 @@ class FakeLiveBundle implements LiveBundle {
 
 describe("program", () => {
   const sandbox = sinon.createSandbox();
+  let initialCwd: string;
+
+  beforeEach(() => {
+    initialCwd = process.cwd();
+  });
 
   afterEach(() => {
+    process.chdir(initialCwd);
     sandbox.restore();
   });
 
@@ -83,6 +89,22 @@ describe("program", () => {
         "config/default.yaml",
       ]);
     });
+
+    it("should use user supplied cwd (--cwd option)", async () => {
+      sandbox.stub(console, "log");
+      const tmpDir = tmp.dirSync({ unsafeCleanup: true }).name;
+      const sut = program({ livebundle: new FakeLiveBundle() }).exitOverride();
+      await sut.parseAsync([
+        "node",
+        "livebundle",
+        "upload",
+        "--config",
+        "config/default.yaml",
+        "--cwd",
+        tmpDir,
+      ]);
+      expect(fs.realpathSync(process.cwd())).eql(fs.realpathSync(tmpDir));
+    });
   });
 
   describe("live command", () => {
@@ -141,34 +163,26 @@ describe("program", () => {
     it("should create a livebundle.yaml config", async () => {
       sandbox.stub(console, "log");
       const tmpDir = tmp.dirSync({ unsafeCleanup: true }).name;
-      const cwd = process.cwd();
-      try {
-        process.chdir(tmpDir);
-        const sut = program({
-          livebundle: new FakeLiveBundle(),
-        }).exitOverride();
-        await sut.parseAsync(["node", "livebundle", "init"]);
-        expect(fs.existsSync(path.join(tmpDir, "livebundle.yaml"))).true;
-      } finally {
-        process.chdir(cwd);
-      }
+
+      process.chdir(tmpDir);
+      const sut = program({
+        livebundle: new FakeLiveBundle(),
+      }).exitOverride();
+      await sut.parseAsync(["node", "livebundle", "init"]);
+      expect(fs.existsSync(path.join(tmpDir, "livebundle.yaml"))).true;
     });
 
     it("should log to console.error if livebundle.yaml already exist", async () => {
       const consoleErrorStub = sandbox.stub(console, "error");
       const tmpDir = tmp.dirSync({ unsafeCleanup: true }).name;
       fs.writeFileSync(path.join(tmpDir, "livebundle.yaml"), "");
-      const cwd = process.cwd();
-      try {
-        process.chdir(tmpDir);
-        const sut = program({
-          livebundle: new FakeLiveBundle(),
-        }).exitOverride();
-        await sut.parseAsync(["node", "livebundle", "init"]);
-        sinon.assert.calledOnce(consoleErrorStub);
-      } finally {
-        process.chdir(cwd);
-      }
+
+      process.chdir(tmpDir);
+      const sut = program({
+        livebundle: new FakeLiveBundle(),
+      }).exitOverride();
+      await sut.parseAsync(["node", "livebundle", "init"]);
+      sinon.assert.calledOnce(consoleErrorStub);
     });
   });
 });
