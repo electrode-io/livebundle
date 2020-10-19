@@ -12,9 +12,9 @@
     "test": "mocha"
   },
   "dependencies": {
-    "debug": "^4.1.1",
+    "debug": "^4.2.0",
     "livebundle-sdk": "^0.3.1",
-    "open": "^7.2.1",
+    "open": "^7.3.0",
     "tmp": "^0.2.1"
   }
 }
