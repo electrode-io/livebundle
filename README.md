@@ -8,8 +8,8 @@
 
 [![ci][1]][2] [![codecov][3]][4]
 
-**Website** livebundle.io\
-**Documentation**  docs.livebundle.io
+**Website:** [livebundle.io][7]\
+**Documentation:**  [docs.livebundle.io][8]
 
 # Debugging
 
@@ -74,3 +74,5 @@ In a nutshell, to enable all logs, just set the `DEBUG=*` environment variable.
 [4]: https://codecov.io/gh/electrode-io/livebundle
 [5]: https://code.visualstudio.com/
 [6]: https://www.npmjs.com/package/debug
+[7]: https://livebundle.io
+[8]: https://docs.livebundle.io
