@@ -1,10 +1,10 @@
 import debug from "debug";
 import { DeepLinkGeneratorResult } from "./types";
-import { LiveBundleContentType, Generator } from "livebundle-sdk";
+import { LiveBundleContentType, GeneratorPlugin } from "livebundle-sdk";
 
 const log = debug("livebundle-generator-deeplink:DeepLinkGeneratorImpl");
 
-export class DeepLinkGeneratorImpl implements Generator {
+export class DeepLinkGeneratorImpl implements GeneratorPlugin {
   public static async create(): Promise<DeepLinkGeneratorImpl> {
     return new DeepLinkGeneratorImpl();
   }

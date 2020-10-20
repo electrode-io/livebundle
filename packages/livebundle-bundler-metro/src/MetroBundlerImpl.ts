@@ -1,6 +1,6 @@
 import debug from "debug";
 import { MetroBundlerConfig, BundleAssetsResolver } from "./types";
-import { Bundler, LocalBundle, ReactNativeAsset } from "livebundle-sdk";
+import { BundlerPlugin, LocalBundle, ReactNativeAsset } from "livebundle-sdk";
 import { configSchema } from "./schemas";
 import tmp from "tmp";
 import path from "path";
@@ -9,7 +9,7 @@ import { BundleAssetsResolverImpl } from "./BundleAssetsResolverImpl";
 
 const log = debug("livebundle-bundler-metro:MetroBundlerImpl");
 
-export class MetroBundlerImpl implements Bundler {
+export class MetroBundlerImpl implements BundlerPlugin {
   private readonly spawn;
   private readonly bundleAssetsResolver;
 

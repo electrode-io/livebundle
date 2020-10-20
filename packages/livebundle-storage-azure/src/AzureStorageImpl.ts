@@ -1,12 +1,12 @@
 import { BlobServiceClient } from "@azure/storage-blob";
 import debug from "debug";
 import { AzureBlobStorageConfig } from "./types";
-import { Storage } from "livebundle-sdk";
+import { StoragePlugin } from "livebundle-sdk";
 import { configSchema } from "./schemas";
 
 const log = debug("livebundle-storage-impl:AzureStorageImpl");
 
-export class AzureStorageImpl implements Storage {
+export class AzureStorageImpl implements StoragePlugin {
   private readonly blobServiceClient: BlobServiceClient;
   private readonly config: AzureBlobStorageConfig;
 

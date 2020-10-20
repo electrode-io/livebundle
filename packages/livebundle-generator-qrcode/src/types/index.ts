@@ -1,5 +1,3 @@
-import { ServerConfig } from "livebundle-sdk/src";
-
 export interface QrCodeGeneratorConfig {
   image: QrCodeGeneratorImageConfig;
 }

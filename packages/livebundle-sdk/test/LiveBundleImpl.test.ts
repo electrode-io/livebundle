@@ -1,9 +1,9 @@
 import "mocha";
 import {
-  NamedStorage,
-  NamedNotifier,
-  NamedBundler,
-  NamedGenerator,
+  NamedStoragePlugin,
+  NamedNotifierPlugin,
+  NamedBundlerPlugin,
+  NamedGeneratorPlugin,
   Uploader,
   LiveBundleContentType,
   Package,
@@ -82,7 +82,7 @@ describe("LiveBundleImpl", () => {
   });
 });
 
-class FakeStorage implements NamedStorage {
+class FakeStorage implements NamedStoragePlugin {
   hasFile(filePath: string): Promise<boolean> {
     return Promise.resolve(true);
   }
@@ -107,7 +107,7 @@ class FakeStorage implements NamedStorage {
   baseUrl: string;
 }
 
-class FakeNotifier implements NamedNotifier {
+class FakeNotifier implements NamedNotifierPlugin {
   name: string;
   notify({
     generators,
@@ -122,7 +122,7 @@ class FakeNotifier implements NamedNotifier {
   }
 }
 
-class FakeGenerator implements NamedGenerator {
+class FakeGenerator implements NamedGeneratorPlugin {
   name: string;
   generate({
     id,
@@ -135,7 +135,7 @@ class FakeGenerator implements NamedGenerator {
   }
 }
 
-class FakeBundler implements NamedBundler {
+class FakeBundler implements NamedBundlerPlugin {
   name: string;
   bundle(): Promise<LocalBundle[]> {
     return Promise.resolve([]);

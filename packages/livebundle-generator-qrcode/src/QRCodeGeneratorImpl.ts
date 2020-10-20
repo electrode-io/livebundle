@@ -1,16 +1,20 @@
 import debug from "debug";
 import { QrCodeGeneratorConfig, QrCodeGeneratorResult } from "./types";
-import { LiveBundleContentType, Storage, Generator } from "livebundle-sdk";
+import {
+  LiveBundleContentType,
+  StoragePlugin,
+  GeneratorPlugin,
+} from "livebundle-sdk";
 import { configSchema } from "./schemas";
 import path from "path";
 import qrcode from "qrcode";
 
 const log = debug("livebundle-generator-qrcode:QRCodeGeneratorImpl");
 
-export class QRCodeGeneratorImpl implements Generator {
+export class QRCodeGeneratorImpl implements GeneratorPlugin {
   public constructor(
     private readonly config: QrCodeGeneratorConfig,
-    private readonly storage: Storage,
+    private readonly storage: StoragePlugin,
   ) {}
 
   public static readonly defaultConfig: Record<
@@ -22,7 +26,7 @@ export class QRCodeGeneratorImpl implements Generator {
 
   public static async create(
     config: QrCodeGeneratorConfig,
-    storage: Storage,
+    storage: StoragePlugin,
   ): Promise<QRCodeGeneratorImpl> {
     return new QRCodeGeneratorImpl(config, storage);
   }

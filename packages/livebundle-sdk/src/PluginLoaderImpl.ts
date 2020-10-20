@@ -1,10 +1,10 @@
 import {
-  NamedBundler,
-  NamedGenerator,
+  NamedBundlerPlugin,
+  NamedGeneratorPlugin,
   PluginLoader,
-  NamedNotifier,
-  NamedStorage,
-  Storage,
+  NamedNotifierPlugin,
+  NamedStoragePlugin,
+  StoragePlugin,
   Uploader,
   LiveBundleConfig,
 } from "./types";
@@ -17,13 +17,13 @@ export class PluginLoaderImpl implements PluginLoader {
   public async loadBundlerPlugin(
     name: string,
     config: Record<string, unknown>,
-  ): Promise<NamedBundler> {
+  ): Promise<NamedBundlerPlugin> {
     const { Module, moduleConfig } = await this.loadLiveBundleModule(
       "bundler",
       name,
       config,
     );
-    const module = Module.create(moduleConfig) as NamedBundler;
+    const module = Module.create(moduleConfig) as NamedBundlerPlugin;
     module.name = name;
     return module;
   }
@@ -31,15 +31,15 @@ export class PluginLoaderImpl implements PluginLoader {
   public async loadGeneratorPlugin(
     name: string,
     config: Record<string, unknown>,
-    storage: Storage,
-  ): Promise<NamedGenerator> {
+    storage: StoragePlugin,
+  ): Promise<NamedGeneratorPlugin> {
     log(`loadGeneratorPlugin(name: ${name})`);
     const { Module, moduleConfig } = await this.loadLiveBundleModule(
       "generator",
       name,
       config,
     );
-    const module = Module.create(moduleConfig, storage) as NamedGenerator;
+    const module = Module.create(moduleConfig, storage) as NamedGeneratorPlugin;
     module.name = name;
     return module;
   }
@@ -47,13 +47,13 @@ export class PluginLoaderImpl implements PluginLoader {
   public async loadNotifierPlugin(
     name: string,
     config: Record<string, unknown>,
-  ): Promise<NamedNotifier> {
+  ): Promise<NamedNotifierPlugin> {
     const { Module, moduleConfig } = await this.loadLiveBundleModule(
       "notifier",
       name,
       config,
     );
-    const module = Module.create(moduleConfig) as NamedNotifier;
+    const module = Module.create(moduleConfig) as NamedNotifierPlugin;
     module.name = name;
     return module;
   }
@@ -61,13 +61,13 @@ export class PluginLoaderImpl implements PluginLoader {
   public async loadStoragePlugin(
     name: string,
     config: Record<string, unknown>,
-  ): Promise<NamedStorage> {
+  ): Promise<NamedStoragePlugin> {
     const { Module, moduleConfig } = await this.loadLiveBundleModule(
       "storage",
       name,
       config,
     );
-    const module = Module.create(moduleConfig) as NamedStorage;
+    const module = Module.create(moduleConfig) as NamedStoragePlugin;
     module.name = name;
     return module;
   }
@@ -111,10 +111,10 @@ export class PluginLoaderImpl implements PluginLoader {
   public async loadAllPlugins(
     config: LiveBundleConfig,
   ): Promise<{
-    bundler: NamedBundler;
-    storage: NamedStorage;
-    generators: NamedGenerator[];
-    notifiers: NamedNotifier[];
+    bundler: NamedBundlerPlugin;
+    storage: NamedStoragePlugin;
+    generators: NamedGeneratorPlugin[];
+    notifiers: NamedNotifierPlugin[];
     uploader: Uploader;
   }> {
     const bundlerModuleName = Object.keys(config.bundler)[0];
@@ -122,20 +122,20 @@ export class PluginLoaderImpl implements PluginLoader {
     const generatorModulesNames = Object.keys(config.generators);
     const notifierModulesNames = Object.keys(config.notifiers);
 
-    const storage: NamedStorage = await this.loadStoragePlugin(
+    const storage: NamedStoragePlugin = await this.loadStoragePlugin(
       storageModuleName,
       config.storage[storageModuleName] as Record<string, unknown>,
     );
     storage.name = storageModuleName;
     const uploader = new UploaderImpl(storage);
 
-    const bundler: NamedBundler = await this.loadBundlerPlugin(
+    const bundler: NamedBundlerPlugin = await this.loadBundlerPlugin(
       bundlerModuleName,
       config.bundler[bundlerModuleName] as Record<string, unknown>,
     );
     bundler.name = bundlerModuleName;
 
-    const generators: NamedGenerator[] = [];
+    const generators: NamedGeneratorPlugin[] = [];
     for (const generatorModuleName of generatorModulesNames) {
       const generator = await this.loadGeneratorPlugin(
         generatorModuleName,
@@ -147,7 +147,7 @@ export class PluginLoaderImpl implements PluginLoader {
       log(`Added ${generatorModuleName} generator`);
     }
 
-    const notifiers: NamedNotifier[] = [];
+    const notifiers: NamedNotifierPlugin[] = [];
     for (const notifierModuleName of notifierModulesNames) {
       const notifier = await this.loadNotifierPlugin(
         notifierModuleName,

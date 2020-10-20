@@ -3,26 +3,10 @@ import MetroBundlerImpl, {
   BundleAssetsResolver,
   MetroBundlerConfig,
 } from "../src";
-import { v4 as uuidv4 } from "uuid";
 import sinon from "sinon";
-import {
-  LocalBundle,
-  Package,
-  ReactNativeAsset,
-  Uploader,
-} from "livebundle-sdk";
+import { ReactNativeAsset } from "livebundle-sdk";
 import { expect } from "chai";
 import { rejects } from "assert";
-
-class NullUploader implements Uploader {
-  upload({ bundles }: { bundles: LocalBundle[] }): Promise<Package> {
-    return Promise.resolve({
-      id: uuidv4(),
-      bundles: [],
-      timestamp: Date.now(),
-    });
-  }
-}
 
 class NullBundleAssetsResolver implements BundleAssetsResolver {
   resolveAssets(bundlePath: string): Promise<ReactNativeAsset[]> {

@@ -1,6 +1,6 @@
 import debug from "debug";
 import { FsStorageConfig } from "./types";
-import { Storage } from "livebundle-sdk";
+import { StoragePlugin } from "livebundle-sdk";
 import { configSchema } from "./schemas";
 import tmp from "tmp";
 import fs from "fs-extra";
@@ -8,7 +8,7 @@ import path from "path";
 
 const log = debug("livebundle-storage-fs:FsStorageImpl");
 
-export class FsStorageImpl implements Storage {
+export class FsStorageImpl implements StoragePlugin {
   private readonly storageDir: string;
 
   public get baseUrl(): string {

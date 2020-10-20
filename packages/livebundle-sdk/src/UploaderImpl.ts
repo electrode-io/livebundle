@@ -7,7 +7,7 @@ import {
   Bundle,
   LocalBundle,
   Package,
-  Storage,
+  StoragePlugin,
   Uploader,
   ReactNativeAsset,
 } from "./types";
@@ -16,7 +16,7 @@ import debug from "debug";
 const log = debug("livebundle-sdk:UploaderImpl");
 
 export class UploaderImpl implements Uploader {
-  constructor(private readonly storage: Storage) {}
+  constructor(private readonly storage: StoragePlugin) {}
 
   public async upload({
     bundles,
