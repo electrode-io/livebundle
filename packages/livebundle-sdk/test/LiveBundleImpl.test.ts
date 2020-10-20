@@ -28,7 +28,7 @@ describe("LiveBundleImpl", () => {
   describe("upload", () => {
     it("should go through", async () => {
       const moduleLoaderStub = sandbox.createStubInstance(PluginLoaderImpl);
-      moduleLoaderStub.loadModules.resolves({
+      moduleLoaderStub.loadAllPlugins.resolves({
         bundler: new FakeBundler(),
         storage: new FakeStorage(),
         uploader: new FakeUploader(),
@@ -56,7 +56,7 @@ describe("LiveBundleImpl", () => {
   describe("live", () => {
     it("should go through", async () => {
       const moduleLoaderStub = sandbox.createStubInstance(PluginLoaderImpl);
-      moduleLoaderStub.loadModules.resolves({
+      moduleLoaderStub.loadAllPlugins.resolves({
         bundler: new FakeBundler(),
         storage: new FakeStorage(),
         uploader: new FakeUploader(),

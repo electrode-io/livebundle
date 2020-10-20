@@ -141,24 +141,24 @@ export interface ReactNativeAsset {
 }
 
 export interface PluginLoader {
-  loadLiveBundleBundlerModule(
+  loadBundlerPlugin(
     name: string,
     config: Record<string, unknown>,
   ): Promise<NamedBundler>;
-  loadLiveBundleGeneratorModule(
+  loadGeneratorPlugin(
     name: string,
     config: Record<string, unknown>,
     storage: Storage,
   ): Promise<NamedGenerator>;
-  loadLiveBundleNotifierModule(
+  loadNotifierPlugin(
     name: string,
     config: Record<string, unknown>,
   ): Promise<NamedNotifier>;
-  loadLiveBundleStorageModule(
+  loadStoragePlugin(
     name: string,
     config: Record<string, unknown>,
   ): Promise<NamedStorage>;
-  loadModules(
+  loadAllPlugins(
     config: LiveBundleConfig,
   ): Promise<{
     bundler: NamedBundler;
