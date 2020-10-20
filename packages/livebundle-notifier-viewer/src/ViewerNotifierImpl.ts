@@ -1,11 +1,11 @@
 import debug from "debug";
 
-import { LiveBundleContentType, Package, Notifier } from "livebundle-sdk";
+import { LiveBundleContentType, Package, NotifierPlugin } from "livebundle-sdk";
 import open from "open";
 
 const log = debug("livebundle-notifier-terminal:ViewerNotifierImpl");
 
-export class ViewerNotifierImpl implements Notifier {
+export class ViewerNotifierImpl implements NotifierPlugin {
   public constructor(private readonly op: typeof open = open) {}
 
   public static async create(): Promise<ViewerNotifierImpl> {

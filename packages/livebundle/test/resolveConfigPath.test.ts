@@ -3,9 +3,6 @@ import fs from "fs-extra";
 import "mocha";
 import path from "path";
 import sinon from "sinon";
-import program from "../src/program";
-import { LiveBundleConfig, LiveBundle } from "livebundle-sdk";
-import tmp from "tmp";
 import { resolveConfigPath } from "../src";
 
 describe("resolveConfigPath", () => {

@@ -29,51 +29,8 @@ export interface LiveBundleConfig {
   notifiers: Record<string, unknown>;
 }
 
-export interface Bundler {
-  bundle(): Promise<LocalBundle[]>;
-}
-
-export interface Generator {
-  generate({
-    id,
-    type,
-  }: {
-    id: string;
-    type: LiveBundleContentType;
-  }): Promise<Record<string, unknown>>;
-}
-
 export interface Uploader {
   upload({ bundles }: { bundles: LocalBundle[] }): Promise<Package>;
-}
-
-export interface Storage {
-  store(
-    content: string,
-    contentLength: number,
-    targetPath: string,
-  ): Promise<string>;
-  storeFile(
-    filePath: string,
-    targetPath: string,
-    options?: {
-      contentType?: string;
-    },
-  ): Promise<string>;
-  hasFile(filePath: string): Promise<boolean>;
-  downloadFile(filePath: string): Promise<Buffer>;
-  readonly baseUrl: string;
-}
-export interface Notifier {
-  notify({
-    generators,
-    pkg,
-    type,
-  }: {
-    generators: Record<string, Record<string, unknown>>;
-    pkg?: Package;
-    type: LiveBundleContentType;
-  }): Promise<void>;
 }
 
 export type Platform = "android" | "ios";
@@ -144,27 +101,27 @@ export interface PluginLoader {
   loadBundlerPlugin(
     name: string,
     config: Record<string, unknown>,
-  ): Promise<NamedBundler>;
+  ): Promise<NamedBundlerPlugin>;
   loadGeneratorPlugin(
     name: string,
     config: Record<string, unknown>,
-    storage: Storage,
-  ): Promise<NamedGenerator>;
+    storage: StoragePlugin,
+  ): Promise<NamedGeneratorPlugin>;
   loadNotifierPlugin(
     name: string,
     config: Record<string, unknown>,
-  ): Promise<NamedNotifier>;
+  ): Promise<NamedNotifierPlugin>;
   loadStoragePlugin(
     name: string,
     config: Record<string, unknown>,
-  ): Promise<NamedStorage>;
+  ): Promise<NamedStoragePlugin>;
   loadAllPlugins(
     config: LiveBundleConfig,
   ): Promise<{
-    bundler: NamedBundler;
-    storage: NamedStorage;
-    generators: NamedGenerator[];
-    notifiers: NamedNotifier[];
+    bundler: NamedBundlerPlugin;
+    storage: NamedStoragePlugin;
+    generators: NamedGeneratorPlugin[];
+    notifiers: NamedNotifierPlugin[];
     uploader: Uploader;
   }>;
 }
@@ -173,7 +130,50 @@ export interface Named {
   name: string;
 }
 
-export type NamedBundler = Bundler & Named;
-export type NamedStorage = Storage & Named;
-export type NamedGenerator = Generator & Named;
-export type NamedNotifier = Notifier & Named;
+export interface BundlerPlugin {
+  bundle(): Promise<LocalBundle[]>;
+}
+
+export interface GeneratorPlugin {
+  generate({
+    id,
+    type,
+  }: {
+    id: string;
+    type: LiveBundleContentType;
+  }): Promise<Record<string, unknown>>;
+}
+
+export interface StoragePlugin {
+  store(
+    content: string,
+    contentLength: number,
+    targetPath: string,
+  ): Promise<string>;
+  storeFile(
+    filePath: string,
+    targetPath: string,
+    options?: {
+      contentType?: string;
+    },
+  ): Promise<string>;
+  hasFile(filePath: string): Promise<boolean>;
+  downloadFile(filePath: string): Promise<Buffer>;
+  readonly baseUrl: string;
+}
+export interface NotifierPlugin {
+  notify({
+    generators,
+    pkg,
+    type,
+  }: {
+    generators: Record<string, Record<string, unknown>>;
+    pkg?: Package;
+    type: LiveBundleContentType;
+  }): Promise<void>;
+}
+
+export type NamedBundlerPlugin = BundlerPlugin & Named;
+export type NamedStoragePlugin = StoragePlugin & Named;
+export type NamedGeneratorPlugin = GeneratorPlugin & Named;
+export type NamedNotifierPlugin = NotifierPlugin & Named;

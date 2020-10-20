@@ -1,7 +1,5 @@
 import debug from "debug";
-import fs from "fs-extra";
 import _ from "lodash";
-import path from "path";
 import { loadYamlFile } from "./loadYamlFile";
 import { schemaValidate } from "./schemaValidate";
 

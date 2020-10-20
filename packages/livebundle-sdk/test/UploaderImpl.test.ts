@@ -2,7 +2,7 @@ import "mocha";
 import { UploaderImpl } from "../src";
 import sinon, { stub } from "sinon";
 import {
-  Storage,
+  StoragePlugin,
   LocalBundle,
   Package,
   ReactNativeAsset,
@@ -10,7 +10,7 @@ import {
 import { expect } from "chai";
 import path from "path";
 
-class FakeStorageImpl implements Storage {
+class FakeStorageImpl implements StoragePlugin {
   hasFile(filePath: string): Promise<boolean> {
     return Promise.resolve(true);
   }

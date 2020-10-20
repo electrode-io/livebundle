@@ -2,10 +2,10 @@ import "mocha";
 import { PluginLoaderImpl } from "../src";
 import fs from "fs-extra";
 import path from "path";
-import { Storage } from "livebundle-sdk";
+import { StoragePlugin } from "livebundle-sdk";
 import { expect } from "chai";
 
-class FakeStorage implements Storage {
+class FakeStorage implements StoragePlugin {
   hasFile(filePath: string): Promise<boolean> {
     throw new Error("Method not implemented.");
   }

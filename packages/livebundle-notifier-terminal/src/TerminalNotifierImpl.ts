@@ -1,10 +1,10 @@
 import debug from "debug";
-import { LiveBundleContentType, Package, Notifier } from "livebundle-sdk";
+import { LiveBundleContentType, Package, NotifierPlugin } from "livebundle-sdk";
 import chalk from "chalk";
 
 const log = debug("livebundle-notifier-terminal:TerminalNotifierImpl");
 
-export class TerminalNotifierImpl implements Notifier {
+export class TerminalNotifierImpl implements NotifierPlugin {
   public constructor(
     private readonly logger: { log: (message?: string) => void } = console,
   ) {}

@@ -1,12 +1,12 @@
 import debug from "debug";
 import { GitHubNotifierConfig } from "./types";
-import { LiveBundleContentType, Package, Notifier } from "livebundle-sdk";
+import { LiveBundleContentType, Package, NotifierPlugin } from "livebundle-sdk";
 import fs from "fs-extra";
 import { Octokit } from "@octokit/rest";
 
 const log = debug("livebundle-notifier-github:GitHubNotifierImpl");
 
-export class GitHubNotifierImpl implements Notifier {
+export class GitHubNotifierImpl implements NotifierPlugin {
   private readonly octokit: Octokit;
 
   public constructor(
