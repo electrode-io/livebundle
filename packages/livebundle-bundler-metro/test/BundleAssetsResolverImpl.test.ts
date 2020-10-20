@@ -100,6 +100,14 @@ describe("BundleAssetsResolverImpl", () => {
         })),
       );
     });
+
+    it("should return an empty array if asset statements are not matching regex", () => {
+      const sut = new BundleAssetsResolverImpl();
+      const result = sut.mapRegisterAssetStatements([
+        "invalidAssetRegistrationStatement",
+      ]);
+      expect(result).to.be.an("array").empty;
+    });
   });
 
   describe("resolveAssets", () => {

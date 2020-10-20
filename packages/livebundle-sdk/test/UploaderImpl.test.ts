@@ -9,6 +9,8 @@ import {
 } from "livebundle-sdk";
 import { expect } from "chai";
 import path from "path";
+import fs from "fs-extra";
+import tmp from "tmp";
 
 class FakeStoragePlugin implements StoragePlugin {
   hasFile(filePath: string): Promise<boolean> {
@@ -119,6 +121,54 @@ describe("UploaderImpl", () => {
       const sut = new UploaderImpl(stubs.storage);
       const result = await sut.getExistingAssetsHashesFromStorage();
       expect(result).to.deep.equal(assetsHashes);
+    });
+  });
+
+  describe("uploadAssets", () => {
+    it("should store asset files in the storage", async () => {
+      const tmpDir = tmp.dirSync({ unsafeCleanup: true }).name;
+      const assetsFileNames = ["a.png", "b.ios.png", "b.android.png"];
+      const assetsFilePaths = assetsFileNames.map((n: string) =>
+        path.join(tmpDir, n),
+      );
+      assetsFilePaths.forEach((p: string) => fs.writeFileSync(p, "content"));
+      const assets: ReactNativeAsset[] = [
+        {
+          files: [path.join(tmpDir, "a.png")],
+          hash: "45be446141257a3b182e4da7425360b0",
+        },
+        {
+          files: [path.join(tmpDir, "b.png")],
+          hash: "a69fa1c2dd77bd4d143b4b77b1d98b88",
+        },
+        {
+          files: [path.join(tmpDir, "c.png")],
+          hash: "39539caee5093eab0c43d8eb43e8cb1a",
+        },
+      ];
+      const sut = new UploaderImpl(stubs.storage);
+      await sut.uploadAssets(assets);
+      sinon.assert.callCount(stubs.storage.storeFile, 4);
+      sinon.assert.calledWithExactly(
+        stubs.storage.storeFile.getCall(0),
+        path.join(tmpDir, "a.png"),
+        "assets/45be446141257a3b182e4da7425360b0/a.android.png",
+      );
+      sinon.assert.calledWithExactly(
+        stubs.storage.storeFile.getCall(1),
+        path.join(tmpDir, "a.png"),
+        "assets/45be446141257a3b182e4da7425360b0/a.ios.png",
+      );
+      sinon.assert.calledWithExactly(
+        stubs.storage.storeFile.getCall(2),
+        path.join(tmpDir, "b.android.png"),
+        "assets/a69fa1c2dd77bd4d143b4b77b1d98b88/b.android.png",
+      );
+      sinon.assert.calledWithExactly(
+        stubs.storage.storeFile.getCall(3),
+        path.join(tmpDir, "b.ios.png"),
+        "assets/a69fa1c2dd77bd4d143b4b77b1d98b88/b.ios.png",
+      );
     });
   });
 

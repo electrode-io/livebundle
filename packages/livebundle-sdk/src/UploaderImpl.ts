@@ -10,6 +10,7 @@ import {
   StoragePlugin,
   Uploader,
   ReactNativeAsset,
+  Platform,
 } from "./types";
 import debug from "debug";
 
@@ -100,14 +101,13 @@ export class UploaderImpl implements Uploader {
     log(`uploadAssets(assets: ${JSON.stringify(assets, null, 2)})`);
     for (const asset of assets) {
       for (const file of asset.files) {
-        const [fileDir, fileName, fileExt] = [
-          path.dirname(file),
-          path.basename(file),
-          path.extname(file),
-        ];
-        const fileNameWithoutExt = fileName.replace(fileExt, "");
-        const [androidFile, iosFile] = ["android", "ios"].map((p) =>
-          path.join(fileDir, `${fileNameWithoutExt}.${p}${fileExt}`),
+        const [fileDir, fileName] = [path.dirname(file), path.basename(file)];
+        const platforms = ["android", "ios"];
+        const [androidFile, iosFile] = platforms.map((p: Platform) =>
+          path.join(
+            fileDir,
+            this.getPlatformSpecificAssetFilename(fileName, p),
+          ),
         );
         if (!(await fs.pathExists(file))) {
           // If the file path does not exist, it may be because its a platform
@@ -116,13 +116,21 @@ export class UploaderImpl implements Uploader {
           if (await fs.pathExists(androidFile)) {
             await this.storage.storeFile(
               androidFile,
-              `assets/${asset.hash}/${fileNameWithoutExt}.android${fileExt}`,
+              this.getPlatformSpecificAssetTargetPath(
+                asset.hash,
+                fileName,
+                "android",
+              ),
             );
           }
           if (await fs.pathExists(iosFile)) {
             await this.storage.storeFile(
               iosFile,
-              `assets/${asset.hash}/${fileNameWithoutExt}.ios${fileExt}`,
+              this.getPlatformSpecificAssetTargetPath(
+                asset.hash,
+                fileName,
+                "ios",
+              ),
             );
           }
         } else {
@@ -130,17 +138,47 @@ export class UploaderImpl implements Uploader {
           // One for android and one for ios
           // This is because we are not using metro bundler to serve assets
           // so the platform specific version cannot be dynamically selected
-          await this.storage.storeFile(
-            file,
-            `assets/${asset.hash}/${fileNameWithoutExt}.android${fileExt}`,
-          );
-          await this.storage.storeFile(
-            file,
-            `assets/${asset.hash}/${fileNameWithoutExt}.ios${fileExt}`,
-          );
+          await Promise.all([
+            this.storage.storeFile(
+              file,
+              this.getPlatformSpecificAssetTargetPath(
+                asset.hash,
+                fileName,
+                "android",
+              ),
+            ),
+            this.storage.storeFile(
+              file,
+              this.getPlatformSpecificAssetTargetPath(
+                asset.hash,
+                fileName,
+                "ios",
+              ),
+            ),
+          ]);
         }
       }
     }
+  }
+
+  public getPlatformSpecificAssetTargetPath(
+    hash: string,
+    filename: string,
+    platform: Platform,
+  ): string {
+    return `assets/${hash}/${this.getPlatformSpecificAssetFilename(
+      filename,
+      platform,
+    )}`;
+  }
+
+  public getPlatformSpecificAssetFilename(
+    filename: string,
+    platform: Platform,
+  ): string {
+    const fileExt = path.extname(filename);
+    const fileNameWithoutExt = filename.replace(fileExt, "");
+    return `${fileNameWithoutExt}.${platform}${fileExt}`;
   }
 
   public async uploadAssetsMetadata(metadata: string[]): Promise<string> {

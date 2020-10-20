@@ -22,10 +22,12 @@ describe("AzureStoragePlugin", () => {
 
   const accountUrl = "https://foo.blob.core.windows.net";
   const container = "bar";
+  const sasToken = "?token";
 
   const storageConfig: AzureBlobStorageConfig = {
     accountUrl,
     container,
+    sasToken,
   };
 
   beforeEach(() => {
