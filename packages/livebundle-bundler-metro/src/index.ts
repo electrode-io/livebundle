@@ -1,5 +1,5 @@
-import { MetroBundlerImpl } from "./MetroBundlerImpl";
+import { MetroBundlerPlugin } from "./MetroBundlerPlugin";
 export * from "./types";
 export * from "./schemas";
 export * from "./BundleAssetsResolverImpl";
-export default MetroBundlerImpl;
+export default MetroBundlerPlugin;

@@ -2,11 +2,11 @@ import debug from "debug";
 import { DeepLinkGeneratorResult } from "./types";
 import { LiveBundleContentType, GeneratorPlugin } from "livebundle-sdk";
 
-const log = debug("livebundle-generator-deeplink:DeepLinkGeneratorImpl");
+const log = debug("livebundle-generator-deeplink:DeepLinkGeneratorPlugin");
 
-export class DeepLinkGeneratorImpl implements GeneratorPlugin {
-  public static async create(): Promise<DeepLinkGeneratorImpl> {
-    return new DeepLinkGeneratorImpl();
+export class DeepLinkGeneratorPlugin implements GeneratorPlugin {
+  public static async create(): Promise<DeepLinkGeneratorPlugin> {
+    return new DeepLinkGeneratorPlugin();
   }
 
   async generate({

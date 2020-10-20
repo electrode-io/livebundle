@@ -1,14 +1,14 @@
 import { expect } from "chai";
 import "mocha";
-import QRCodeGeneratorImpl, { QrCodeGeneratorConfig } from "../src";
+import QRCodeGeneratorPlugin, { QrCodeGeneratorConfig } from "../src";
 import { v4 as uuidv4 } from "uuid";
 import { LiveBundleContentType } from "livebundle-sdk";
-import FsStorageImpl from "livebundle-storage-fs";
+import FsStoragePlugin from "livebundle-storage-fs";
 import tmp from "tmp";
 import path from "path";
 import fs from "fs-extra";
 
-describe("QRCodeGeneratorImpl", () => {
+describe("QRCodeGeneratorPlugin", () => {
   const generatorConfig = (): QrCodeGeneratorConfig => ({
     image: {
       margin: 1,
@@ -18,12 +18,12 @@ describe("QRCodeGeneratorImpl", () => {
   });
 
   describe("create", () => {
-    it("should return an instance of QRCodeGeneratorImpl", async () => {
-      const res = await QRCodeGeneratorImpl.create(
+    it("should return an instance of QRCodeGeneratorPlugin", async () => {
+      const res = await QRCodeGeneratorPlugin.create(
         generatorConfig(),
-        new FsStorageImpl({}),
+        new FsStoragePlugin({}),
       );
-      expect(res).instanceOf(QRCodeGeneratorImpl);
+      expect(res).instanceOf(QRCodeGeneratorPlugin);
     });
   });
 
@@ -31,8 +31,8 @@ describe("QRCodeGeneratorImpl", () => {
     [LiveBundleContentType.PACKAGE, LiveBundleContentType.SESSION].forEach(
       (lbContentType) => {
         it(`should generate a local QR code image [${lbContentType}]`, async () => {
-          const storage = new FsStorageImpl({});
-          const sut = new QRCodeGeneratorImpl(generatorConfig(), storage);
+          const storage = new FsStoragePlugin({});
+          const sut = new QRCodeGeneratorPlugin(generatorConfig(), storage);
           const res = await sut.generate({
             id: uuidv4(),
             type: lbContentType,
@@ -41,8 +41,8 @@ describe("QRCodeGeneratorImpl", () => {
         });
 
         it(`should generate a terminal friendly image [${lbContentType}]`, async () => {
-          const storage = new FsStorageImpl({});
-          const sut = new QRCodeGeneratorImpl(generatorConfig(), storage);
+          const storage = new FsStoragePlugin({});
+          const sut = new QRCodeGeneratorPlugin(generatorConfig(), storage);
           const res = await sut.generate({
             id: uuidv4(),
             type: lbContentType,
@@ -51,8 +51,8 @@ describe("QRCodeGeneratorImpl", () => {
         });
 
         it(`should store the image to the storage [${lbContentType}]`, async () => {
-          const storage = new FsStorageImpl({});
-          const sut = new QRCodeGeneratorImpl(generatorConfig(), storage);
+          const storage = new FsStoragePlugin({});
+          const sut = new QRCodeGeneratorPlugin(generatorConfig(), storage);
           const res = await sut.generate({
             id: uuidv4(),
             type: lbContentType,

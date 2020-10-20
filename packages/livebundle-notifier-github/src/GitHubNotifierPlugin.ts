@@ -4,9 +4,9 @@ import { LiveBundleContentType, Package, NotifierPlugin } from "livebundle-sdk";
 import fs from "fs-extra";
 import { Octokit } from "@octokit/rest";
 
-const log = debug("livebundle-notifier-github:GitHubNotifierImpl");
+const log = debug("livebundle-notifier-github:GitHubNotifierPlugin");
 
-export class GitHubNotifierImpl implements NotifierPlugin {
+export class GitHubNotifierPlugin implements NotifierPlugin {
   private readonly octokit: Octokit;
 
   public constructor(
@@ -27,8 +27,8 @@ export class GitHubNotifierImpl implements NotifierPlugin {
 
   public static async create(
     config: GitHubNotifierConfig,
-  ): Promise<GitHubNotifierImpl> {
-    return new GitHubNotifierImpl(config);
+  ): Promise<GitHubNotifierPlugin> {
+    return new GitHubNotifierPlugin(config);
   }
 
   public async notify({

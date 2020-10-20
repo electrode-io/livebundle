@@ -1,4 +1,4 @@
-import { GitHubNotifierImpl } from "./GitHubNotifierImpl";
+import { GitHubNotifierPlugin } from "./GitHubNotifierPlugin";
 export * from "./types";
 export * from "./schemas";
-export default GitHubNotifierImpl;
+export default GitHubNotifierPlugin;

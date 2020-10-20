@@ -1,20 +1,20 @@
 import { expect } from "chai";
 import "mocha";
-import DeepLinkGeneratorImpl from "../src";
+import DeepLinkGeneratorPlugin from "../src";
 import { v4 as uuidv4 } from "uuid";
 import { LiveBundleContentType } from "livebundle-sdk";
 
-describe("DeepLinkGeneratorImpl", () => {
+describe("DeepLinkGeneratorPlugin", () => {
   describe("create", () => {
-    it("should return an instance of DeepLinkGeneratorImpl", async () => {
-      const res = await DeepLinkGeneratorImpl.create();
-      expect(res).instanceOf(DeepLinkGeneratorImpl);
+    it("should return an instance of DeepLinkGeneratorPlugin", async () => {
+      const res = await DeepLinkGeneratorPlugin.create();
+      expect(res).instanceOf(DeepLinkGeneratorPlugin);
     });
   });
 
   describe("generate", () => {
     it("should generate a LiveBundle package DeepLink", async () => {
-      const sut = new DeepLinkGeneratorImpl();
+      const sut = new DeepLinkGeneratorPlugin();
       const id = uuidv4();
       const result = await sut.generate({
         id,
@@ -24,7 +24,7 @@ describe("DeepLinkGeneratorImpl", () => {
     });
 
     it("should generate a LiveBundle session DeepLink", async () => {
-      const sut = new DeepLinkGeneratorImpl();
+      const sut = new DeepLinkGeneratorPlugin();
       const id = uuidv4();
       const result = await sut.generate({
         id,

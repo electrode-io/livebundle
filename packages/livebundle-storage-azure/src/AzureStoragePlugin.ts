@@ -4,9 +4,9 @@ import { AzureBlobStorageConfig } from "./types";
 import { StoragePlugin } from "livebundle-sdk";
 import { configSchema } from "./schemas";
 
-const log = debug("livebundle-storage-impl:AzureStorageImpl");
+const log = debug("livebundle-storage-impl:AzureStoragePlugin");
 
-export class AzureStorageImpl implements StoragePlugin {
+export class AzureStoragePlugin implements StoragePlugin {
   private readonly blobServiceClient: BlobServiceClient;
   private readonly config: AzureBlobStorageConfig;
 
@@ -67,8 +67,8 @@ export class AzureStorageImpl implements StoragePlugin {
 
   public static async create(
     azureConfig: AzureBlobStorageConfig,
-  ): Promise<AzureStorageImpl> {
-    return new AzureStorageImpl(azureConfig);
+  ): Promise<AzureStoragePlugin> {
+    return new AzureStoragePlugin(azureConfig);
   }
 
   async store(

@@ -1,2 +1,2 @@
-import { ViewerNotifierImpl } from "./ViewerNotifierImpl";
-export default ViewerNotifierImpl;
+import { ViewerNotifierPlugin } from "./ViewerNotifierPlugin";
+export default ViewerNotifierPlugin;

@@ -1,7 +1,7 @@
 import "mocha";
 import { Octokit } from "@octokit/rest";
 import sinon from "sinon";
-import GitHubNotifierImpl, { GitHubNotifierConfig } from "../src";
+import GitHubNotifierPlugin, { GitHubNotifierConfig } from "../src";
 import { LiveBundleContentType, Package } from "livebundle-sdk";
 import { v4 as uuidv4 } from "uuid";
 import { expect } from "chai";
@@ -9,7 +9,7 @@ import tmp from "tmp";
 import fs from "fs-extra";
 import path from "path";
 
-describe("GitHubNotifierImpl", () => {
+describe("GitHubNotifierPlugin", () => {
   const sandbox = sinon.createSandbox();
 
   const stubs = {
@@ -67,15 +67,15 @@ describe("GitHubNotifierImpl", () => {
   });
 
   describe("create", () => {
-    it("should return an instance of GitHubNotifierImpl", async () => {
-      const res = await GitHubNotifierImpl.create(notifierConfig);
-      expect(res).instanceOf(GitHubNotifierImpl);
+    it("should return an instance of GitHubNotifierPlugin", async () => {
+      const res = await GitHubNotifierPlugin.create(notifierConfig);
+      expect(res).instanceOf(GitHubNotifierPlugin);
     });
   });
 
   describe("notify", () => {
     it("should not post a PR comment if LiveBundle content type is SESSION", async () => {
-      const sut = new GitHubNotifierImpl(notifierConfig, {
+      const sut = new GitHubNotifierPlugin(notifierConfig, {
         octokit: stubs.octokit,
       });
       try {
@@ -92,7 +92,7 @@ describe("GitHubNotifierImpl", () => {
     });
 
     it("should not post a PR comment if LB_NOTIFIER_GITHUB_PRURL and GITHUB_EVENT_PATH are missing", async () => {
-      const sut = new GitHubNotifierImpl(notifierConfig, {
+      const sut = new GitHubNotifierPlugin(notifierConfig, {
         octokit: stubs.octokit,
       });
       await sut.notify(notifyPayload);
@@ -100,7 +100,7 @@ describe("GitHubNotifierImpl", () => {
     });
 
     it("should not post a PR comment if LB_NOTIFIER_GITHUB_PRURL is invalid", async () => {
-      const sut = new GitHubNotifierImpl(notifierConfig, {
+      const sut = new GitHubNotifierPlugin(notifierConfig, {
         octokit: stubs.octokit,
       });
       try {
@@ -113,7 +113,7 @@ describe("GitHubNotifierImpl", () => {
     });
 
     it("should work with LB_NOTIFIER_GITHUB_PRURL env var [GitHub action not used]", async () => {
-      const sut = new GitHubNotifierImpl(notifierConfig, {
+      const sut = new GitHubNotifierPlugin(notifierConfig, {
         octokit: stubs.octokit,
       });
       try {
@@ -126,7 +126,7 @@ describe("GitHubNotifierImpl", () => {
     });
 
     it("should post proper PR comment [QRCode only]", async () => {
-      const sut = new GitHubNotifierImpl(notifierConfig, {
+      const sut = new GitHubNotifierPlugin(notifierConfig, {
         octokit: stubs.octokit,
       });
       try {
@@ -147,7 +147,7 @@ describe("GitHubNotifierImpl", () => {
     });
 
     it("should post proper PR comment [DeepLink only]", async () => {
-      const sut = new GitHubNotifierImpl(notifierConfig, {
+      const sut = new GitHubNotifierPlugin(notifierConfig, {
         octokit: stubs.octokit,
       });
       try {
@@ -168,7 +168,7 @@ describe("GitHubNotifierImpl", () => {
     });
 
     it("should post proper PR comment [LB_NOTIFIER_GITHUB_PRURL]", async () => {
-      const sut = new GitHubNotifierImpl(notifierConfig, {
+      const sut = new GitHubNotifierPlugin(notifierConfig, {
         octokit: stubs.octokit,
       });
       try {
@@ -187,7 +187,7 @@ describe("GitHubNotifierImpl", () => {
     });
 
     it("should work with GITHUB_EVENT_PATH env var [GitHub action]", async () => {
-      const sut = new GitHubNotifierImpl(notifierConfig, {
+      const sut = new GitHubNotifierPlugin(notifierConfig, {
         octokit: stubs.octokit,
       });
       const tmpDir = tmp.dirSync({ unsafeCleanup: true }).name;
@@ -206,7 +206,7 @@ describe("GitHubNotifierImpl", () => {
     });
 
     it("should post proper PR comment [GITHUB_EVENT_PATH]", async () => {
-      const sut = new GitHubNotifierImpl(notifierConfig, {
+      const sut = new GitHubNotifierPlugin(notifierConfig, {
         octokit: stubs.octokit,
       });
       const tmpDir = tmp.dirSync({ unsafeCleanup: true }).name;

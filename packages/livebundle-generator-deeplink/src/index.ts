@@ -1,3 +1,3 @@
-import { DeepLinkGeneratorImpl } from "./DeepLinkGeneratorImpl";
+import { DeepLinkGeneratorPlugin } from "./DeepLinkGeneratorPlugin";
 export * from "./types";
-export default DeepLinkGeneratorImpl;
+export default DeepLinkGeneratorPlugin;

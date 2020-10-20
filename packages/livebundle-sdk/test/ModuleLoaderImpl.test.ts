@@ -5,7 +5,7 @@ import path from "path";
 import { StoragePlugin } from "livebundle-sdk";
 import { expect } from "chai";
 
-class FakeStorage implements StoragePlugin {
+class FakeStoragePlugin implements StoragePlugin {
   hasFile(filePath: string): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
@@ -52,7 +52,7 @@ describe("PluginLoaderImpl", () => {
       const res = await sut.loadGeneratorPlugin(
         "deeplink",
         {},
-        new FakeStorage(),
+        new FakeStoragePlugin(),
       );
       expect(res).not.undefined;
     });
