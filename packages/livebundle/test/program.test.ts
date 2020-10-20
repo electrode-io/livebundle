@@ -25,6 +25,11 @@ describe("program", () => {
   });
 
   afterEach(() => {
+    try {
+      fs.unlinkSync(path.join(process.cwd(), "livebundle.yaml"));
+    } catch (e) {
+      // noop
+    }
     process.chdir(initialCwd);
     sandbox.restore();
   });
@@ -82,6 +87,16 @@ describe("program", () => {
       const sut = program({ livebundle: new FakeLiveBundle() }).exitOverride();
       await sut.parseAsync(["node", "livebundle", "upload"]);
       sinon.assert.calledOnce(consoleErrorStub);
+    });
+
+    it("should load the configuration from cwd if config is not explicitely supplied", async () => {
+      fs.writeFileSync(
+        path.join(process.cwd(), "livebundle.yaml"),
+        fs.readFileSync(path.resolve(__dirname, "../config/default.yaml")),
+      );
+      sandbox.stub(console, "log");
+      const sut = program({ livebundle: new FakeLiveBundle() }).exitOverride();
+      await sut.parseAsync(["node", "livebundle", "upload"]);
     });
 
     it("should not throw if the livebundle upload fails", async () => {

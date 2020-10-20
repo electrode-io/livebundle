@@ -36,7 +36,8 @@ export class BundleAssetsResolverImpl implements BundleAssetsResolver {
       throw new Error(`cwd path does not exist: ${cwd}`);
     }
     return registerAssetStatements
-      .map((x) => x.match(this.ngre)?.groups)
+      .filter((x) => this.ngre.test(x))
+      .map((x) => x.match(this.ngre)!.groups)
       .map((x: MatchedAsset) => ({
         ...x,
         fileLocation: path.resolve(cwd, x.httpServerLocation.substring(8)),

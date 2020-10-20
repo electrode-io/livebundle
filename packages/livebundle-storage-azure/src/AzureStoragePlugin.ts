@@ -39,7 +39,7 @@ export class AzureStoragePlugin implements StoragePlugin {
     this.blobServiceClient =
       blobServiceClient ??
       new BlobServiceClient(
-        `${this.accountUrl}${azureConfig.sasToken ?? ""}`,
+        `${this.accountUrl}${azureConfig.sasToken}`,
         undefined,
         azureConfig.options,
       );

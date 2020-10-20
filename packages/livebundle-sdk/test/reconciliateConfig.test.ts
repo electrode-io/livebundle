@@ -74,4 +74,11 @@ describe("getErrorMessage", () => {
 - propA is defined in config as well as environment variable LB_TEST_PROPA
 `);
   });
+
+  it("should return the correct error message [no ambiguous props]", () => {
+    const errorMessage = getErrorMessage({
+      ambiguousConfigProps: [],
+    });
+    expect(errorMessage).equal("");
+  });
 });
