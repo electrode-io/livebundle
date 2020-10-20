@@ -22,7 +22,7 @@ export class LiveBundleImpl implements LiveBundle {
       generators,
       notifiers,
       uploader,
-    } = await this.moduleLoader.loadModules(config);
+    } = await this.moduleLoader.loadAllPlugins(config);
 
     const bundles: LocalBundle[] = await bundler.bundle();
 
@@ -53,7 +53,7 @@ export class LiveBundleImpl implements LiveBundle {
       generators,
       notifiers,
       storage,
-    } = await this.moduleLoader.loadModules(config);
+    } = await this.moduleLoader.loadAllPlugins(config);
 
     const metadata = JSON.stringify({
       host: `${ip.address()}:8081`,

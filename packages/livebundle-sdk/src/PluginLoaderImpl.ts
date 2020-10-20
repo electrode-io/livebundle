@@ -14,7 +14,7 @@ import debug from "debug";
 const log = debug("livebundle-sdk:PluginLoaderImpl");
 
 export class PluginLoaderImpl implements PluginLoader {
-  public async loadLiveBundleBundlerModule(
+  public async loadBundlerPlugin(
     name: string,
     config: Record<string, unknown>,
   ): Promise<NamedBundler> {
@@ -28,12 +28,12 @@ export class PluginLoaderImpl implements PluginLoader {
     return module;
   }
 
-  public async loadLiveBundleGeneratorModule(
+  public async loadGeneratorPlugin(
     name: string,
     config: Record<string, unknown>,
     storage: Storage,
   ): Promise<NamedGenerator> {
-    log(`loadLiveBundleGeneratorModule(name: ${name})`);
+    log(`loadGeneratorPlugin(name: ${name})`);
     const { Module, moduleConfig } = await this.loadLiveBundleModule(
       "generator",
       name,
@@ -44,7 +44,7 @@ export class PluginLoaderImpl implements PluginLoader {
     return module;
   }
 
-  public async loadLiveBundleNotifierModule(
+  public async loadNotifierPlugin(
     name: string,
     config: Record<string, unknown>,
   ): Promise<NamedNotifier> {
@@ -58,7 +58,7 @@ export class PluginLoaderImpl implements PluginLoader {
     return module;
   }
 
-  public async loadLiveBundleStorageModule(
+  public async loadStoragePlugin(
     name: string,
     config: Record<string, unknown>,
   ): Promise<NamedStorage> {
@@ -108,7 +108,7 @@ export class PluginLoaderImpl implements PluginLoader {
     };
   }
 
-  public async loadModules(
+  public async loadAllPlugins(
     config: LiveBundleConfig,
   ): Promise<{
     bundler: NamedBundler;
@@ -122,14 +122,14 @@ export class PluginLoaderImpl implements PluginLoader {
     const generatorModulesNames = Object.keys(config.generators);
     const notifierModulesNames = Object.keys(config.notifiers);
 
-    const storage: NamedStorage = await this.loadLiveBundleStorageModule(
+    const storage: NamedStorage = await this.loadStoragePlugin(
       storageModuleName,
       config.storage[storageModuleName] as Record<string, unknown>,
     );
     storage.name = storageModuleName;
     const uploader = new UploaderImpl(storage);
 
-    const bundler: NamedBundler = await this.loadLiveBundleBundlerModule(
+    const bundler: NamedBundler = await this.loadBundlerPlugin(
       bundlerModuleName,
       config.bundler[bundlerModuleName] as Record<string, unknown>,
     );
@@ -137,7 +137,7 @@ export class PluginLoaderImpl implements PluginLoader {
 
     const generators: NamedGenerator[] = [];
     for (const generatorModuleName of generatorModulesNames) {
-      const generator = await this.loadLiveBundleGeneratorModule(
+      const generator = await this.loadGeneratorPlugin(
         generatorModuleName,
         config.generators[generatorModuleName] as Record<string, unknown>,
         storage,
@@ -149,7 +149,7 @@ export class PluginLoaderImpl implements PluginLoader {
 
     const notifiers: NamedNotifier[] = [];
     for (const notifierModuleName of notifierModulesNames) {
-      const notifier = await this.loadLiveBundleNotifierModule(
+      const notifier = await this.loadNotifierPlugin(
         notifierModuleName,
         config.notifiers[notifierModuleName] as Record<string, unknown>,
       );

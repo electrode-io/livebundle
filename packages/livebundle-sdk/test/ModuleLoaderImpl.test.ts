@@ -30,10 +30,10 @@ class FakeStorage implements Storage {
 }
 
 describe("PluginLoaderImpl", () => {
-  describe("loadLiveBundleBundlerModule", () => {
+  describe("loadBundlerPlugin", () => {
     it("should load the bundler module", async () => {
       const sut = new PluginLoaderImpl();
-      const res = await sut.loadLiveBundleBundlerModule(
+      const res = await sut.loadBundlerPlugin(
         "metro",
         await fs.readJSON(
           path.join(
@@ -46,10 +46,10 @@ describe("PluginLoaderImpl", () => {
     });
   });
 
-  describe("loadLiveBundleGeneratorModule", () => {
+  describe("loadGeneratorPlugin", () => {
     it("should load the generator module", async () => {
       const sut = new PluginLoaderImpl();
-      const res = await sut.loadLiveBundleGeneratorModule(
+      const res = await sut.loadGeneratorPlugin(
         "deeplink",
         {},
         new FakeStorage(),
@@ -58,10 +58,10 @@ describe("PluginLoaderImpl", () => {
     });
   });
 
-  describe("loadLiveBundleNotifierModule", () => {
+  describe("loadNotifierPlugin", () => {
     it("should load the notifier module", async () => {
       const sut = new PluginLoaderImpl();
-      const res = await sut.loadLiveBundleNotifierModule("github", {
+      const res = await sut.loadNotifierPlugin("github", {
         token: "abcd",
         baseUrl: "https://foo",
       });
@@ -69,18 +69,18 @@ describe("PluginLoaderImpl", () => {
     });
   });
 
-  describe("loadLiveBundleStorageModule", () => {
+  describe("loadStoragePlugin", () => {
     it("should load the storage module", async () => {
       const sut = new PluginLoaderImpl();
-      const res = await sut.loadLiveBundleStorageModule("fs", {});
+      const res = await sut.loadStoragePlugin("fs", {});
       expect(res).not.undefined;
     });
   });
 
-  describe("loadModules", () => {
+  describe("loadAllPlugins", () => {
     it("should load the modules declared in configuration", async () => {
       const sut = new PluginLoaderImpl();
-      const res = await sut.loadModules({
+      const res = await sut.loadAllPlugins({
         bundler: {
           metro: null,
         },
