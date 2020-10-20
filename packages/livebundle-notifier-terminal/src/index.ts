@@ -1,2 +1,2 @@
-import { TerminalNotifierImpl } from "./TerminalNotifierImpl";
-export default TerminalNotifierImpl;
+import { TerminalNotifierPlugin } from "./TerminalNotifierPlugin";
+export default TerminalNotifierPlugin;

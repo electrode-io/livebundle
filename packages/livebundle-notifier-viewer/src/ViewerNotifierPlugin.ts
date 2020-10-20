@@ -3,13 +3,13 @@ import debug from "debug";
 import { LiveBundleContentType, Package, NotifierPlugin } from "livebundle-sdk";
 import open from "open";
 
-const log = debug("livebundle-notifier-terminal:ViewerNotifierImpl");
+const log = debug("livebundle-notifier-terminal:ViewerNotifierPlugin");
 
-export class ViewerNotifierImpl implements NotifierPlugin {
+export class ViewerNotifierPlugin implements NotifierPlugin {
   public constructor(private readonly op: typeof open = open) {}
 
-  public static async create(): Promise<ViewerNotifierImpl> {
-    return new ViewerNotifierImpl();
+  public static async create(): Promise<ViewerNotifierPlugin> {
+    return new ViewerNotifierPlugin();
   }
 
   public async notify({

@@ -6,9 +6,9 @@ import tmp from "tmp";
 import fs from "fs-extra";
 import path from "path";
 
-const log = debug("livebundle-storage-fs:FsStorageImpl");
+const log = debug("livebundle-storage-fs:FsStoragePlugin");
 
-export class FsStorageImpl implements StoragePlugin {
+export class FsStoragePlugin implements StoragePlugin {
   private readonly storageDir: string;
 
   public get baseUrl(): string {
@@ -44,8 +44,10 @@ export class FsStorageImpl implements StoragePlugin {
     return fs.readFile(path.join(this.storageDir, filePath));
   }
 
-  public static async create(config: FsStorageConfig): Promise<FsStorageImpl> {
-    return new FsStorageImpl(config);
+  public static async create(
+    config: FsStorageConfig,
+  ): Promise<FsStoragePlugin> {
+    return new FsStoragePlugin(config);
   }
 
   async store(

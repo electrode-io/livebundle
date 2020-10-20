@@ -1,5 +1,5 @@
 import "mocha";
-import MetroBundlerImpl, {
+import MetroBundlerPlugin, {
   BundleAssetsResolver,
   MetroBundlerConfig,
 } from "../src";
@@ -14,7 +14,7 @@ class NullBundleAssetsResolver implements BundleAssetsResolver {
   }
 }
 
-describe("MetroBundlerImpl", () => {
+describe("MetroBundlerPlugin", () => {
   const sandbox = sinon.createSandbox();
 
   const bundlerConfig: MetroBundlerConfig = {
@@ -26,9 +26,9 @@ describe("MetroBundlerImpl", () => {
   });
 
   describe("create", () => {
-    it("should return an instance of MetroBundlerImpl", async () => {
-      const res = await MetroBundlerImpl.create(bundlerConfig);
-      expect(res).instanceOf(MetroBundlerImpl);
+    it("should return an instance of MetroBundlerPlugin", async () => {
+      const res = await MetroBundlerPlugin.create(bundlerConfig);
+      expect(res).instanceOf(MetroBundlerPlugin);
     });
   });
 
@@ -60,7 +60,7 @@ describe("MetroBundlerImpl", () => {
 
     it("should go through", async () => {
       const spawn = sandbox.stub().returns(spawnRes);
-      const sut = new MetroBundlerImpl(bundlerConfig, {
+      const sut = new MetroBundlerPlugin(bundlerConfig, {
         bundleAssetsResolver: new NullBundleAssetsResolver(),
         spawn,
       });
@@ -71,7 +71,7 @@ describe("MetroBundlerImpl", () => {
       const spawn = sandbox
         .stub()
         .returns({ ...spawnRes, on: onCloseEvent(1) });
-      const sut = new MetroBundlerImpl(bundlerConfig, {
+      const sut = new MetroBundlerPlugin(bundlerConfig, {
         bundleAssetsResolver: new NullBundleAssetsResolver(),
         spawn,
       });

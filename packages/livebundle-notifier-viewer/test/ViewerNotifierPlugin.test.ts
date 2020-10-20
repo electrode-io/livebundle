@@ -1,15 +1,15 @@
 import "mocha";
-import ViewerNotifierImpl from "../src";
+import ViewerNotifierPlugin from "../src";
 import { v4 as uuidv4 } from "uuid";
 import { LiveBundleContentType } from "livebundle-sdk";
 import sinon from "sinon";
 import { expect } from "chai";
 
-describe("ViewerNotifierImpl", () => {
+describe("ViewerNotifierPlugin", () => {
   describe("create", () => {
-    it("should return an instance of ViewerNotifierImpl", async () => {
-      const res = await ViewerNotifierImpl.create();
-      expect(res).instanceOf(ViewerNotifierImpl);
+    it("should return an instance of ViewerNotifierPlugin", async () => {
+      const res = await ViewerNotifierPlugin.create();
+      expect(res).instanceOf(ViewerNotifierPlugin);
     });
   });
 
@@ -21,7 +21,7 @@ describe("ViewerNotifierImpl", () => {
         type: LiveBundleContentType.PACKAGE,
       };
       const openStub = sinon.stub();
-      const sut = new ViewerNotifierImpl(openStub);
+      const sut = new ViewerNotifierPlugin(openStub);
       await sut.notify(notifyPayload);
       sinon.assert.calledOnceWithExactly(
         openStub,
@@ -36,7 +36,7 @@ describe("ViewerNotifierImpl", () => {
         type: LiveBundleContentType.PACKAGE,
       };
       const openStub = sinon.stub();
-      const sut = new ViewerNotifierImpl(openStub);
+      const sut = new ViewerNotifierPlugin(openStub);
       await sut.notify(notifyPayload);
     });
   });

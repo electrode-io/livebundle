@@ -1,4 +1,4 @@
-import { QRCodeGeneratorImpl } from "./QRCodeGeneratorImpl";
+import { QRCodeGeneratorPlugin } from "./QRCodeGeneratorPlugin";
 export * from "./types";
 export * from "./schemas";
-export default QRCodeGeneratorImpl;
+export default QRCodeGeneratorPlugin;

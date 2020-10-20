@@ -7,9 +7,9 @@ import path from "path";
 import cp from "child_process";
 import { BundleAssetsResolverImpl } from "./BundleAssetsResolverImpl";
 
-const log = debug("livebundle-bundler-metro:MetroBundlerImpl");
+const log = debug("livebundle-bundler-metro:MetroBundlerPlugin");
 
-export class MetroBundlerImpl implements BundlerPlugin {
+export class MetroBundlerPlugin implements BundlerPlugin {
   private readonly spawn;
   private readonly bundleAssetsResolver;
 
@@ -29,8 +29,8 @@ export class MetroBundlerImpl implements BundlerPlugin {
 
   public static async create(
     config: MetroBundlerConfig,
-  ): Promise<MetroBundlerImpl> {
-    return new MetroBundlerImpl(config);
+  ): Promise<MetroBundlerPlugin> {
+    return new MetroBundlerPlugin(config);
   }
 
   public static readonly defaultConfig: Record<

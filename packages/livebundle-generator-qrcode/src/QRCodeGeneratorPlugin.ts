@@ -9,9 +9,9 @@ import { configSchema } from "./schemas";
 import path from "path";
 import qrcode from "qrcode";
 
-const log = debug("livebundle-generator-qrcode:QRCodeGeneratorImpl");
+const log = debug("livebundle-generator-qrcode:QRCodeGeneratorPlugin");
 
-export class QRCodeGeneratorImpl implements GeneratorPlugin {
+export class QRCodeGeneratorPlugin implements GeneratorPlugin {
   public constructor(
     private readonly config: QrCodeGeneratorConfig,
     private readonly storage: StoragePlugin,
@@ -27,8 +27,8 @@ export class QRCodeGeneratorImpl implements GeneratorPlugin {
   public static async create(
     config: QrCodeGeneratorConfig,
     storage: StoragePlugin,
-  ): Promise<QRCodeGeneratorImpl> {
-    return new QRCodeGeneratorImpl(config, storage);
+  ): Promise<QRCodeGeneratorPlugin> {
+    return new QRCodeGeneratorPlugin(config, storage);
   }
 
   async generate({

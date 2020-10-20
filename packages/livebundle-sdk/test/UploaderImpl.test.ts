@@ -1,6 +1,6 @@
 import "mocha";
 import { UploaderImpl } from "../src";
-import sinon, { stub } from "sinon";
+import sinon from "sinon";
 import {
   StoragePlugin,
   LocalBundle,
@@ -10,7 +10,7 @@ import {
 import { expect } from "chai";
 import path from "path";
 
-class FakeStorageImpl implements StoragePlugin {
+class FakeStoragePlugin implements StoragePlugin {
   hasFile(filePath: string): Promise<boolean> {
     return Promise.resolve(true);
   }
@@ -38,7 +38,7 @@ describe("UploaderImpl", () => {
   const sandbox = sinon.createSandbox();
 
   const stubs = {
-    storage: sandbox.createStubInstance(FakeStorageImpl),
+    storage: sandbox.createStubInstance(FakeStoragePlugin),
   };
 
   const assets: ReactNativeAsset[] = [

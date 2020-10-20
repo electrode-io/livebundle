@@ -2,15 +2,15 @@ import debug from "debug";
 import { LiveBundleContentType, Package, NotifierPlugin } from "livebundle-sdk";
 import chalk from "chalk";
 
-const log = debug("livebundle-notifier-terminal:TerminalNotifierImpl");
+const log = debug("livebundle-notifier-terminal:TerminalNotifierPlugin");
 
-export class TerminalNotifierImpl implements NotifierPlugin {
+export class TerminalNotifierPlugin implements NotifierPlugin {
   public constructor(
     private readonly logger: { log: (message?: string) => void } = console,
   ) {}
 
-  public static async create(): Promise<TerminalNotifierImpl> {
-    return new TerminalNotifierImpl();
+  public static async create(): Promise<TerminalNotifierPlugin> {
+    return new TerminalNotifierPlugin();
   }
 
   public async notify({
