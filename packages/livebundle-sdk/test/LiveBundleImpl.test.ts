@@ -27,15 +27,15 @@ describe("LiveBundleImpl", () => {
 
   describe("upload", () => {
     it("should go through", async () => {
-      const moduleLoaderStub = sandbox.createStubInstance(PluginLoaderImpl);
-      moduleLoaderStub.loadAllPlugins.resolves({
+      const pluginLoaderStub = sandbox.createStubInstance(PluginLoaderImpl);
+      pluginLoaderStub.loadAllPlugins.resolves({
         bundler: new FakeBundler(),
         storage: new FakeStorage(),
         uploader: new FakeUploader(),
         generators: [new FakeGenerator()],
         notifiers: [new FakeNotifier()],
       });
-      const sut = new LiveBundleImpl(moduleLoaderStub);
+      const sut = new LiveBundleImpl(pluginLoaderStub);
       await sut.upload({
         bundler: {
           fake: null,
@@ -55,15 +55,15 @@ describe("LiveBundleImpl", () => {
 
   describe("live", () => {
     it("should go through", async () => {
-      const moduleLoaderStub = sandbox.createStubInstance(PluginLoaderImpl);
-      moduleLoaderStub.loadAllPlugins.resolves({
+      const pluginLoaderStub = sandbox.createStubInstance(PluginLoaderImpl);
+      pluginLoaderStub.loadAllPlugins.resolves({
         bundler: new FakeBundler(),
         storage: new FakeStorage(),
         uploader: new FakeUploader(),
         generators: [new FakeGenerator()],
         notifiers: [new FakeNotifier()],
       });
-      const sut = new LiveBundleImpl(moduleLoaderStub);
+      const sut = new LiveBundleImpl(pluginLoaderStub);
       await sut.live({
         bundler: {
           fake: null,

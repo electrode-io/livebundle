@@ -31,7 +31,7 @@ class FakeStoragePlugin implements StoragePlugin {
 
 describe("PluginLoaderImpl", () => {
   describe("loadBundlerPlugin", () => {
-    it("should load the bundler module", async () => {
+    it("should load the bundler plugin", async () => {
       const sut = new PluginLoaderImpl();
       const res = await sut.loadBundlerPlugin(
         "metro",
@@ -47,7 +47,7 @@ describe("PluginLoaderImpl", () => {
   });
 
   describe("loadGeneratorPlugin", () => {
-    it("should load the generator module", async () => {
+    it("should load the generator plugin", async () => {
       const sut = new PluginLoaderImpl();
       const res = await sut.loadGeneratorPlugin(
         "deeplink",
@@ -59,7 +59,7 @@ describe("PluginLoaderImpl", () => {
   });
 
   describe("loadNotifierPlugin", () => {
-    it("should load the notifier module", async () => {
+    it("should load the notifier plugin", async () => {
       const sut = new PluginLoaderImpl();
       const res = await sut.loadNotifierPlugin("github", {
         token: "abcd",
@@ -70,7 +70,7 @@ describe("PluginLoaderImpl", () => {
   });
 
   describe("loadStoragePlugin", () => {
-    it("should load the storage module", async () => {
+    it("should load the storage plugin", async () => {
       const sut = new PluginLoaderImpl();
       const res = await sut.loadStoragePlugin("fs", {});
       expect(res).not.undefined;
@@ -78,7 +78,7 @@ describe("PluginLoaderImpl", () => {
   });
 
   describe("loadAllPlugins", () => {
-    it("should load the modules declared in configuration", async () => {
+    it("should load the plugins declared in configuration", async () => {
       const sut = new PluginLoaderImpl();
       const res = await sut.loadAllPlugins({
         bundler: {

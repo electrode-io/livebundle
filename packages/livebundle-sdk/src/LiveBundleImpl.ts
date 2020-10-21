@@ -12,7 +12,7 @@ import ip from "ip";
 const log = debug("livebundle-sdk:LiveBundleImpl");
 
 export class LiveBundleImpl implements LiveBundle {
-  public constructor(private readonly moduleLoader: PluginLoader) {}
+  public constructor(private readonly pluginLoader: PluginLoader) {}
 
   public async upload(config: LiveBundleConfig): Promise<void> {
     log(`upload(config: ${JSON.stringify(config, null, 2)})`);
@@ -22,7 +22,7 @@ export class LiveBundleImpl implements LiveBundle {
       generators,
       notifiers,
       uploader,
-    } = await this.moduleLoader.loadAllPlugins(config);
+    } = await this.pluginLoader.loadAllPlugins(config);
 
     const bundles: LocalBundle[] = await bundler.bundle();
 
@@ -53,7 +53,7 @@ export class LiveBundleImpl implements LiveBundle {
       generators,
       notifiers,
       storage,
-    } = await this.moduleLoader.loadAllPlugins(config);
+    } = await this.pluginLoader.loadAllPlugins(config);
 
     const metadata = JSON.stringify({
       host: `${ip.address()}:8081`,
