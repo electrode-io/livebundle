@@ -17,25 +17,25 @@ describe("reconciliateConfig", () => {
   it("should reconciliate missing properties with env vars", () => {
     try {
       process.env.LB_TEST_PROPB = "bar";
-      const res = reconciliateConfig({
+      const config = reconciliateConfig({
         curConfig: {
           propA: "foo",
           propC: "gaz",
         },
         envVarToConfigKey,
       });
-      expect(res.config).deep.equal(finalConfig);
+      expect(config).deep.equal(finalConfig);
     } finally {
       delete process.env.LB_TEST_PROPB;
     }
   });
 
   it("should work if property is present in config but not set as env var", () => {
-    const res = reconciliateConfig({
+    const config = reconciliateConfig({
       curConfig: finalConfig,
       envVarToConfigKey,
     });
-    expect(res.config).deep.equal(finalConfig);
+    expect(config).deep.equal(finalConfig);
   });
 
   it("should not throw if property is missing from config and not set as env var", () => {

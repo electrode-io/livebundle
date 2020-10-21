@@ -130,6 +130,13 @@ export interface Named {
   name: string;
 }
 
+export interface PluginClass<T> {
+  create: (config: Record<string, unknown>, storage?: StoragePlugin) => T;
+  readonly envVarToConfigKey: Record<string, string>;
+  readonly schema: Record<string, unknown>;
+  readonly defaultConfig: Record<string, unknown>;
+}
+
 export interface BundlerPlugin {
   bundle(): Promise<LocalBundle[]>;
 }

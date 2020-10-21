@@ -8,11 +8,7 @@ export function reconciliateConfig<T extends Record<string, unknown>>({
 }: {
   curConfig: Partial<T> | undefined;
   envVarToConfigKey: Record<string, string>;
-}): {
-  ambiguousConfigProps: [string, string][];
-  missingConfigProps: [string, string][];
-  config?: T;
-} {
+}): T {
   log(
     `reconciliateConfig(curConfig: ${JSON.stringify(
       curConfig,
@@ -23,11 +19,9 @@ export function reconciliateConfig<T extends Record<string, unknown>>({
 
   const res: {
     ambiguousConfigProps: [string, string][];
-    missingConfigProps: [string, string][];
-    config?: T;
+    config: T;
   } = {
     ambiguousConfigProps: [],
-    missingConfigProps: [],
     config: (curConfig as T) ?? ({} as T),
   };
 
@@ -41,21 +35,15 @@ export function reconciliateConfig<T extends Record<string, unknown>>({
       (res.config as Record<string, unknown>)[configKey] = envVarVal;
     } else if (curConfig && curConfig[configKey]) {
       // Config property is defined in config
-      (res.config as Record<string, unknown>)[configKey] = curConfig![
-        configKey
-      ];
+      (res.config as Record<string, unknown>)[configKey] = curConfig[configKey];
     }
   }
 
   if (res.ambiguousConfigProps.length > 0) {
-    res.config = undefined;
-  }
-
-  if (!res.config) {
     throw new Error(getErrorMessage(res));
   }
 
-  return res;
+  return res.config;
 }
 
 export function getErrorMessage({
