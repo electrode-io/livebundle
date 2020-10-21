@@ -7,6 +7,7 @@ import {
   StoragePlugin,
   Uploader,
   LiveBundleConfig,
+  PluginClass,
 } from "./types";
 import { loadConfig, reconciliateConfig, UploaderImpl } from ".";
 import debug from "debug";
@@ -18,12 +19,12 @@ export class PluginLoaderImpl implements PluginLoader {
     name: string,
     config: Record<string, unknown>,
   ): Promise<NamedBundlerPlugin> {
-    const { Plugin, pluginConfig } = await this.loadPlugin(
+    const { Plugin, pluginConfig } = await this.loadPlugin<NamedBundlerPlugin>(
       "bundler",
       name,
       config,
     );
-    const plugin = Plugin.create(pluginConfig) as NamedBundlerPlugin;
+    const plugin = Plugin.create(pluginConfig);
     plugin.name = name;
     return plugin;
   }
@@ -34,12 +35,10 @@ export class PluginLoaderImpl implements PluginLoader {
     storage: StoragePlugin,
   ): Promise<NamedGeneratorPlugin> {
     log(`loadGeneratorPlugin(name: ${name})`);
-    const { Plugin, pluginConfig } = await this.loadPlugin(
-      "generator",
-      name,
-      config,
-    );
-    const plugin = Plugin.create(pluginConfig, storage) as NamedGeneratorPlugin;
+    const { Plugin, pluginConfig } = await this.loadPlugin<
+      NamedGeneratorPlugin
+    >("generator", name, config);
+    const plugin = Plugin.create(pluginConfig, storage);
     plugin.name = name;
     return plugin;
   }
@@ -48,12 +47,12 @@ export class PluginLoaderImpl implements PluginLoader {
     name: string,
     config: Record<string, unknown>,
   ): Promise<NamedNotifierPlugin> {
-    const { Plugin, pluginConfig } = await this.loadPlugin(
+    const { Plugin, pluginConfig } = await this.loadPlugin<NamedNotifierPlugin>(
       "notifier",
       name,
       config,
     );
-    const plugin = Plugin.create(pluginConfig) as NamedNotifierPlugin;
+    const plugin = Plugin.create(pluginConfig);
     plugin.name = name;
     return plugin;
   }
@@ -62,22 +61,22 @@ export class PluginLoaderImpl implements PluginLoader {
     name: string,
     config: Record<string, unknown>,
   ): Promise<NamedStoragePlugin> {
-    const { Plugin, pluginConfig } = await this.loadPlugin(
+    const { Plugin, pluginConfig } = await this.loadPlugin<NamedStoragePlugin>(
       "storage",
       name,
       config,
     );
-    const plugin = Plugin.create(pluginConfig) as NamedStoragePlugin;
+    const plugin = Plugin.create(pluginConfig);
     plugin.name = name;
     return plugin;
   }
 
-  public async loadPlugin(
+  public async loadPlugin<T>(
     type: string,
     name: string,
     config: Record<string, unknown>,
   ): Promise<{
-    Plugin: any;
+    Plugin: PluginClass<T>;
     pluginConfig: Record<string, unknown>;
   }> {
     log(
@@ -93,7 +92,7 @@ export class PluginLoaderImpl implements PluginLoader {
       pluginConfig = reconciliateConfig({
         curConfig: pluginConfig,
         envVarToConfigKey: Plugin.envVarToConfigKey,
-      }).config!;
+      });
     }
 
     pluginConfig = await loadConfig<Record<string, unknown>>({

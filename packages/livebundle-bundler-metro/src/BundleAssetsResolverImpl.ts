@@ -37,7 +37,7 @@ export class BundleAssetsResolverImpl implements BundleAssetsResolver {
     }
     return registerAssetStatements
       .filter((x) => this.ngre.test(x))
-      .map((x) => x.match(this.ngre)!.groups)
+      .map((x) => x.match(this.ngre)?.groups)
       .map((x: MatchedAsset) => ({
         ...x,
         fileLocation: path.resolve(cwd, x.httpServerLocation.substring(8)),
