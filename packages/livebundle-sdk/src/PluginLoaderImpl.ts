@@ -72,7 +72,7 @@ export class PluginLoaderImpl implements PluginLoader {
   }
 
   public async loadPlugin<T>(
-    type: string,
+    category: string,
     name: string,
     config: Record<string, unknown>,
   ): Promise<{
@@ -80,13 +80,13 @@ export class PluginLoaderImpl implements PluginLoader {
     pluginConfig: Record<string, unknown>;
   }> {
     log(
-      `loadPlugin(type: ${type}, name: ${name}, config: ${JSON.stringify(
+      `loadPlugin(category: ${category}, name: ${name}, config: ${JSON.stringify(
         config,
         null,
         2,
       )})`,
     );
-    const { default: Plugin } = await import(`livebundle-${type}-${name}`);
+    const { default: Plugin } = await import(`livebundle-${category}-${name}`);
     let pluginConfig = config;
     if (Plugin.envVarToConfigKey) {
       pluginConfig = reconciliateConfig({
