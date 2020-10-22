@@ -179,6 +179,22 @@ describe("program", () => {
         "config/default.yaml",
       ]);
     });
+
+    it("should use user supplied cwd (--cwd option)", async () => {
+      sandbox.stub(console, "log");
+      const tmpDir = tmp.dirSync({ unsafeCleanup: true }).name;
+      const sut = program({ livebundle: new FakeLiveBundle() }).exitOverride();
+      await sut.parseAsync([
+        "node",
+        "livebundle",
+        "live",
+        "--config",
+        "config/default.yaml",
+        "--cwd",
+        tmpDir,
+      ]);
+      expect(fs.realpathSync(process.cwd())).eql(fs.realpathSync(tmpDir));
+    });
   });
 
   describe("init command", () => {
@@ -205,6 +221,20 @@ describe("program", () => {
       }).exitOverride();
       await sut.parseAsync(["node", "livebundle", "init"]);
       sinon.assert.calledOnce(consoleErrorStub);
+    });
+
+    it("should use user supplied cwd (--cwd option)", async () => {
+      sandbox.stub(console, "log");
+      const tmpDir = tmp.dirSync({ unsafeCleanup: true }).name;
+      const sut = program({ livebundle: new FakeLiveBundle() }).exitOverride();
+      await sut.parseAsync([
+        "node",
+        "livebundle",
+        "init",
+        "--cwd",
+        tmpDir,
+      ]);
+      expect(fs.realpathSync(process.cwd())).eql(fs.realpathSync(tmpDir));
     });
   });
 });

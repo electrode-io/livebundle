@@ -24,7 +24,7 @@ export default function program({
   uploadCommand
     .name("upload")
     .option("--config <string>", "Path to config file")
-    .option("--cwd <string>", "Set current working directory")
+    .option("--cwd <string>", "Directory from which to run this command from")
     .description("bundle and upload resulting bundles")
     .action(async ({ config, cwd }: { config?: string; cwd?: string }) => {
       let conf;
@@ -63,10 +63,14 @@ export default function program({
   liveCommand
     .name("live")
     .option("--config <string>", "Path to config file")
-    .description("start a live session")
-    .action(async ({ config }: { config?: string }) => {
+    .option("--cwd <string>", "Directory from which to run this command from")
+    .description("start a LiveBundle live session")
+    .action(async ({ config, cwd }: { config?: string; cwd?: string }) => {
       let conf;
       try {
+        if (cwd) {
+          process.chdir(cwd);
+        }
         conf = await loadConfig<Config>({
           configPath: config,
           schema: configSchema,
@@ -92,7 +96,11 @@ export default function program({
   initCommand
     .name("init")
     .description("generates a default livebundle.yaml configuration file")
-    .action(async () => {
+    .option("--cwd <string>", "Directory from which to run this command from")
+    .action(async ({ cwd }: { cwd?: string }) => {
+      if (cwd) {
+        process.chdir(cwd);
+      }
       if (await fs.pathExists("livebundle.yaml")) {
         return console.error(`A livebundle.yaml configuration already exists`);
       }
