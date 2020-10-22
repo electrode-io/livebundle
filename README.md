@@ -8,9 +8,9 @@
 
 [![ci][1]][2] [![codecov][3]][4]
 
-## **Website** [livebundle.io][7]
-## **Documentation** [docs.livebundle.io][8]
-## **Contributing** [contribute.livebundle.io][9]
+### **Website** [livebundle.io][7]
+### **Documentation** [docs.livebundle.io][8]
+### **Contributing** [contribute.livebundle.io][9]
 
 # Related repositories
 
