@@ -4,6 +4,7 @@ import { expect } from "chai";
 import tmp from "tmp";
 import fs from "fs-extra";
 import path from "path";
+import os from "os";
 
 describe("FsStoragePlugin", () => {
   const storageConfig = (): FsStorageConfig => ({
@@ -24,6 +25,14 @@ describe("FsStoragePlugin", () => {
       expect(sut.baseUrl).equal(config.storageDir);
     });
   });
+
+  describe("constructor", () => {
+    it("should untildify storage directory path", () => {
+      const config = { storageDir: "~" }
+      const sut = new FsStoragePlugin(config);
+      expect(sut.baseUrl).equal(os.homedir());
+    });
+  })
 
   describe("create", () => {
     it("should return an instance of FsStoragePlugin", async () => {
