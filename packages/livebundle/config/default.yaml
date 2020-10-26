@@ -31,8 +31,8 @@ storage:
   #
   fs:
     # Local directory for storage
-    # Leave empty to use a temporary directory
-    storageDir:
+    # No setting a path will use a temporary directory
+    storageDir: ~/.livebundle/storage
 
   # Azure blob storage provider configuration
   # We recommend using env variables here instead of
