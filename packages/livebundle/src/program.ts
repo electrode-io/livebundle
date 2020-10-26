@@ -1,6 +1,11 @@
 import commander, { Command } from "commander";
 import fs from "fs-extra";
-import { loadConfig, LiveBundle, LiveBundleConfig } from "livebundle-sdk";
+import {
+  loadConfig,
+  LiveBundle,
+  LiveBundleConfig,
+  untildifyPath,
+} from "livebundle-sdk";
 import path from "path";
 import { configSchema } from "./schemas";
 import { Config } from "./types";
@@ -23,8 +28,12 @@ export default function program({
   const uploadCommand = new Command();
   uploadCommand
     .name("upload")
-    .option("--config <string>", "Path to config file")
-    .option("--cwd <string>", "Directory from which to run this command from")
+    .option("--config <string>", "Path to config file", untildifyPath)
+    .option(
+      "--cwd <string>",
+      "Directory from which to run this command from",
+      untildifyPath,
+    )
     .description("bundle and upload resulting bundles")
     .action(async ({ config, cwd }: { config?: string; cwd?: string }) => {
       let conf;
@@ -62,8 +71,12 @@ export default function program({
   const liveCommand = new Command();
   liveCommand
     .name("live")
-    .option("--config <string>", "Path to config file")
-    .option("--cwd <string>", "Directory from which to run this command from")
+    .option("--config <string>", "Path to config file", untildifyPath)
+    .option(
+      "--cwd <string>",
+      "Directory from which to run this command from",
+      untildifyPath,
+    )
     .description("start a LiveBundle live session")
     .action(async ({ config, cwd }: { config?: string; cwd?: string }) => {
       let conf;

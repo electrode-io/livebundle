@@ -1,6 +1,6 @@
 import debug from "debug";
 import { FsStorageConfig } from "./types";
-import { StoragePlugin } from "livebundle-sdk";
+import { StoragePlugin, untildifyPath } from "livebundle-sdk";
 import { configSchema } from "./schemas";
 import tmp from "tmp";
 import fs from "fs-extra";
@@ -27,8 +27,9 @@ export class FsStoragePlugin implements StoragePlugin {
   public static readonly schema: Record<string, unknown> = configSchema;
 
   public constructor(fsConfig: FsStorageConfig) {
-    this.storageDir =
-      fsConfig.storageDir ?? tmp.dirSync({ unsafeCleanup: true }).name;
+    this.storageDir = fsConfig.storageDir
+      ? untildifyPath(fsConfig.storageDir)
+      : tmp.dirSync({ unsafeCleanup: true }).name;
     fs.ensureDir(this.storageDir);
   }
 
