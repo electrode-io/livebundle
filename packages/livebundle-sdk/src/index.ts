@@ -10,3 +10,4 @@ export * from "./schemaValidate";
 export * from "./types";
 export * from "./reconciliateConfig";
 export * from "./untildifyPath";
+export * from "./getNativeModules";
