@@ -12,6 +12,7 @@
     "test": "mocha"
   },
   "dependencies": {
+    "@react-native-community/cli-types": "^4.10.1",
     "ajv": "^6.12.6",
     "debug": "^4.2.0",
     "form-data": "^3.0.0",
