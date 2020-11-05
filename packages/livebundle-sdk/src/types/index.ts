@@ -55,6 +55,7 @@ export type BundleCli = Omit<Bundle, "id">;
 export interface Package {
   id: string;
   bundles: Bundle[];
+  nativeModules: Record<string, string>;
   timestamp: number;
 }
 

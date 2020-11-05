@@ -13,6 +13,7 @@ import {
   Platform,
 } from "./types";
 import debug from "debug";
+import { getNativeModules } from "./getNativeModules";
 
 const log = debug("livebundle-sdk:UploaderImpl");
 
@@ -26,9 +27,12 @@ export class UploaderImpl implements Uploader {
   }): Promise<Package> {
     log(`upload`);
 
+    const nativeModules = await getNativeModules();
+
     const pkg: Package = {
       id: uuidv4(),
       bundles: [],
+      nativeModules,
       timestamp: Date.now(),
     };
 

@@ -5,6 +5,7 @@ import {
   LiveBundle,
   LiveBundleConfig,
   untildifyPath,
+  getNativeModules,
 } from "livebundle-sdk";
 import path from "path";
 import { configSchema } from "./schemas";
