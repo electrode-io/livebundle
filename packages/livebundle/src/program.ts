@@ -84,8 +84,14 @@ export default function program({
         if (cwd) {
           process.chdir(cwd);
         }
+        const resolvedConfigPath = resolveConfigPath();
+        if (!config && !resolvedConfigPath) {
+          return console.error(`No LiveBundle configuration file found.
+- To create a new configuration file you can use 'livebundle init' command
+- To use an existing configuration file from a specific location you can use the '--config' option`);
+        }
         conf = await loadConfig<Config>({
-          configPath: config,
+          configPath: config ?? resolvedConfigPath,
           schema: configSchema,
         });
       } catch (e) {
