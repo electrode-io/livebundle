@@ -5,7 +5,6 @@ import {
   LiveBundle,
   LiveBundleConfig,
   untildifyPath,
-  getNativeModules,
 } from "livebundle-sdk";
 import path from "path";
 import { configSchema } from "./schemas";
@@ -42,7 +41,6 @@ export default function program({
         if (cwd) {
           process.chdir(cwd);
         }
-        await writeBuildMetadata();
         const resolvedConfigPath = resolveConfigPath();
         if (!config && !resolvedConfigPath) {
           return console.error(`No LiveBundle configuration file found.
@@ -86,7 +84,6 @@ export default function program({
         if (cwd) {
           process.chdir(cwd);
         }
-        await writeBuildMetadata();
         conf = await loadConfig<Config>({
           configPath: config,
           schema: configSchema,
@@ -131,9 +128,4 @@ export default function program({
     .addCommand(uploadCommand)
     .addCommand(liveCommand)
     .addCommand(initCommand);
-}
-
-async function writeBuildMetadata() {
-  const nativeModules = await getNativeModules();
-  fs.writeJson(".livebundle/build-metadata.json", { nativeModules });
 }
