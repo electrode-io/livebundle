@@ -1,6 +1,6 @@
 {
   "name": "livebundle-notifier-viewer",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "main": "dist/index.js",
   "license": "Apache-2.0",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "debug": "^4.2.0",
-    "livebundle-sdk": "^0.3.1",
+    "livebundle-sdk": "^0.3.2",
     "open": "^7.3.0",
     "tmp": "^0.2.1"
   }
