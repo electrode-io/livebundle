@@ -12,7 +12,6 @@ import { Config } from "./types";
 import emoji from "node-emoji";
 import ora from "ora";
 import { resolveConfigPath } from "./resolveConfigPath";
-import { getNativeModules } from "./getNativeModules";
 
 const pJsonPath = path.resolve(__dirname, "..", "package.json");
 const pJson = fs.readJSONSync(pJsonPath);
@@ -42,7 +41,6 @@ export default function program({
         if (cwd) {
           process.chdir(cwd);
         }
-        await writeBuildMetadata();
         const resolvedConfigPath = resolveConfigPath();
         if (!config && !resolvedConfigPath) {
           return console.error(`No LiveBundle configuration file found.
@@ -86,7 +84,6 @@ export default function program({
         if (cwd) {
           process.chdir(cwd);
         }
-        await writeBuildMetadata();
         conf = await loadConfig<Config>({
           configPath: config,
           schema: configSchema,
@@ -131,9 +128,4 @@ export default function program({
     .addCommand(uploadCommand)
     .addCommand(liveCommand)
     .addCommand(initCommand);
-}
-
-async function writeBuildMetadata() {
-  const nativeModules = await getNativeModules();
-  fs.writeJson(".livebundle/build-metadata.json", { nativeModules });
 }

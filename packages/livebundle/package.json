@@ -15,7 +15,6 @@
     "test": "mocha"
   },
   "dependencies": {
-    "@react-native-community/cli-types": "^4.10.1",
     "chalk": "^4.1.0",
     "commander": "^6.1.0",
     "debug": "^4.2.0",
