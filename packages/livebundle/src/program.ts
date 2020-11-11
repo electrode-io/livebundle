@@ -13,6 +13,7 @@ import { Config } from "./types";
 import emoji from "node-emoji";
 import ora from "ora";
 import { resolveConfigPath } from "./resolveConfigPath";
+import { getNativeModules } from "./getNativeModules";
 
 const pJsonPath = path.resolve(__dirname, "..", "package.json");
 const pJson = fs.readJSONSync(pJsonPath);
