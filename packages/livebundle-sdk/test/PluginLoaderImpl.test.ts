@@ -84,6 +84,9 @@ describe("PluginLoaderImpl", () => {
         bundler: {
           metro: null,
         },
+        server: {
+          metro: null,
+        },
         storage: {
           fs: null,
         },

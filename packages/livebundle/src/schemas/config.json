@@ -5,6 +5,9 @@
     "bundler": {
       "type": "object"
     },
+    "server": {
+      "type": "object"
+    },
     "storage": {
       "type": "object"
     },
@@ -15,5 +18,5 @@
       "type": "object"
     }
   },
-  "required": [ "bundler", "storage", "generators", "notifiers" ]
+  "required": [ "bundler", "server", "storage", "generators", "notifiers" ]
 }

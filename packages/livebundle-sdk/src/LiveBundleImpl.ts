@@ -4,6 +4,7 @@ import {
   LiveBundleContentType,
   LiveBundle,
   PluginLoader,
+  ServerOpts,
 } from "./types";
 import debug from "debug";
 import { v4 as uuidv4 } from "uuid";
@@ -46,18 +47,31 @@ export class LiveBundleImpl implements LiveBundle {
     }
   }
 
-  public async live(config: LiveBundleConfig): Promise<void> {
-    log(`live(config: ${JSON.stringify(config, null, 2)})`);
+  public async live(
+    config: LiveBundleConfig,
+    opts?: ServerOpts,
+  ): Promise<void> {
+    log(
+      `live(config: ${JSON.stringify(config, null, 2)}, opts: ${JSON.stringify(
+        opts,
+        null,
+        2,
+      )})`,
+    );
 
     const {
+      server,
       generators,
       notifiers,
       storage,
     } = await this.pluginLoader.loadAllPlugins(config);
 
-    const metadata = JSON.stringify({
-      host: `${ip.address()}:8081`,
-    });
+    await server.launchServer(opts);
+
+    const metadata = JSON.stringify(
+      LiveBundleImpl.buildLiveSessionMetadata(opts),
+    );
+
     const sessionId = uuidv4();
     await storage.store(
       metadata,
@@ -80,5 +94,11 @@ export class LiveBundleImpl implements LiveBundle {
         type: LiveBundleContentType.SESSION,
       });
     }
+  }
+
+  public static buildLiveSessionMetadata(opts?: ServerOpts): string {
+    return JSON.stringify({
+      host: `${opts?.host ?? ip.address()}:${opts?.port ?? "8081"}`,
+    });
   }
 }

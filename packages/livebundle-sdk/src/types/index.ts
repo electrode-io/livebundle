@@ -8,6 +8,7 @@ export interface LocalBundle {
 
 export interface LiveBundleConfig {
   bundler: Record<string, unknown>;
+  server: Record<string, unknown>;
   storage: Record<string, unknown>;
   generators: Record<string, unknown>;
   notifiers: Record<string, unknown>;
@@ -39,7 +40,7 @@ export enum LiveBundleContentType {
 
 export interface LiveBundle {
   upload(config: LiveBundleConfig): Promise<void>;
-  live(config: LiveBundleConfig): Promise<void>;
+  live(config: LiveBundleConfig, opts?: ServerOpts): Promise<void>;
 }
 
 export interface ReactNativeAsset {
@@ -52,6 +53,10 @@ export interface PluginLoader {
     name: string,
     config: Record<string, unknown>,
   ): Promise<NamedBundlerPlugin>;
+  loadServerPlugin(
+    name: string,
+    config: Record<string, unknown>,
+  ): Promise<NamedServerPlugin>;
   loadGeneratorPlugin(
     name: string,
     config: Record<string, unknown>,
@@ -69,6 +74,7 @@ export interface PluginLoader {
     config: LiveBundleConfig,
   ): Promise<{
     bundler: NamedBundlerPlugin;
+    server: NamedServerPlugin;
     storage: NamedStoragePlugin;
     generators: NamedGeneratorPlugin[];
     notifiers: NamedNotifierPlugin[];
@@ -89,6 +95,16 @@ export interface PluginClass<T> {
 
 export interface BundlerPlugin {
   bundle(): Promise<LocalBundle[]>;
+}
+
+export interface ServerPlugin {
+  launchServer(opts?: ServerOpts): Promise<void>;
+}
+
+export interface ServerOpts {
+  host?: string;
+  port?: number;
+  rest?: string[];
 }
 
 export interface GeneratorPlugin {
@@ -134,3 +150,4 @@ export type NamedBundlerPlugin = BundlerPlugin & Named;
 export type NamedStoragePlugin = StoragePlugin & Named;
 export type NamedGeneratorPlugin = GeneratorPlugin & Named;
 export type NamedNotifierPlugin = NotifierPlugin & Named;
+export type NamedServerPlugin = ServerPlugin & Named;

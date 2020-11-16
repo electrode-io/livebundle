@@ -10,9 +10,11 @@ import {
   LocalBundle,
   PluginLoaderImpl,
   LiveBundleImpl,
+  NamedServerPlugin,
 } from "../src";
 import { v4 as uuidv4 } from "uuid";
 import sinon from "sinon";
+import { expect } from "chai";
 
 describe("LiveBundleImpl", () => {
   const sandbox = sinon.createSandbox();
@@ -30,6 +32,7 @@ describe("LiveBundleImpl", () => {
       const pluginLoaderStub = sandbox.createStubInstance(PluginLoaderImpl);
       pluginLoaderStub.loadAllPlugins.resolves({
         bundler: new FakeBundler(),
+        server: new FakeServer(),
         storage: new FakeStorage(),
         uploader: new FakeUploader(),
         generators: [new FakeGenerator()],
@@ -38,6 +41,9 @@ describe("LiveBundleImpl", () => {
       const sut = new LiveBundleImpl(pluginLoaderStub);
       await sut.upload({
         bundler: {
+          fake: null,
+        },
+        server: {
           fake: null,
         },
         generators: {
@@ -58,6 +64,7 @@ describe("LiveBundleImpl", () => {
       const pluginLoaderStub = sandbox.createStubInstance(PluginLoaderImpl);
       pluginLoaderStub.loadAllPlugins.resolves({
         bundler: new FakeBundler(),
+        server: new FakeServer(),
         storage: new FakeStorage(),
         uploader: new FakeUploader(),
         generators: [new FakeGenerator()],
@@ -66,6 +73,9 @@ describe("LiveBundleImpl", () => {
       const sut = new LiveBundleImpl(pluginLoaderStub);
       await sut.live({
         bundler: {
+          fake: null,
+        },
+        server: {
           fake: null,
         },
         generators: {
@@ -78,6 +88,17 @@ describe("LiveBundleImpl", () => {
           fake: null,
         },
       });
+    });
+  });
+
+  describe("buildLiveSessionMetadata", () => {
+    it("should return expected metadata string [host/port provided]", () => {
+      expect(
+        LiveBundleImpl.buildLiveSessionMetadata({
+          host: "1.2.3.4",
+          port: 8086,
+        }),
+      ).equals('{"host":"1.2.3.4:8086"}');
     });
   });
 });
@@ -139,6 +160,13 @@ class FakeBundler implements NamedBundlerPlugin {
   name: string;
   bundle(): Promise<LocalBundle[]> {
     return Promise.resolve([]);
+  }
+}
+
+class FakeServer implements NamedServerPlugin {
+  name: string;
+  launchServer(): Promise<void> {
+    return Promise.resolve();
   }
 }
 

@@ -5,6 +5,7 @@ import {
   LiveBundle,
   LiveBundleConfig,
   untildifyPath,
+  ServerOpts,
 } from "livebundle-sdk";
 import path from "path";
 import { configSchema } from "./schemas";
@@ -34,7 +35,7 @@ export default function program({
       "Directory from which to run this command from",
       untildifyPath,
     )
-    .description("bundle and upload resulting bundles")
+    .description("Bundle and upload resulting bundles")
     .action(async ({ config, cwd }: { config?: string; cwd?: string }) => {
       let conf;
       try {
@@ -77,39 +78,58 @@ export default function program({
       "Directory from which to run this command from",
       untildifyPath,
     )
-    .description("start a LiveBundle live session")
-    .action(async ({ config, cwd }: { config?: string; cwd?: string }) => {
-      let conf;
-      try {
-        if (cwd) {
-          process.chdir(cwd);
-        }
-        const resolvedConfigPath = resolveConfigPath();
-        if (!config && !resolvedConfigPath) {
-          return console.error(`No LiveBundle configuration file found.
+    .option("--host <host>", "Server host")
+    .option("--port <port>", "Server port", "8081")
+    .allowUnknownOption()
+    .description("Start a LiveBundle live session")
+    .action(
+      async ({
+        config,
+        cwd,
+        host,
+        port,
+      }: {
+        config?: string;
+        cwd?: string;
+        host?: string;
+        port?: number;
+      }) => {
+        let conf;
+        try {
+          if (cwd) {
+            process.chdir(cwd);
+          }
+          const resolvedConfigPath = resolveConfigPath();
+          if (!config && !resolvedConfigPath) {
+            return console.error(`No LiveBundle configuration file found.
 - To create a new configuration file you can use 'livebundle init' command
 - To use an existing configuration file from a specific location you can use the '--config' option`);
+          }
+          conf = await loadConfig<Config>({
+            configPath: config ?? resolvedConfigPath,
+            schema: configSchema,
+          });
+        } catch (e) {
+          return console.error(`Invalid configuration.\n${e.message}`);
         }
-        conf = await loadConfig<Config>({
-          configPath: config ?? resolvedConfigPath,
-          schema: configSchema,
-        });
-      } catch (e) {
-        return console.error(`Invalid configuration.\n${e.message}`);
-      }
 
-      const spinner: ora.Ora = ora(`Creating LiveBundle sessions`);
-      spinner.start();
-      try {
-        await livebundle.live((conf as unknown) as LiveBundleConfig);
-        spinner.stopAndPersist({
-          symbol: emoji.get("rocket"),
-          text: `LiveBundle session started`,
-        });
-      } catch (e) {
-        spinner.fail(`LiveBundle failure\n${e.message}`);
-      }
-    });
+        const spinner: ora.Ora = ora(`Creating LiveBundle sessions`);
+        spinner.start();
+        try {
+          await livebundle.live((conf as unknown) as LiveBundleConfig, {
+            host,
+            port,
+            rest: liveCommand.args,
+          });
+          spinner.stopAndPersist({
+            symbol: emoji.get("rocket"),
+            text: `LiveBundle session started`,
+          });
+        } catch (e) {
+          spinner.fail(`LiveBundle failure\n${e.message}`);
+        }
+      },
+    );
 
   const initCommand = new Command();
   initCommand
