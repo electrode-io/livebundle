@@ -8,6 +8,7 @@
 #
 # JavaScript bundler configuration
 # Only one bundler can be specified
+# Only used for 'upload' command
 bundler:
   # Metro bundler configuration
   #
@@ -20,6 +21,13 @@ bundler:
       - dev: true
         entry: index.js
         platform: ios
+
+# React Native server configuration
+# Only used for 'live' command
+server:
+  # Metro  server configuration
+  #
+  metro:
 
 #
 # Storage provider configuration

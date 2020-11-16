@@ -8,9 +8,11 @@ import {
   Uploader,
   LiveBundleConfig,
   PluginClass,
+  NamedServerPlugin,
 } from "./types";
 import { loadConfig, reconciliateConfig, UploaderImpl } from ".";
 import debug from "debug";
+import { server } from "sinon";
 
 const log = debug("livebundle-sdk:PluginLoaderImpl");
 
@@ -21,6 +23,20 @@ export class PluginLoaderImpl implements PluginLoader {
   ): Promise<NamedBundlerPlugin> {
     const { Plugin, pluginConfig } = await this.loadPlugin<NamedBundlerPlugin>(
       "bundler",
+      name,
+      config,
+    );
+    const plugin = Plugin.create(pluginConfig);
+    plugin.name = name;
+    return plugin;
+  }
+
+  public async loadServerPlugin(
+    name: string,
+    config: Record<string, unknown>,
+  ): Promise<NamedServerPlugin> {
+    const { Plugin, pluginConfig } = await this.loadPlugin<NamedServerPlugin>(
+      "server",
       name,
       config,
     );
@@ -111,12 +127,14 @@ export class PluginLoaderImpl implements PluginLoader {
     config: LiveBundleConfig,
   ): Promise<{
     bundler: NamedBundlerPlugin;
+    server: NamedServerPlugin;
     storage: NamedStoragePlugin;
     generators: NamedGeneratorPlugin[];
     notifiers: NamedNotifierPlugin[];
     uploader: Uploader;
   }> {
     const bundlerPluginName = Object.keys(config.bundler)[0];
+    const serverPluginName = Object.keys(config.server)[0];
     const storagePluginName = Object.keys(config.storage)[0];
     const generatorPluginsNames = Object.keys(config.generators);
     const notifierPluginsNames = Object.keys(config.notifiers);
@@ -133,6 +151,12 @@ export class PluginLoaderImpl implements PluginLoader {
       config.bundler[bundlerPluginName] as Record<string, unknown>,
     );
     bundler.name = bundlerPluginName;
+
+    const server: NamedServerPlugin = await this.loadServerPlugin(
+      serverPluginName,
+      config.server[serverPluginName] as Record<string, unknown>,
+    );
+    server.name = serverPluginName;
 
     const generators: NamedGeneratorPlugin[] = [];
     for (const generatorPluginName of generatorPluginsNames) {
@@ -159,6 +183,7 @@ export class PluginLoaderImpl implements PluginLoader {
 
     return {
       bundler,
+      server,
       storage,
       generators,
       notifiers,
