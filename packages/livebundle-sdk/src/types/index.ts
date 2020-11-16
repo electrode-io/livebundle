@@ -6,22 +6,6 @@ export interface LocalBundle {
   assets: ReactNativeAsset[];
 }
 
-export interface BundleTask {
-  dev: boolean;
-  entry: string;
-  platform: Platform;
-}
-
-export interface PrepareTask {
-  steps: string[];
-}
-
-export interface LiveBundleTask {
-  prepare?: PrepareTask;
-  bundle: BundleTask[];
-  storage: Record<string, unknown>;
-}
-
 export interface LiveBundleConfig {
   bundler: Record<string, unknown>;
   storage: Record<string, unknown>;
@@ -35,14 +19,6 @@ export interface Uploader {
 
 export type Platform = "android" | "ios";
 
-export interface StackFrame {
-  arguments?: string[];
-  column?: number;
-  file?: string;
-  lineNumber?: number;
-  methodName: string;
-}
-
 export interface Bundle {
   id: string;
   dev: boolean;
@@ -50,36 +26,10 @@ export interface Bundle {
   sourceMap: string;
 }
 
-export type BundleCli = Omit<Bundle, "id">;
-
 export interface Package {
   id: string;
   bundles: Bundle[];
   timestamp: number;
-}
-
-export interface PackageCli {
-  bundles: Bundle[];
-}
-
-export interface ServerPaths {
-  assets: string;
-  packages: string;
-}
-
-export interface Config extends Record<string, unknown> {
-  accessKeys: string[];
-  server: ServerConfig;
-  store: StoreConfig;
-}
-
-export interface ServerConfig {
-  host: string;
-  port: number;
-}
-
-export interface StoreConfig {
-  path: string;
 }
 
 export enum LiveBundleContentType {
