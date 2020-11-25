@@ -73,6 +73,8 @@ generators:
   # Deep Link generator configuration
   #
   deeplink:
+    # Replace this value with your application reverse domain
+    host: io.livebundle
 
 #
 # Notifiers configuration
