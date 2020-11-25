@@ -1,13 +1,25 @@
 import debug from "debug";
-import { DeepLinkGeneratorResult } from "./types";
+import { DeepLinkGeneratorResult, DeepLinkGeneratorConfig } from "./types";
 import { LiveBundleContentType, GeneratorPlugin } from "livebundle-sdk";
+import { configSchema } from "./schemas";
 
 const log = debug("livebundle-generator-deeplink:DeepLinkGeneratorPlugin");
 
 export class DeepLinkGeneratorPlugin implements GeneratorPlugin {
-  public static async create(): Promise<DeepLinkGeneratorPlugin> {
-    return new DeepLinkGeneratorPlugin();
+  public constructor(private readonly config: DeepLinkGeneratorConfig) {}
+
+  public static async create(
+    config: DeepLinkGeneratorConfig,
+  ): Promise<DeepLinkGeneratorPlugin> {
+    return new DeepLinkGeneratorPlugin(config);
   }
+
+  public static readonly defaultConfig: Record<
+    string,
+    unknown
+  > = require("../config/default.json");
+
+  public static readonly schema: Record<string, unknown> = configSchema;
 
   async generate({
     id,
@@ -18,7 +30,7 @@ export class DeepLinkGeneratorPlugin implements GeneratorPlugin {
   }): Promise<DeepLinkGeneratorResult> {
     log(`generate(id: ${id}, type: ${type})`);
     return type === LiveBundleContentType.PACKAGE
-      ? { deepLinkUrl: `livebundle://packages?id=${id}` }
-      : { deepLinkUrl: `livebundle://sessions?id=${id}` };
+      ? { deepLinkUrl: `livebundle://${this.config.host}/packages?id=${id}` }
+      : { deepLinkUrl: `livebundle://${this.config.host}/sessions?id=${id}` };
   }
 }
