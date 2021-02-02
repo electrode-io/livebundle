@@ -13,7 +13,7 @@ export async function loadYamlFile<T extends Record<string, unknown>>(
   });
 
   try {
-    return yaml.safeLoad(file) as T;
+    return yaml.load(file) as T;
   } catch (e) {
     throw new Error(`YAML file load failed (${filePath}): ${e.message}`);
   }

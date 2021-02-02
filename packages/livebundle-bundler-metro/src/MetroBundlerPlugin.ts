@@ -70,7 +70,7 @@ export class MetroBundlerPlugin implements BundlerPlugin {
           if (code !== 0) {
             reject(`npx ${cmdArgs} failed with exit code ${code}`);
           } else {
-            resolve();
+            resolve(true);
           }
         });
       });

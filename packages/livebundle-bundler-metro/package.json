@@ -12,8 +12,8 @@
     "test": "mocha"
   },
   "dependencies": {
-    "debug": "^4.2.0",
-    "fs-extra": "^9.0.1",
+    "debug": "^4.3.1",
+    "fs-extra": "^9.1.0",
     "livebundle-sdk": "^0.3.3",
     "tmp": "^0.2.1"
   }

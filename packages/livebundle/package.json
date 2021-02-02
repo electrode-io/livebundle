@@ -16,9 +16,9 @@
   },
   "dependencies": {
     "chalk": "^4.1.0",
-    "commander": "^6.1.0",
-    "debug": "^4.2.0",
-    "fs-extra": "^9.0.1",
+    "commander": "^7.0.0",
+    "debug": "^4.3.1",
+    "fs-extra": "^9.1.0",
     "livebundle-bundler-metro": "^0.3.3",
     "livebundle-generator-deeplink": "^0.3.3",
     "livebundle-generator-qrcode": "^0.3.4",
@@ -31,9 +31,9 @@
     "livebundle-storage-fs": "^0.3.3",
     "lodash": "^4.17.20",
     "node-emoji": "^1.10.0",
-    "open": "^7.3.0",
-    "ora": "^5.1.0",
+    "open": "^7.4.0",
+    "ora": "^5.3.0",
     "qrcode": "^1.4.4",
-    "uuid": "^8.3.1"
+    "uuid": "^8.3.2"
   }
 }

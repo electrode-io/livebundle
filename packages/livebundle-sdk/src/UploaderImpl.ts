@@ -57,7 +57,7 @@ export class UploaderImpl implements Uploader {
               zippedBundlePath,
               `packages/${pkg.id}/${bundleMetadata.id}`,
             );
-            resolve();
+            resolve(true);
           });
       });
       pkg.bundles.push(bundleMetadata);
