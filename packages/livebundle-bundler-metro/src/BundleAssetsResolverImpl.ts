@@ -13,7 +13,8 @@ type MatchedAsset = {
 };
 
 export class BundleAssetsResolverImpl implements BundleAssetsResolver {
-  public readonly re = /registerAsset\({[\s]*"?__packager_asset"?:( true|!0),[\s]*"?httpServerLocation"?:\s?"(?<httpServerLocation>[^"]+)",(\s|.)+?scales"?:\s?\[(?<scales>[^\]]+)],[\s]*"?hash"?:\s?"(?<hash>[^"]+)",[\s]*"?name"?:\s?"(?<name>[^"]+)",[\s]*"?type"?:\s?"(?<type>[^"]+)"[\s]*\}\)/gm;
+  public readonly re =
+    /registerAsset\({[\s]*"?__packager_asset"?:( true|!0),[\s]*"?httpServerLocation"?:\s?"(?<httpServerLocation>[^"]+)",(\s|.)+?scales"?:\s?\[(?<scales>[^\]]+)],[\s]*"?hash"?:\s?"(?<hash>[^"]+)",[\s]*"?name"?:\s?"(?<name>[^"]+)",[\s]*"?type"?:\s?"(?<type>[^"]+)"[\s]*\}\)/gm;
   public readonly ngre = new RegExp(this.re, "m");
 
   public async resolveAssets(

@@ -70,9 +70,7 @@ export interface PluginLoader {
     name: string,
     config: Record<string, unknown>,
   ): Promise<NamedStoragePlugin>;
-  loadAllPlugins(
-    config: LiveBundleConfig,
-  ): Promise<{
+  loadAllPlugins(config: LiveBundleConfig): Promise<{
     bundler: NamedBundlerPlugin;
     server: NamedServerPlugin;
     storage: NamedStoragePlugin;

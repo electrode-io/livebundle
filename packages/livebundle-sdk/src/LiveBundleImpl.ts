@@ -18,12 +18,8 @@ export class LiveBundleImpl implements LiveBundle {
   public async upload(config: LiveBundleConfig): Promise<void> {
     log(`upload(config: ${JSON.stringify(config, null, 2)})`);
 
-    const {
-      bundler,
-      generators,
-      notifiers,
-      uploader,
-    } = await this.pluginLoader.loadAllPlugins(config);
+    const { bundler, generators, notifiers, uploader } =
+      await this.pluginLoader.loadAllPlugins(config);
 
     const bundles: LocalBundle[] = await bundler.bundle();
 
@@ -59,12 +55,8 @@ export class LiveBundleImpl implements LiveBundle {
       )})`,
     );
 
-    const {
-      server,
-      generators,
-      notifiers,
-      storage,
-    } = await this.pluginLoader.loadAllPlugins(config);
+    const { server, generators, notifiers, storage } =
+      await this.pluginLoader.loadAllPlugins(config);
 
     await server.launchServer(opts);
 

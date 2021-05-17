@@ -12,7 +12,7 @@
     "test": "mocha"
   },
   "dependencies": {
-    "chalk": "^4.1.0",
+    "chalk": "^4.1.1",
     "debug": "^4.3.1",
     "livebundle-sdk": "^0.3.4",
     "tmp": "^0.2.1"

@@ -5,7 +5,6 @@ import {
   LiveBundle,
   LiveBundleConfig,
   untildifyPath,
-  ServerOpts,
 } from "livebundle-sdk";
 import path from "path";
 import { configSchema } from "./schemas";
@@ -59,7 +58,7 @@ export default function program({
       const spinner: ora.Ora = ora(`Running LiveBundle`);
       spinner.start();
       try {
-        await livebundle.upload((conf as unknown) as LiveBundleConfig);
+        await livebundle.upload(conf as unknown as LiveBundleConfig);
         spinner.stopAndPersist({
           symbol: emoji.get("rocket"),
           text: `Shipped LiveBundle package`,
@@ -116,7 +115,7 @@ export default function program({
         const spinner: ora.Ora = ora(`Creating LiveBundle sessions`);
         spinner.start();
         try {
-          await livebundle.live((conf as unknown) as LiveBundleConfig, {
+          await livebundle.live(conf as unknown as LiveBundleConfig, {
             host,
             port,
             rest: liveCommand.args,
