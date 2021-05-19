@@ -21,6 +21,7 @@ describe("ViewerNotifierPlugin", () => {
         type: LiveBundleContentType.PACKAGE,
       };
       const openStub = sinon.stub();
+      // @ts-ignore
       const sut = new ViewerNotifierPlugin(openStub);
       await sut.notify(notifyPayload);
       sinon.assert.calledOnceWithExactly(
@@ -36,6 +37,7 @@ describe("ViewerNotifierPlugin", () => {
         type: LiveBundleContentType.PACKAGE,
       };
       const openStub = sinon.stub();
+      // @ts-ignore
       const sut = new ViewerNotifierPlugin(openStub);
       await sut.notify(notifyPayload);
     });

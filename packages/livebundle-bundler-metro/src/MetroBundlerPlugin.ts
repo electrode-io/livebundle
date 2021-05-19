@@ -74,9 +74,8 @@ export class MetroBundlerPlugin implements BundlerPlugin {
           }
         });
       });
-      const assets: ReactNativeAsset[] = await this.bundleAssetsResolver.resolveAssets(
-        bundlePath,
-      );
+      const assets: ReactNativeAsset[] =
+        await this.bundleAssetsResolver.resolveAssets(bundlePath);
       bundles.push({
         assets,
         bundlePath,

@@ -12,7 +12,6 @@ import {
 } from "./types";
 import { loadConfig, reconciliateConfig, UploaderImpl } from ".";
 import debug from "debug";
-import { server } from "sinon";
 
 const log = debug("livebundle-sdk:PluginLoaderImpl");
 
@@ -51,9 +50,8 @@ export class PluginLoaderImpl implements PluginLoader {
     storage: StoragePlugin,
   ): Promise<NamedGeneratorPlugin> {
     log(`loadGeneratorPlugin(name: ${name})`);
-    const { Plugin, pluginConfig } = await this.loadPlugin<
-      NamedGeneratorPlugin
-    >("generator", name, config);
+    const { Plugin, pluginConfig } =
+      await this.loadPlugin<NamedGeneratorPlugin>("generator", name, config);
     const plugin = Plugin.create(pluginConfig, storage);
     plugin.name = name;
     return plugin;
@@ -123,9 +121,7 @@ export class PluginLoaderImpl implements PluginLoader {
     };
   }
 
-  public async loadAllPlugins(
-    config: LiveBundleConfig,
-  ): Promise<{
+  public async loadAllPlugins(config: LiveBundleConfig): Promise<{
     bundler: NamedBundlerPlugin;
     server: NamedServerPlugin;
     storage: NamedStoragePlugin;
