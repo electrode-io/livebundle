@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  release-ern:
+  release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -14,6 +14,6 @@ jobs:
       - name: Build
         run: yarn build
       - name: Release
-        run: lerna publish from-package --yes
+        run: lerna publish from-package --yes --no-verify-access
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
