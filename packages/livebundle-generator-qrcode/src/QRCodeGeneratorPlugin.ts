@@ -1,10 +1,11 @@
-import debug from "debug";
 import { QrCodeGeneratorConfig, QrCodeGeneratorResult } from "./types";
 import {
   LiveBundleContentType,
   StoragePlugin,
   GeneratorPlugin,
 } from "livebundle-sdk";
+import debug from "debug";
+import fs from "fs-extra";
 import { configSchema } from "./schemas";
 import path from "path";
 import qrcode from "qrcode";
@@ -44,6 +45,7 @@ export class QRCodeGeneratorPlugin implements GeneratorPlugin {
 
     //
     // Generate as local png image file
+    await fs.ensureDir(path.dirname(this.config.image.path));
     const localImagePath = path.resolve(this.config.image.path);
     await qrcode.toFile(localImagePath, pkgId, {
       margin: this.config.image.margin,
