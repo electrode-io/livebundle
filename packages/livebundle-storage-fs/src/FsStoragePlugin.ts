@@ -30,7 +30,7 @@ export class FsStoragePlugin implements StoragePlugin {
     this.storageDir = fsConfig.storageDir
       ? untildifyPath(fsConfig.storageDir)
       : tmp.dirSync({ unsafeCleanup: true }).name;
-    fs.ensureDir(this.storageDir);
+    fs.ensureDirSync(this.storageDir);
   }
 
   hasFile(filePath: string): Promise<boolean> {
