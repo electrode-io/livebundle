@@ -1,6 +1,6 @@
 {
   "name": "livebundle-sdk",
-  "version": "0.3.5",
+  "version": "1.0.0",
   "main": "dist/index.js",
   "license": "Apache-2.0",
   "scripts": {
