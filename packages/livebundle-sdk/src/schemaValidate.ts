@@ -16,7 +16,7 @@ export function schemaValidate<T>({
 refSchemas: ${refSchemas.map((s) => s["$id"])}
 schema: ${schema["$id"]}}`);
 
-  const ajv = new Ajv({ $data: true });
+  const ajv = new Ajv({ $data: true, strict: false });
   for (const refSchema of refSchemas) {
     ajv.addSchema(refSchema);
   }
