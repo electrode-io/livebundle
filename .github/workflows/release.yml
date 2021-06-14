@@ -11,9 +11,15 @@ jobs:
       - uses: actions/setup-node@v2
       - name: Install
         run: yarn install
-      - name: Build
-        run: yarn build
+      - name: Authenticate with Registry
+        run: |
+          yarn logout
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
+          npm whoami
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Release
         run: lerna publish from-package --yes --no-verify-access
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
