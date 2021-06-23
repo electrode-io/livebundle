@@ -4,10 +4,11 @@
 	<br>
 </h2>
 
-# LiveBundle CLI
+# [LiveBundle][7] CLI
 
 [![ci][1]][2] [![codecov][3]][4]
 
+## [Documentation][8]
 # Related repositories
 
 - [react-native-livebundle](https://github.com/electrode-io/react-native-livebundle) contains LiveBundle React Native native module along with a demo application.
@@ -19,3 +20,5 @@
 [4]: https://codecov.io/gh/electrode-io/livebundle
 [5]: https://code.visualstudio.com/
 [6]: https://www.npmjs.com/package/debug
+[7]: https://www.livebundle.io
+[8]: https://www.livebundle.io/docs/
