@@ -10,7 +10,6 @@ import { configSchema } from "./schemas";
 const log = debug("livebundle-storage-impl:S3StoragePlugin");
 
 export class S3StoragePlugin implements StoragePlugin {
-  public static readonly schema: Record<string, unknown> = configSchema;
   private readonly config: S3StorageConfig;
   private readonly s3: S3;
 
@@ -25,7 +24,7 @@ export class S3StoragePlugin implements StoragePlugin {
         accessKeyId: this.config.accessKeyId,
         secretAccessKey: this.config.secretAccessKey,
         sessionToken: this.config.sessionToken,
-        region: this.config.region ?? "us-east-2",
+        region: this.config.region,
         maxRetries: 4,
         correctClockSkew: true,
       });
@@ -38,6 +37,16 @@ export class S3StoragePlugin implements StoragePlugin {
   public getFilePathUrl(filePath: string): string {
     return `${this.baseUrl}/${filePath}`;
   }
+
+  public static readonly schema: Record<string, unknown> = configSchema;
+
+  public static readonly envVarToConfigKey: Record<string, string> = {
+    LB_STORAGE_AWS_ACCESS_KEY_ID: "accessKeyId",
+    LB_STORAGE_AWS_SECRET_ACCESS_KEY: "secretAccessKey",
+    LB_STORAGE_AWS_SESSION_TOKEN: "sessionToken",
+    LB_STORAGE_AWS_BUCKET_NAME: "bucketName",
+    LB_STORAGE_AWS_REGION: "region",
+  };
 
   async hasFile(filePath: string): Promise<boolean> {
     log(`hasFile(filePath: ${filePath})`);
