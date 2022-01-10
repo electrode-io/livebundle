@@ -189,11 +189,21 @@ describe("S3StoragePlugin", () => {
       const result = await sut.hasFile(targetPath);
       expect(result).false;
     });
+
+    it("should return false if it fails to check file", async () => {
+      const targetPath = "/target/file8";
+      const sut = new S3StoragePlugin(storageConfig, {
+        s3: stubs.s3,
+      });
+      stubs.headObject.rejects();
+      const result = await sut.hasFile(targetPath);
+      expect(result).false;
+    });
   });
 
   describe("downloadFile", () => {
     it("should return the download file as a Buffer", async () => {
-      const targetPath = "/target/file8";
+      const targetPath = "/target/file9";
       const sut = new S3StoragePlugin(storageConfig, {
         s3: stubs.s3,
       });
@@ -204,6 +214,15 @@ describe("S3StoragePlugin", () => {
       await sut.downloadFile(targetPath);
       sinon.assert.calledOnceWithExactly(stubs.getObject, params);
       sinon.assert.calledOnceWithExactly(stubs.promiseWithBody);
+    });
+
+    it("should throw if it fails to download file", async () => {
+      const targetPath = "/target/file10";
+      const sut = new S3StoragePlugin(storageConfig, {
+        s3: stubs.s3,
+      });
+      stubs.getObject.rejects();
+      await rejects(sut.downloadFile(targetPath));
     });
   });
 });
