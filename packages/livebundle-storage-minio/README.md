@@ -1,0 +1,1 @@
+# LiveBundle Minio Storage
